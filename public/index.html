@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CarCash</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+
+            background:
+                radial-gradient(circle at 20% 20%, rgba(0, 140, 255, .25), transparent 30%),
+                radial-gradient(circle at 80% 80%, rgba(130, 0, 255, .25), transparent 30%),
+                #070b14;
+
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 52px;
+            font-weight: 900;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+
+            background: linear-gradient(90deg, #00c6ff, #7c3cff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: #aab4c8;
+            font-size: 18px;
+            margin-bottom: 45px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            max-width: 700px;
+            margin: auto;
+        }
+
+        .card {
+            background: rgba(15, 22, 38, .85);
+            border: 1px solid rgba(255,255,255,.08);
+            border-radius: 20px;
+            padding: 35px 25px;
+
+            box-shadow: 0 15px 40px rgba(0,0,0,.35);
+
+            transition: .25s;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(0,198,255,.5);
+        }
+
+        .icon {
+            font-size: 55px;
+            margin-bottom: 15px;
+        }
+
+        .card h2 {
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: #9da8bc;
+            margin-bottom: 25px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+
+            border: none;
+            border-radius: 12px;
+
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            background: linear-gradient(90deg, #009dff, #6840ff);
+
+            transition: .2s;
+        }
+
+        button:hover {
+            transform: scale(1.03);
+            filter: brightness(1.15);
+        }
+
+        .footer {
+            margin-top: 35px;
+            color: #68758c;
+            font-size: 13px;
+        }
+
+        @media (max-width: 650px) {
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .logo {
+                font-size: 40px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="logo">
+            CarCash
+        </div>
+
+        <div class="subtitle">
+            Virtual Car Investment Platform
+        </div>
+
+        <div class="cards">
+
+            <div class="card">
+
+                <div class="icon">
+                    🚗
+                </div>
+
+                <h2>
+                    Login
+                </h2>
+
+                <p>
+                    Hesabına daxil ol və maşınlarını idarə et.
+                </p>
+
+                <button onclick="location.href='/login.html'">
+                    Login
+                </button>
+
+            </div>
+
+            <div class="card">
+
+                <div class="icon">
+                    🏎️
+                </div>
+
+                <h2>
+                    Register
+                </h2>
+
+                <p>
+                    Yeni hesab yarat və CarCash-a başla.
+                </p>
+
+                <button onclick="location.href='/register.html'">
+                    Register
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="footer">
+            © 2026 CarCash
+        </div>
+
+    </div>
+
+</body>
+</html>

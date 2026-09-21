@@ -1,0 +1,4716 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="theme-color" content="#080c18">
+<title>CarCash</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
+}
+
+html{
+min-height:100%;
+background:#080c18;
+}
+
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:
+radial-gradient(circle at 10% 0%,#263b73 0%,transparent 32%),
+radial-gradient(circle at 90% 100%,#17213f 0%,transparent 35%),
+#080c18;
+color:#fff;
+min-height:100vh;
+overflow-x:hidden;
+}
+
+button,input,textarea{
+font:inherit;
+}
+
+button{
+border:0;
+cursor:pointer;
+font-weight:700;
+}
+
+button:active{
+transform:scale(.98);
+}
+
+img{
+max-width:100%;
+}
+
+/* HEADER */
+
+header{
+min-height:70px;
+padding:0 30px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:20px;
+background:rgba(10,15,30,.94);
+border-bottom:1px solid rgba(255,255,255,.07);
+backdrop-filter:blur(14px);
+-webkit-backdrop-filter:blur(14px);
+position:sticky;
+top:0;
+z-index:100;
+}
+
+.logo{
+font-size:24px;
+font-weight:800;
+letter-spacing:.3px;
+white-space:nowrap;
+}
+
+.logo span{
+color:#5b8cff;
+}
+
+.header-right{
+display:flex;
+align-items:center;
+justify-content:flex-end;
+gap:8px;
+}
+
+.balance-box{
+background:#11182a;
+border:1px solid #202a42;
+padding:9px 15px;
+border-radius:11px;
+min-width:150px;
+}
+
+.balance-box small{
+color:#8994aa;
+display:block;
+font-size:10px;
+margin-bottom:2px;
+}
+
+.balance{
+font-size:18px;
+font-weight:800;
+font-variant-numeric:tabular-nums;
+white-space:nowrap;
+}
+
+.deposit-btn,
+.withdraw-btn,
+.profile-btn,
+.support-btn,
+.logout-btn{
+padding:11px 14px;
+border-radius:10px;
+white-space:nowrap;
+transition:.15s;
+}
+
+.deposit-btn{
+background:#4d7cff;
+color:#fff;
+}
+
+.withdraw-btn{
+background:#42df96;
+color:#07150f;
+}
+
+.profile-btn{
+background:#7c5cff;
+color:#fff;
+}
+
+.support-btn{
+background:#ff9f43;
+color:#17100a;
+}
+
+.logout-btn{
+background:#20283b;
+color:#fff;
+}
+
+.mobile-menu-btn{
+display:none;
+width:42px;
+height:42px;
+border-radius:11px;
+background:#182139;
+color:#fff;
+font-size:22px;
+align-items:center;
+justify-content:center;
+flex:0 0 42px;
+}
+
+.container{
+width:min(1200px,calc(100% - 30px));
+margin:30px auto 60px;
+}
+
+.welcome{
+margin-bottom:25px;
+}
+
+.welcome h1{
+margin:0 0 7px;
+font-size:32px;
+}
+
+.welcome p{
+margin:0;
+color:#8f9ab0;
+word-break:break-word;
+}
+
+/* STATS */
+
+.stats{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:16px;
+margin-bottom:30px;
+}
+
+.stat{
+background:#101728;
+border:1px solid #1d2740;
+border-radius:16px;
+padding:21px;
+min-width:0;
+overflow:hidden;
+}
+
+.stat-title{
+color:#8e99af;
+font-size:13px;
+margin-bottom:9px;
+}
+
+.stat-value{
+font-size:25px;
+font-weight:800;
+font-variant-numeric:tabular-nums;
+overflow-wrap:anywhere;
+}
+
+.live-total{
+color:#42df96;
+font-size:13px;
+margin-top:7px;
+font-weight:700;
+line-height:1.5;
+}
+
+.live-balance{
+color:#5b8cff;
+font-size:12px;
+margin-top:6px;
+font-weight:700;
+line-height:1.5;
+}
+
+/* PROMO */
+
+.promo-card{
+background:
+linear-gradient(
+135deg,
+rgba(91,140,255,.13),
+rgba(124,92,255,.13)
+);
+border:1px solid rgba(91,140,255,.25);
+border-radius:18px;
+padding:22px;
+margin-top:30px;
+position:relative;
+overflow:hidden;
+}
+
+.promo-content{
+position:relative;
+z-index:2;
+}
+
+.promo-title{
+font-size:20px;
+font-weight:800;
+margin-bottom:6px;
+}
+
+.promo-subtitle{
+color:#8f9ab0;
+font-size:13px;
+margin-bottom:16px;
+line-height:1.5;
+}
+
+.promo-row{
+display:flex;
+gap:10px;
+}
+
+.promo-input{
+flex:1;
+min-width:0;
+padding:13px 15px;
+border-radius:10px;
+border:1px solid #29344d;
+background:#0b1120;
+color:#fff;
+outline:none;
+font-size:14px;
+text-transform:uppercase;
+}
+
+.promo-input:focus{
+border-color:#5b8cff;
+}
+
+.promo-button{
+padding:13px 20px;
+border-radius:10px;
+background:#7c5cff;
+color:#fff;
+white-space:nowrap;
+min-height:46px;
+}
+
+.promo-button:disabled{
+opacity:.5;
+cursor:not-allowed;
+}
+
+.promo-message{
+display:none;
+margin-top:12px;
+padding:11px 13px;
+border-radius:9px;
+font-size:13px;
+line-height:1.5;
+}
+
+.promo-message.show{
+display:block;
+}
+
+.promo-message.success{
+color:#48df98;
+background:rgba(30,200,120,.12);
+border:1px solid rgba(30,200,120,.2);
+}
+
+.promo-message.error{
+color:#ff7777;
+background:rgba(255,70,70,.12);
+border:1px solid rgba(255,70,70,.2);
+}
+
+.section-title{
+margin:30px 0 14px;
+font-size:21px;
+}
+
+/* CARS */
+
+.cars{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:16px;
+}
+
+.car{
+background:#101728;
+border:1px solid #1d2740;
+border-radius:16px;
+padding:18px;
+transition:.2s;
+min-width:0;
+}
+
+.car:hover{
+transform:translateY(-3px);
+border-color:#38559a;
+}
+
+.car-icon{
+height:150px;
+border-radius:12px;
+overflow:hidden;
+background:linear-gradient(135deg,#1b2949,#0d1424);
+margin-bottom:14px;
+}
+
+.car-icon img{
+width:100%;
+height:100%;
+object-fit:cover;
+display:block;
+}
+
+.car h3{
+margin:0 0 9px;
+overflow-wrap:anywhere;
+}
+
+.car-info{
+color:#a3aec2;
+font-size:14px;
+line-height:1.8;
+}
+
+.car-monthly{
+margin-top:10px;
+padding:9px 11px;
+border-radius:9px;
+background:rgba(91,140,255,.10);
+border:1px solid rgba(91,140,255,.22);
+color:#6e9aff;
+font-size:13px;
+font-weight:800;
+line-height:1.4;
+}
+
+.car-monthly span{
+color:#fff;
+}
+
+.buy-btn{
+width:100%;
+margin-top:14px;
+padding:11px;
+border-radius:9px;
+background:#4d7cff;
+color:#fff;
+min-height:44px;
+}
+
+.buy-btn:disabled{
+opacity:.45;
+cursor:not-allowed;
+}
+
+/* MY CARS */
+
+.my-cars{
+background:#101728;
+border:1px solid #1d2740;
+border-radius:16px;
+padding:8px 18px;
+min-height:80px;
+overflow:hidden;
+}
+
+.my-car-item{
+display:flex;
+justify-content:space-between;
+align-items:center;
+min-height:100px;
+padding:14px 4px;
+border-bottom:1px solid #1c263c;
+gap:15px;
+}
+
+.my-car-item:last-child{
+border-bottom:0;
+}
+
+.my-car-left{
+display:flex;
+align-items:center;
+gap:14px;
+min-width:0;
+}
+
+.my-car-icon{
+width:90px;
+height:64px;
+flex:0 0 90px;
+border-radius:12px;
+overflow:hidden;
+background:linear-gradient(135deg,#1b2949,#0d1424);
+border:1px solid #263657;
+}
+
+.my-car-icon img{
+width:100%;
+height:100%;
+object-fit:cover;
+display:block;
+}
+
+.my-car-name{
+font-size:16px;
+font-weight:800;
+margin-bottom:5px;
+overflow-wrap:anywhere;
+}
+
+.my-car-price{
+color:#8e99ae;
+font-size:12px;
+}
+
+.my-car-daily{
+color:#42df96;
+font-size:13px;
+font-weight:800;
+margin-top:3px;
+}
+
+.my-car-monthly{
+color:#6e9aff;
+font-size:12px;
+font-weight:800;
+margin-top:4px;
+}
+
+.my-car-earned{
+color:#5b8cff;
+font-size:14px;
+font-weight:800;
+margin-top:6px;
+font-variant-numeric:tabular-nums;
+}
+
+.my-car-right{
+display:flex;
+align-items:center;
+gap:10px;
+flex:0 0 auto;
+}
+
+.collect-one-btn{
+background:#42df96;
+color:#07150f;
+padding:10px 15px;
+border-radius:9px;
+font-weight:800;
+white-space:nowrap;
+min-height:42px;
+}
+
+.collect-one-btn:disabled{
+opacity:.5;
+cursor:not-allowed;
+}
+
+.collect-all-btn{
+margin-top:12px;
+width:100%;
+padding:10px 14px;
+border-radius:9px;
+background:#42df96;
+color:#07150f;
+font-weight:800;
+min-height:42px;
+}
+
+.collect-all-btn:disabled{
+opacity:.5;
+cursor:not-allowed;
+}
+
+/* HISTORY */
+
+.history{
+background:#101728;
+border:1px solid #1d2740;
+border-radius:16px;
+overflow:hidden;
+}
+
+.history-row{
+display:grid;
+grid-template-columns:1.2fr 1fr 1fr 1fr;
+gap:10px;
+padding:15px 20px;
+border-bottom:1px solid #1c263c;
+align-items:center;
+min-width:0;
+}
+
+.history-row:last-child{
+border-bottom:0;
+}
+
+.history-row>div{
+min-width:0;
+overflow-wrap:anywhere;
+}
+
+.history-head{
+color:#8e97aa;
+font-size:13px;
+}
+
+.status{
+display:inline-block;
+padding:5px 9px;
+border-radius:7px;
+font-size:12px;
+font-weight:700;
+white-space:nowrap;
+}
+
+.status.pending,
+.status.open{
+background:rgba(255,180,0,.15);
+color:#ffc44d;
+}
+
+.status.approved,
+.status.answered,
+.status.waiting{
+background:rgba(30,200,120,.15);
+color:#42df96;
+}
+
+.status.rejected,
+.status.closed{
+background:rgba(255,70,70,.15);
+color:#ff7777;
+}
+
+/* MODAL */
+
+.modal{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.72);
+display:none;
+align-items:center;
+justify-content:center;
+padding:20px;
+z-index:999;
+overflow-y:auto;
+}
+
+.modal.active{
+display:flex;
+}
+
+.modal-box{
+width:min(520px,100%);
+max-height:90vh;
+overflow-y:auto;
+background:#11182b;
+border:1px solid #27334e;
+border-radius:18px;
+padding:25px;
+box-shadow:0 25px 80px rgba(0,0,0,.55);
+position:relative;
+}
+
+.modal-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px;
+margin-bottom:20px;
+}
+
+.modal-header h2{
+margin:0;
+font-size:21px;
+}
+
+.close{
+width:36px;
+height:36px;
+border-radius:9px;
+background:#252d43;
+color:white;
+font-size:20px;
+}
+
+.profile-card{
+background:linear-gradient(
+135deg,
+rgba(91,140,255,.12),
+rgba(124,92,255,.10)
+);
+border:1px solid rgba(91,140,255,.22);
+border-radius:15px;
+padding:18px;
+margin-bottom:20px;
+}
+
+.profile-top{
+display:flex;
+align-items:center;
+gap:15px;
+margin-bottom:18px;
+}
+
+.profile-avatar{
+width:64px;
+height:64px;
+border-radius:50%;
+background:linear-gradient(135deg,#4d7cff,#7c5cff);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:28px;
+font-weight:800;
+}
+
+.profile-name-big{
+font-size:21px;
+font-weight:800;
+margin-bottom:4px;
+}
+
+.profile-email-big{
+color:#8e99ae;
+font-size:13px;
+word-break:break-all;
+}
+
+.profile-info-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.profile-info{
+background:rgba(0,0,0,.18);
+border:1px solid rgba(255,255,255,.05);
+border-radius:10px;
+padding:11px;
+}
+
+.profile-info small{
+color:#8994aa;
+display:block;
+margin-bottom:4px;
+}
+
+.profile-info strong{
+font-size:14px;
+}
+
+.payment-box{
+background:rgba(77,124,255,.08);
+border:1px solid rgba(77,124,255,.22);
+padding:16px;
+border-radius:13px;
+margin-bottom:18px;
+}
+
+.payment-label{
+color:#8f9ab1;
+font-size:12px;
+margin-bottom:5px;
+}
+
+.payment-value{
+font-size:18px;
+font-weight:800;
+word-break:break-word;
+margin-bottom:12px;
+}
+
+.input-group{
+margin-bottom:16px;
+}
+
+.input-group label{
+display:block;
+margin-bottom:7px;
+font-size:13px;
+color:#aab3c7;
+}
+
+.input-group input,
+.input-group textarea{
+width:100%;
+padding:13px;
+border-radius:9px;
+border:1px solid #29344d;
+background:#0b1120;
+color:white;
+outline:none;
+font-family:Arial,sans-serif;
+}
+
+.input-group textarea{
+min-height:130px;
+resize:vertical;
+}
+
+.input-group input:focus,
+.input-group textarea:focus{
+border-color:#4d7cff;
+}
+
+.input-group input[type=file]{
+padding:10px;
+}
+
+.submit-btn{
+width:100%;
+padding:13px;
+border-radius:9px;
+background:#4d7cff;
+color:white;
+font-size:15px;
+min-height:46px;
+}
+
+.submit-btn:disabled,
+.password-btn:disabled{
+opacity:.5;
+cursor:not-allowed;
+}
+
+.password-btn{
+width:100%;
+padding:13px;
+border-radius:9px;
+background:#7c5cff;
+color:white;
+font-size:15px;
+min-height:46px;
+}
+
+.danger-btn{
+width:100%;
+padding:13px;
+border-radius:9px;
+background:#252d43;
+color:#fff;
+font-size:15px;
+margin-top:8px;
+min-height:46px;
+}
+
+.message{
+display:none;
+padding:12px;
+border-radius:9px;
+margin-bottom:15px;
+font-size:14px;
+line-height:1.5;
+word-break:break-word;
+}
+
+.message.show{
+display:block;
+}
+
+.message.success{
+background:rgba(30,200,120,.12);
+color:#48df98;
+border:1px solid rgba(30,200,120,.2);
+}
+
+.message.error{
+background:rgba(255,70,70,.12);
+color:#ff7777;
+border:1px solid rgba(255,70,70,.2);
+}
+
+.note{
+color:#8d97aa;
+font-size:12px;
+line-height:1.6;
+margin-top:12px;
+}
+
+.profile-divider{
+height:1px;
+background:#242e46;
+margin:22px 0;
+}
+
+.profile-section-title{
+font-size:16px;
+font-weight:800;
+margin-bottom:14px;
+}
+
+/* SUPPORT */
+
+.support-create{
+background:linear-gradient(
+135deg,
+rgba(255,159,67,.12),
+rgba(124,92,255,.10)
+);
+border:1px solid rgba(255,159,67,.25);
+border-radius:14px;
+padding:16px;
+margin-bottom:20px;
+}
+
+.support-list{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.ticket{
+background:#0d1424;
+border:1px solid #26324c;
+border-radius:13px;
+padding:15px;
+cursor:pointer;
+transition:.2s;
+}
+
+.ticket:hover{
+border-color:#4d7cff;
+transform:translateY(-1px);
+}
+
+.ticket-top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:10px;
+}
+
+.ticket-subject{
+font-size:15px;
+font-weight:800;
+word-break:break-word;
+}
+
+.ticket-date{
+color:#78849a;
+font-size:11px;
+margin-top:8px;
+}
+
+.ticket-message{
+color:#aeb8cb;
+font-size:13px;
+line-height:1.6;
+margin-top:10px;
+white-space:pre-wrap;
+word-break:break-word;
+}
+
+.ticket-reply{
+margin-top:14px;
+background:rgba(77,124,255,.08);
+border:1px solid rgba(77,124,255,.2);
+border-radius:10px;
+padding:13px;
+}
+
+.ticket-reply-title{
+font-size:12px;
+font-weight:800;
+color:#5b8cff;
+margin-bottom:7px;
+}
+
+.ticket-reply-text{
+font-size:13px;
+line-height:1.6;
+color:#d4dbea;
+white-space:pre-wrap;
+word-break:break-word;
+}
+
+.ticket-actions{
+display:flex;
+gap:8px;
+margin-top:12px;
+}
+
+.ticket-close-btn{
+background:#252d43;
+color:#fff;
+padding:10px 13px;
+border-radius:8px;
+min-height:42px;
+}
+
+.ticket-reply-box{
+margin-top:12px;
+padding:13px;
+border-radius:10px;
+background:rgba(30,200,120,.07);
+border:1px solid rgba(30,200,120,.18);
+}
+
+.ticket-user-label{
+color:#5b8cff;
+font-size:11px;
+font-weight:800;
+margin-bottom:6px;
+}
+
+.ticket-admin-label{
+color:#42df96;
+font-size:11px;
+font-weight:800;
+margin-bottom:6px;
+}
+
+.empty{
+color:#7f8aa0;
+padding:20px;
+text-align:center;
+line-height:1.6;
+}
+
+/* MOBILE */
+
+@media(max-width:1050px){
+
+.stats{
+grid-template-columns:repeat(2,1fr);
+}
+
+.cars{
+grid-template-columns:repeat(2,1fr);
+}
+
+header{
+padding-left:20px;
+padding-right:20px;
+}
+
+}
+
+@media(max-width:700px){
+
+header{
+min-height:64px;
+padding:
+max(9px,env(safe-area-inset-top))
+12px
+9px
+12px;
+gap:8px;
+}
+
+.logo{
+font-size:20px;
+flex:1;
+}
+
+.mobile-menu-btn{
+display:flex;
+}
+
+.header-right{
+display:none;
+position:absolute;
+top:100%;
+left:10px;
+right:10px;
+padding:12px;
+background:rgba(12,18,34,.98);
+border:1px solid #27334e;
+border-radius:14px;
+box-shadow:0 20px 50px rgba(0,0,0,.45);
+flex-direction:column;
+align-items:stretch;
+gap:8px;
+z-index:101;
+}
+
+.header-right.mobile-open{
+display:flex;
+}
+
+.balance-box{
+width:100%;
+min-width:0;
+}
+
+.profile-btn,
+.deposit-btn,
+.withdraw-btn,
+.support-btn,
+.logout-btn{
+width:100%;
+min-height:44px;
+text-align:center;
+}
+
+.container{
+width:calc(100% - 20px);
+margin:20px auto 45px;
+}
+
+.welcome h1{
+font-size:25px;
+}
+
+.welcome p{
+font-size:13px;
+line-height:1.5;
+}
+
+.stats{
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-bottom:20px;
+}
+
+.stat{
+padding:15px;
+border-radius:13px;
+}
+
+.stat-title{
+font-size:11px;
+}
+
+.stat-value{
+font-size:18px;
+}
+
+.cars{
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.car{
+padding:11px;
+border-radius:13px;
+}
+
+.car-icon{
+height:110px;
+border-radius:9px;
+}
+
+.car h3{
+font-size:14px;
+}
+
+.car-info{
+font-size:11px;
+line-height:1.65;
+}
+
+.car-monthly{
+font-size:10px;
+padding:7px 8px;
+margin-top:7px;
+}
+
+.buy-btn{
+margin-top:10px;
+min-height:42px;
+padding:9px;
+font-size:13px;
+}
+
+.my-cars{
+padding:5px 12px;
+border-radius:13px;
+}
+
+.my-car-item{
+min-height:auto;
+padding:12px 0;
+gap:8px;
+}
+
+.my-car-left{
+gap:9px;
+}
+
+.my-car-icon{
+width:72px;
+height:53px;
+flex-basis:72px;
+border-radius:9px;
+}
+
+.my-car-name{
+font-size:13px;
+}
+
+.my-car-price{
+font-size:10px;
+}
+
+.my-car-daily{
+font-size:11px;
+}
+
+.my-car-monthly{
+font-size:10px;
+}
+
+.my-car-earned{
+font-size:11px;
+}
+
+.collect-one-btn{
+padding:8px 9px;
+min-height:38px;
+font-size:11px;
+}
+
+.history-row{
+grid-template-columns:1fr 1fr;
+gap:8px 12px;
+padding:13px;
+font-size:12px;
+}
+
+.history-head{
+display:none;
+}
+
+.modal{
+align-items:flex-end;
+padding:
+8px
+8px
+max(8px,env(safe-area-inset-bottom));
+}
+
+.modal-box{
+width:100%;
+max-height:92dvh;
+padding:17px;
+border-radius:18px 18px 12px 12px;
+}
+
+.profile-info-grid{
+grid-template-columns:1fr 1fr;
+gap:7px;
+}
+
+.promo-row{
+flex-direction:column;
+}
+
+.promo-input,
+.promo-button{
+width:100%;
+}
+
+.ticket-top{
+align-items:flex-start;
+flex-direction:column;
+}
+
+.ticket-actions{
+flex-direction:column;
+}
+
+.ticket-close-btn{
+width:100%;
+}
+
+input,
+textarea,
+select{
+font-size:16px!important;
+}
+
+}
+
+@media(max-width:380px){
+
+.container{
+width:calc(100% - 14px);
+}
+
+.cars{
+gap:7px;
+}
+
+.car{
+padding:9px;
+}
+
+.car-icon{
+height:95px;
+}
+
+.car h3{
+font-size:12px;
+}
+
+.car-info{
+font-size:10px;
+}
+
+.car-monthly{
+font-size:9px;
+}
+
+.my-car-icon{
+width:60px;
+height:46px;
+flex-basis:60px;
+}
+
+.my-car-name{
+font-size:12px;
+}
+
+.my-car-monthly,
+.my-car-earned{
+font-size:10px;
+}
+
+.collect-one-btn{
+padding:7px 8px;
+font-size:10px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">
+CAR<span>CASH</span>
+</div>
+
+<button
+class="mobile-menu-btn"
+id="mobileMenuButton"
+onclick="toggleMobileMenu()">
+☰
+</button>
+
+<div
+class="header-right"
+id="headerRight">
+
+<div class="balance-box">
+
+<small>BALANS</small>
+
+<div
+class="balance"
+id="headerBalance">
+0.00000000 AZN
+</div>
+
+</div>
+
+<button
+class="profile-btn"
+onclick="openProfile();closeMobileMenu()">
+👤 Profil
+</button>
+
+<button
+class="support-btn"
+onclick="openSupport();closeMobileMenu()">
+🎫 Support
+</button>
+
+<button
+class="deposit-btn"
+onclick="openDeposit();closeMobileMenu()">
++ Deposit
+</button>
+
+<button
+class="withdraw-btn"
+onclick="openWithdraw();closeMobileMenu()">
+- Çıxarış
+</button>
+
+<button
+class="logout-btn"
+onclick="logout()">
+Çıxış
+</button>
+
+</div>
+
+</header>
+
+<div class="container">
+
+<div class="welcome">
+
+<h1>Dashboard</h1>
+
+<p id="welcomeText">
+Xoş gəlmisən!
+</p>
+
+</div>
+
+<div class="stats">
+
+<div class="stat">
+
+<div class="stat-title">
+Balans
+</div>
+
+<div
+class="stat-value"
+id="statBalance">
+0.00000000 AZN
+</div>
+
+<div
+class="live-balance"
+id="balanceProgress">
+Balans
+</div>
+
+</div>
+
+<div class="stat">
+
+<div class="stat-title">
+Maşın sayı
+</div>
+
+<div
+class="stat-value"
+id="statCars">
+0
+</div>
+
+</div>
+
+<div class="stat">
+
+<div class="stat-title">
+Gündəlik gəlir
+</div>
+
+<div
+class="stat-value"
+id="statDaily">
+0.00 AZN
+</div>
+
+</div>
+
+<div class="stat">
+
+<div class="stat-title">
+Yığılan gəlir
+</div>
+
+<div
+class="stat-value"
+id="liveTotal">
+0.00000000 AZN
+</div>
+
+<button
+class="collect-all-btn"
+id="collectAllButton"
+onclick="collectAllCars()">
+TOPLA
+</button>
+
+</div>
+
+</div>
+
+<!-- PROMO -->
+
+<div class="promo-card">
+
+<div class="promo-content">
+
+<div class="promo-title">
+🎁 Promo kod
+</div>
+
+<div class="promo-subtitle">
+Promo kodunu daxil et və balansına bonus əlavə et.
+</div>
+
+<div class="promo-row">
+
+<input
+class="promo-input"
+id="promoCode"
+type="text"
+maxlength="50"
+autocomplete="off"
+placeholder="Promo kodunu daxil et">
+
+<button
+class="promo-button"
+id="promoButton"
+onclick="redeemPromo()">
+Kodu istifadə et
+</button>
+
+</div>
+
+<div
+class="promo-message"
+id="promoMessage">
+</div>
+
+</div>
+
+</div>
+
+<h2 class="section-title">
+Maşınlar
+</h2>
+
+<div
+class="cars"
+id="cars">
+Yüklənir...
+</div>
+
+<h2 class="section-title">
+Mənim maşınlarım
+</h2>
+
+<div
+class="my-cars"
+id="myCars">
+
+<div class="empty">
+Yüklənir...
+</div>
+
+</div>
+
+<h2 class="section-title">
+Deposit tarixçəsi
+</h2>
+
+<div class="history">
+
+<div class="history-row history-head">
+
+<div>Sifariş</div>
+<div>Məbləğ</div>
+<div>Status</div>
+<div>Tarix</div>
+
+</div>
+
+<div id="depositHistory">
+
+<div class="history-row">
+
+<div>
+Yüklənir...
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<h2 class="section-title">
+Çıxarış tarixçəsi
+</h2>
+
+<div class="history">
+
+<div class="history-row history-head">
+
+<div>ID</div>
+<div>Məbləğ</div>
+<div>Status</div>
+<div>Tarix</div>
+
+</div>
+
+<div id="withdrawHistory">
+
+<div class="history-row">
+
+<div class="empty">
+Hələ çıxarış yoxdur.
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- PROFILE -->
+
+<div
+class="modal"
+id="profileModal">
+
+<div class="modal-box">
+
+<div class="modal-header">
+
+<h2>👤 Profil</h2>
+
+<button
+class="close"
+onclick="closeProfile()">
+×
+</button>
+
+</div>
+
+<div
+class="message"
+id="profileMessage">
+</div>
+
+<div class="profile-card">
+
+<div class="profile-top">
+
+<div
+class="profile-avatar"
+id="profileAvatar">
+U
+</div>
+
+<div>
+
+<div
+class="profile-name-big"
+id="profileNameBig">
+Yüklənir...
+</div>
+
+<div
+class="profile-email-big"
+id="profileEmailBig">
+Yüklənir...
+</div>
+
+</div>
+
+</div>
+
+<div class="profile-info-grid">
+
+<div class="profile-info">
+
+<small>
+Balans
+</small>
+
+<strong id="profileBalance">
+0.00 AZN
+</strong>
+
+</div>
+
+<div class="profile-info">
+
+<small>
+Maşın sayı
+</small>
+
+<strong id="profileCars">
+0
+</strong>
+
+</div>
+
+<div class="profile-info">
+
+<small>
+Gündəlik gəlir
+</small>
+
+<strong id="profileDaily">
+0.00 AZN
+</strong>
+
+</div>
+
+<div class="profile-info">
+
+<small>
+Hesab tarixi
+</small>
+
+<strong id="profileCreated">
+-
+</strong>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="profile-divider"></div>
+
+<div class="profile-section-title">
+Profil məlumatları
+</div>
+
+<div class="input-group">
+
+<label>
+Ad / istifadəçi adı
+</label>
+
+<input
+type="text"
+id="profileNameInput"
+maxlength="60"
+placeholder="Adını daxil et">
+
+</div>
+
+<div class="input-group">
+
+<label>
+Email
+</label>
+
+<input
+type="email"
+id="profileEmailInput"
+maxlength="120"
+placeholder="Email daxil et">
+
+</div>
+
+<button
+class="submit-btn"
+id="saveProfileBtn"
+onclick="saveProfile()">
+Profil məlumatlarını yadda saxla
+</button>
+
+<div class="profile-divider"></div>
+
+<div class="profile-section-title">
+🔒 Şifrəni dəyiş
+</div>
+
+<div class="input-group">
+
+<label>
+Hazırkı şifrə
+</label>
+
+<input
+type="password"
+id="currentPassword"
+placeholder="Hazırkı şifrə">
+
+</div>
+
+<div class="input-group">
+
+<label>
+Yeni şifrə
+</label>
+
+<input
+type="password"
+id="newPassword"
+minlength="6"
+placeholder="Minimum 6 simvol">
+
+</div>
+
+<div class="input-group">
+
+<label>
+Yeni şifrəni təkrar yaz
+</label>
+
+<input
+type="password"
+id="confirmPassword"
+minlength="6"
+placeholder="Yeni şifrə">
+
+</div>
+
+<button
+class="password-btn"
+id="changePasswordBtn"
+onclick="changePassword()">
+Şifrəni dəyiş
+</button>
+
+<button
+class="danger-btn"
+onclick="closeProfile()">
+Bağla
+</button>
+
+</div>
+
+</div>
+
+<!-- SUPPORT -->
+
+<div
+class="modal"
+id="supportModal">
+
+<div class="modal-box">
+
+<div class="modal-header">
+
+<h2>
+🎫 Support
+</h2>
+
+<button
+class="close"
+onclick="closeSupport()">
+×
+</button>
+
+</div>
+
+<div
+class="message"
+id="supportMessage">
+</div>
+
+<div class="support-create">
+
+<div class="profile-section-title">
+Yeni support ticket
+</div>
+
+<div class="input-group">
+
+<label>
+Mövzu
+</label>
+
+<input
+type="text"
+id="ticketSubject"
+maxlength="100"
+placeholder="Məsələn: Deposit problemim var">
+
+</div>
+
+<div class="input-group">
+
+<label>
+Mesaj
+</label>
+
+<textarea
+id="ticketMessage"
+maxlength="5000"
+placeholder="Problemini ətraflı yaz..."></textarea>
+
+</div>
+
+<button
+class="submit-btn"
+id="createTicketBtn"
+onclick="createTicket()">
+🎫 Ticket yarat
+</button>
+
+</div>
+
+<div class="profile-section-title">
+Mənim ticketlərim
+</div>
+
+<div
+class="support-list"
+id="supportTickets">
+
+<div class="empty">
+Yüklənir...
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- TICKET -->
+
+<div
+class="modal"
+id="ticketModal">
+
+<div class="modal-box">
+
+<div class="modal-header">
+
+<h2>
+🎫 Ticket
+</h2>
+
+<button
+class="close"
+onclick="closeTicket()">
+×
+</button>
+
+</div>
+
+<div id="ticketDetail"></div>
+
+</div>
+
+</div>
+
+<!-- WITHDRAW -->
+
+<div
+class="modal"
+id="withdrawModal">
+
+<div class="modal-box">
+
+<div class="modal-header">
+
+<h2>
+Çıxarış et
+</h2>
+
+<button
+class="close"
+onclick="closeWithdraw()">
+×
+</button>
+
+</div>
+
+<div
+class="message"
+id="withdrawMessage">
+</div>
+
+<div class="payment-box">
+
+<div class="payment-label">
+Mövcud balans
+</div>
+
+<div
+class="payment-value"
+id="withdrawBalance">
+0.00 AZN
+</div>
+
+</div>
+
+<div class="input-group">
+
+<label>
+Məbləğ (AZN)
+</label>
+
+<input
+type="number"
+id="withdrawAmount"
+min="40"
+step="0.01"
+placeholder="Minimum 40 AZN">
+
+</div>
+
+<div class="input-group">
+
+<label>
+Ödəniş üsulu
+</label>
+
+<input
+type="text"
+id="withdrawMethod"
+placeholder="Məsələn: Bank kartı">
+
+</div>
+
+<div class="input-group">
+
+<label>
+Hesab / kart məlumatı
+</label>
+
+<input
+type="text"
+id="withdrawAccount"
+placeholder="Kart nömrəsi və ya hesab">
+
+</div>
+
+<button
+class="submit-btn"
+id="submitWithdrawBtn"
+onclick="submitWithdraw()">
+Çıxarış tələb et
+</button>
+
+<div class="note">
+Minimum çıxarış məbləği 40 AZN-dir.
+Sorğu admin tərəfindən yoxlanıldıqdan sonra təsdiqlənəcək.
+</div>
+
+</div>
+
+</div>
+
+<!-- DEPOSIT -->
+
+<div
+class="modal"
+id="depositModal">
+
+<div class="modal-box">
+
+<div class="modal-header">
+
+<h2>
+Deposit et
+</h2>
+
+<button
+class="close"
+onclick="closeDeposit()">
+×
+</button>
+
+</div>
+
+<div
+class="message"
+id="depositMessage">
+</div>
+
+<div class="payment-box">
+
+<div class="payment-label">
+Ödəniş kartı
+</div>
+
+<div
+class="payment-value"
+id="paymentCardNumber">
+Yüklənir...
+</div>
+
+<div class="payment-label">
+Kart sahibi
+</div>
+
+<div
+class="payment-value"
+id="paymentCardName">
+Unknown
+</div>
+
+</div>
+
+<div class="input-group">
+
+<label>
+Məbləğ (AZN)
+</label>
+
+<input
+type="number"
+id="depositAmount"
+min="1"
+max="10000"
+step="0.01"
+placeholder="Məsələn: 10">
+
+</div>
+
+<div class="input-group">
+
+<label>
+Ödəniş çeki / screenshot
+</label>
+
+<input
+type="file"
+id="receipt"
+accept="image/png,image/jpeg,image/webp">
+
+</div>
+
+<button
+class="submit-btn"
+id="submitDepositBtn"
+onclick="submitDeposit()">
+Ödənişi göndər
+</button>
+
+<div class="note">
+Əvvəlcə yuxarıda göstərilən karta ödəniş et.
+Daha sonra məbləği daxil edib çekin şəklini yüklə.
+Admin ödənişi yoxladıqdan sonra məbləğ balansına əlavə olunacaq.
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let currentUser=null;
+
+const DAY_MS=24*60*60*1000;
+
+let liveEarningsTimer=null;
+
+
+/* MOBILE */
+
+function toggleMobileMenu(){
+
+const menu=
+document.getElementById("headerRight");
+
+if(menu){
+
+menu.classList.toggle(
+"mobile-open"
+);
+
+}
+
+}
+
+function closeMobileMenu(){
+
+const menu=
+document.getElementById("headerRight");
+
+if(menu){
+
+menu.classList.remove(
+"mobile-open"
+);
+
+}
+
+}
+
+
+/* API */
+
+async function api(
+url,
+options={}
+){
+
+const response=
+await fetch(
+url,
+{
+credentials:"include",
+...options
+}
+);
+
+let data={};
+
+try{
+
+data=
+await response.json();
+
+}catch{
+
+data={};
+
+}
+
+if(!response.ok){
+
+throw new Error(
+data.error||
+data.message||
+"Server xətası"
+);
+
+}
+
+return data;
+
+}
+
+
+/* USER */
+
+async function loadUser(){
+
+try{
+
+const data=
+await api("/api/me");
+
+currentUser=
+data.user||
+data;
+
+currentUser.cars=
+Array.isArray(
+currentUser.cars
+)
+?
+currentUser.cars
+:
+[];
+
+const name=
+currentUser.name||
+"";
+
+const email=
+currentUser.email||
+"";
+
+document.getElementById(
+"welcomeText"
+).textContent=
+name
+?
+"Xoş gəlmisən, "+name
+:
+email
+?
+"Xoş gəlmisən, "+email
+:
+"Xoş gəlmisən!";
+
+updateBalance(
+Number(
+currentUser.balance||0
+)
+);
+
+}catch(error){
+
+console.error(error);
+
+window.location.href=
+"/login.html";
+
+}
+
+}
+
+
+/* BALANCE */
+
+function updateBalance(balance){
+
+const number=
+Number(balance||0);
+
+const value=
+number.toFixed(8)+
+" AZN";
+
+document.getElementById(
+"headerBalance"
+).textContent=value;
+
+document.getElementById(
+"statBalance"
+).textContent=value;
+
+document.getElementById(
+"balanceProgress"
+).textContent=
+"Dəqiq balans: "+value;
+
+}
+
+
+/* MONTHLY */
+
+function getMonthlyIncome(name){
+
+const monthlyMap={
+
+"LEVEL 1":7.50,
+"LEVEL 2":17.00,
+"LEVEL 3":35.00,
+"LEVEL 4":95.00,
+"LEVEL 5":195.00,
+"LEVEL 6":495.00,
+"LEVEL 7":1005.00,
+"LEVEL 8":2050.00
+
+};
+
+const level=
+String(name||"")
+.trim()
+.toUpperCase();
+
+return Number(
+monthlyMap[level]||0
+);
+
+}
+
+
+/* IMAGE */
+
+function getCarImage(name){
+
+const level=
+String(name||"")
+.trim()
+.toUpperCase();
+
+const imageMap={
+
+"LEVEL 1":
+"/cars/car-5.jpg",
+
+"LEVEL 2":
+"/cars/car-10.jpg",
+
+"LEVEL 3":
+"/cars/car-20.jpg",
+
+"LEVEL 4":
+"/cars/car-40.jpg",
+
+"LEVEL 5":
+"/cars/car-80.jpg",
+
+"LEVEL 6":
+"/cars/car-160.jpg",
+
+"LEVEL 7":
+"/cars/car-320.jpg",
+
+"LEVEL 8":
+"/cars/car-640.jpg"
+
+};
+
+return imageMap[level]||
+"/cars/car-5.jpg";
+
+}
+
+
+/* LOAD CARS */
+
+async function loadCars(){
+
+try{
+
+const data=
+await api("/api/cars");
+
+const cars=
+Array.isArray(data)
+?
+data
+:
+(
+data.cars||
+data.data||
+data.items||
+[]
+);
+
+const container=
+document.getElementById("cars");
+
+if(!cars.length){
+
+container.innerHTML=
+'<div class="empty">Maşın tapılmadı.</div>';
+
+return;
+
+}
+
+const grouped=
+new Map();
+
+cars.forEach(car=>{
+
+const name=
+String(
+car.name||
+"Maşın"
+)
+.trim()
+.replace(
+/\s+/g,
+" "
+);
+
+const key=
+name.toLowerCase();
+
+if(!grouped.has(key)){
+
+grouped.set(
+key,
+{
+id:car.id,
+name,
+price:Number(
+car.price||0
+),
+daily:Number(
+car.daily||0
+)
+}
+);
+
+}
+
+});
+
+const sortedCars=
+Array.from(
+grouped.values()
+)
+.sort(
+(a,b)=>
+a.price-b.price
+);
+
+container.innerHTML=
+sortedCars.map(
+car=>{
+
+const monthly=
+getMonthlyIncome(
+car.name
+);
+
+return`
+
+<div class="car">
+
+<div class="car-icon">
+
+<img
+src="${getCarImage(car.name)}"
+alt="${escapeHtml(car.name)}"
+onerror="this.onerror=null;this.src='/cars/car-5.jpg';">
+
+</div>
+
+<h3>
+${escapeHtml(car.name)}
+</h3>
+
+<div class="car-info">
+
+Qiymət:
+<b>
+${car.price.toFixed(2)}
+AZN
+</b>
+
+<br>
+
+Gündəlik:
+<b>
+${car.daily.toFixed(2)}
+AZN
+</b>
+
+</div>
+
+<div class="car-monthly">
+
+📅 Aylıq gəlir:
+
+<span>
+${monthly.toFixed(2)} AZN
+</span>
+
+</div>
+
+<button
+class="buy-btn"
+onclick="buyCar(${Number(car.id)})">
+
+Al
+
+</button>
+
+</div>
+
+`;
+
+}
+).join("");
+
+}catch(error){
+
+console.error(
+"loadCars:",
+error
+);
+
+document.getElementById(
+"cars"
+).innerHTML=
+'<div class="empty">Maşınlar yüklənmədi.</div>';
+
+}
+
+}
+
+
+/* BUY */
+
+async function buyCar(id){
+
+if(!confirm(
+"Bu maşını almaq istəyirsən?"
+))return;
+
+try{
+
+const data=
+await api(
+"/api/cars/buy",
+{
+method:"POST",
+headers:{
+"Content-Type":
+"application/json"
+},
+body:JSON.stringify({
+carId:id
+})
+}
+);
+
+alert(
+data.message||
+"Maşın alındı!"
+);
+
+await loadUser();
+
+renderMyCars();
+
+await loadCars();
+
+}catch(error){
+
+alert(error.message);
+
+}
+
+}
+
+
+/* LIVE */
+
+function parseServerDate(value){
+
+if(!value)
+return null;
+
+const text=
+String(value).trim();
+
+if(!text)
+return null;
+
+let date;
+
+if(
+/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/
+.test(text)
+){
+
+date=
+new Date(
+text.replace(
+" ",
+"T"
+)+"Z"
+);
+
+}else{
+
+date=
+new Date(text);
+
+}
+
+if(
+Number.isNaN(
+date.getTime()
+)
+){
+
+return null;
+
+}
+
+return date;
+
+}
+
+
+function calculateLiveCarEarned(car){
+
+const daily=
+Number(car.daily||0);
+
+if(
+!Number.isFinite(daily)||
+daily<=0
+){
+
+return 0;
+
+}
+
+const last=
+parseServerDate(
+car.last_credited_at||
+car.purchased_at
+);
+
+if(!last)
+return 0;
+
+const elapsed=
+Date.now()-
+last.getTime();
+
+if(elapsed<=0)
+return 0;
+
+return(
+elapsed/DAY_MS
+)*daily;
+
+}
+
+
+function updateLiveEarnings(){
+
+if(
+!currentUser||
+!Array.isArray(
+currentUser.cars
+)
+){
+
+return;
+
+}
+
+let totalPending=0;
+
+currentUser.cars.forEach(
+car=>{
+
+const earned=
+calculateLiveCarEarned(
+car
+);
+
+totalPending+=earned;
+
+const element=
+document.getElementById(
+"earned-"+Number(car.id)
+);
+
+if(element){
+
+element.textContent=
+"Yığılmış: "+
+earned.toFixed(8)+
+" AZN";
+
+}
+
+});
+
+const liveTotal=
+document.getElementById(
+"liveTotal"
+);
+
+if(liveTotal){
+
+liveTotal.textContent=
+totalPending.toFixed(8)+
+" AZN";
+
+}
+
+}
+
+
+function startLiveEarnings(){
+
+if(liveEarningsTimer){
+
+clearInterval(
+liveEarningsTimer
+);
+
+}
+
+updateLiveEarnings();
+
+liveEarningsTimer=
+setInterval(
+updateLiveEarnings,
+1000
+);
+
+}
+
+
+/* MY CARS */
+
+function renderMyCars(){
+
+const cars=
+currentUser&&
+Array.isArray(
+currentUser.cars
+)
+?
+currentUser.cars
+:
+[];
+
+const container=
+document.getElementById(
+"myCars"
+);
+
+document.getElementById(
+"statCars"
+).textContent=
+cars.length;
+
+if(!cars.length){
+
+container.innerHTML=
+'<div class="empty">Hələ maşının yoxdur.</div>';
+
+document.getElementById(
+"statDaily"
+).textContent=
+"0.00 AZN";
+
+document.getElementById(
+"liveTotal"
+).textContent=
+"0.00000000 AZN";
+
+return;
+
+}
+
+let dailyTotal=0;
+
+cars.forEach(
+car=>{
+
+dailyTotal+=
+Number(
+car.daily||0
+);
+
+});
+
+const sortedCars=
+[...cars].sort(
+(a,b)=>
+Number(a.price||0)-
+Number(b.price||0)
+);
+
+container.innerHTML=
+sortedCars.map(
+car=>{
+
+const earned=
+calculateLiveCarEarned(
+car
+);
+
+const monthly=
+getMonthlyIncome(
+car.name
+);
+
+return`
+
+<div class="my-car-item">
+
+<div class="my-car-left">
+
+<div class="my-car-icon">
+
+<img
+src="${getCarImage(car.name)}"
+alt="${escapeHtml(car.name)}"
+onerror="this.onerror=null;this.src='/cars/car-5.jpg';">
+
+</div>
+
+<div>
+
+<div class="my-car-name">
+
+${escapeHtml(
+car.name||
+"Maşın"
+)}
+
+</div>
+
+<div class="my-car-price">
+
+${Number(
+car.price||0
+).toFixed(2)}
+AZN
+
+</div>
+
+<div class="my-car-daily">
+
++${Number(
+car.daily||0
+).toFixed(2)}
+AZN/gün
+
+</div>
+
+<div class="my-car-monthly">
+
+📅 Aylıq:
+${monthly.toFixed(2)}
+AZN
+
+</div>
+
+<div
+class="my-car-earned"
+id="earned-${Number(car.id)}">
+
+Yığılmış:
+${earned.toFixed(8)}
+AZN
+
+</div>
+
+</div>
+
+</div>
+
+<div class="my-car-right">
+
+<button
+class="collect-one-btn"
+onclick="collectOneCar(${Number(car.id)})">
+
+TOPLA
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+}
+).join("");
+
+document.getElementById(
+"statDaily"
+).textContent=
+dailyTotal.toFixed(2)+
+" AZN";
+
+startLiveEarnings();
+
+}
+
+
+/* COLLECT ALL */
+
+async function collectAllCars(){
+
+const button=
+document.getElementById(
+"collectAllButton"
+);
+
+button.disabled=true;
+
+button.textContent=
+"TOPLANIR...";
+
+try{
+
+const data=
+await api(
+"/api/cars/collect-all",
+{
+method:"POST"
+}
+);
+
+alert(
+data.message||
+"Bütün gəlirlər balansa əlavə edildi."
+);
+
+await loadUser();
+
+renderMyCars();
+
+}catch(error){
+
+alert(
+error.message||
+"Gəlir toplanarkən xəta baş verdi."
+);
+
+}finally{
+
+button.disabled=false;
+
+button.textContent=
+"TOPLA";
+
+}
+
+}
+
+
+/* COLLECT ONE */
+
+async function collectOneCar(id){
+
+try{
+
+const data=
+await api(
+"/api/cars/"+
+Number(id)+
+"/collect",
+{
+method:"POST"
+}
+);
+
+alert(
+data.message||
+"Gəlir balansa əlavə edildi."
+);
+
+await loadUser();
+
+renderMyCars();
+
+}catch(error){
+
+alert(
+error.message||
+"Gəlir toplanarkən xəta baş verdi."
+);
+
+}
+
+}
+
+
+/* PROMO */
+
+async function redeemPromo(){
+
+const input=
+document.getElementById(
+"promoCode"
+);
+
+const button=
+document.getElementById(
+"promoButton"
+);
+
+const code=
+input.value.trim().toUpperCase();
+
+if(!code){
+
+showPromoMessage(
+"Promo kodunu daxil et.",
+"error"
+);
+
+return;
+
+}
+
+button.disabled=true;
+
+button.textContent=
+"Yoxlanılır...";
+
+try{
+
+const data=
+await api(
+"/api/promo/redeem",
+{
+method:"POST",
+headers:{
+"Content-Type":
+"application/json"
+},
+body:JSON.stringify({
+code
+})
+}
+);
+
+if(currentUser){
+
+currentUser.balance=
+Number(
+data.balance??
+currentUser.balance
+);
+
+}
+
+updateBalance(
+Number(
+data.balance??
+currentUser.balance??
+0
+)
+);
+
+input.value="";
+
+showPromoMessage(
+data.message||
+"Promo kod uğurla istifadə edildi!",
+"success"
+);
+
+}catch(error){
+
+showPromoMessage(
+error.message||
+"Promo kod istifadə edilə bilmədi.",
+"error"
+);
+
+}finally{
+
+button.disabled=false;
+
+button.textContent=
+"Kodu istifadə et";
+
+}
+
+}
+
+
+function showPromoMessage(
+text,
+type
+){
+
+const box=
+document.getElementById(
+"promoMessage"
+);
+
+box.textContent=text;
+
+box.className=
+"promo-message show "+
+type;
+
+}
+
+
+/* PROFILE */
+
+async function openProfile(){
+
+closeMobileMenu();
+
+document.getElementById(
+"profileModal"
+).classList.add("active");
+
+await loadProfile();
+
+}
+
+function closeProfile(){
+
+document.getElementById(
+"profileModal"
+).classList.remove("active");
+
+}
+
+async function loadProfile(){
+
+try{
+
+const data=
+await api("/api/profile");
+
+const profile=
+data.profile||
+data;
+
+const name=
+profile.name||"";
+
+const email=
+profile.email||"";
+
+document.getElementById(
+"profileNameBig"
+).textContent=
+name||"İstifadəçi";
+
+document.getElementById(
+"profileEmailBig"
+).textContent=
+email||"-";
+
+document.getElementById(
+"profileNameInput"
+).value=name;
+
+document.getElementById(
+"profileEmailInput"
+).value=email;
+
+document.getElementById(
+"profileBalance"
+).textContent=
+Number(
+profile.balance||0
+).toFixed(8)+
+" AZN";
+
+document.getElementById(
+"profileCars"
+).textContent=
+Number(
+profile.car_count||0
+);
+
+document.getElementById(
+"profileDaily"
+).textContent=
+Number(
+profile.daily_income||0
+).toFixed(2)+
+" AZN";
+
+document.getElementById(
+"profileCreated"
+).textContent=
+profile.created_at
+?
+formatDate(
+profile.created_at
+)
+:
+"-";
+
+document.getElementById(
+"profileAvatar"
+).textContent=
+(
+name||
+email||
+"U"
+)
+.charAt(0)
+.toUpperCase();
+
+}catch(error){
+
+showProfileMessage(
+error.message,
+"error"
+);
+
+}
+
+}
+
+
+async function saveProfile(){
+
+const name=
+document.getElementById(
+"profileNameInput"
+).value.trim();
+
+const email=
+document.getElementById(
+"profileEmailInput"
+).value.trim();
+
+const button=
+document.getElementById(
+"saveProfileBtn"
+);
+
+if(!name){
+
+showProfileMessage(
+"Adı daxil et.",
+"error"
+);
+
+return;
+
+}
+
+if(
+!email||
+!email.includes("@")
+){
+
+showProfileMessage(
+"Düzgün email daxil et.",
+"error"
+);
+
+return;
+
+}
+
+button.disabled=true;
+
+button.textContent=
+"Yadda saxlanılır...";
+
+try{
+
+const data=
+await api(
+"/api/profile",
+{
+method:"PUT",
+headers:{
+"Content-Type":
+"application/json"
+},
+body:JSON.stringify({
+name,
+email
+})
+}
+);
+
+if(currentUser){
+
+currentUser.name=name;
+currentUser.email=email;
+
+}
+
+document.getElementById(
+"welcomeText"
+).textContent=
+"Xoş gəlmisən, "+name;
+
+showProfileMessage(
+data.message||
+"Profil məlumatları yeniləndi.",
+"success"
+);
+
+await loadProfile();
+
+}catch(error){
+
+showProfileMessage(
+error.message,
+"error"
+);
+
+}finally{
+
+button.disabled=false;
+
+button.textContent=
+"Profil məlumatlarını yadda saxla";
+
+}
+
+}
+
+
+async function changePassword(){
+
+const currentPassword=
+document.getElementById(
+"currentPassword"
+).value;
+
+const newPassword=
+document.getElementById(
+"newPassword"
+).value;
+
+const confirmPassword=
+document.getElementById(
+"confirmPassword"
+).value;
+
+const button=
+document.getElementById(
+"changePasswordBtn"
+);
+
+if(!currentPassword){
+
+showProfileMessage(
+"Hazırkı şifrəni daxil et.",
+"error"
+);
+
+return;
+
+}
+
+if(newPassword.length<6){
+
+showProfileMessage(
+"Yeni şifrə minimum 6 simvol olmalıdır.",
+"error"
+);
+
+return;
+
+}
+
+if(newPassword!==confirmPassword){
+
+showProfileMessage(
+"Yeni şifrələr eyni deyil.",
+"error"
+);
+
+return;
+
+}
+
+button.disabled=true;
+
+button.textContent=
+"Dəyişdirilir...";
+
+try{
+
+const data=
+await api(
+"/api/profile/password",
+{
+method:"PUT",
+headers:{
+"Content-Type":
+"application/json"
+},
+body:JSON.stringify({
+currentPassword,
+newPassword
+})
+}
+);
+
+document.getElementById(
+"currentPassword"
+).value="";
+
+document.getElementById(
+"newPassword"
+).value="";
+
+document.getElementById(
+"confirmPassword"
+).value="";
+
+showProfileMessage(
+data.message||
+"Şifrə uğurla dəyişdirildi.",
+"success"
+);
+
+}catch(error){
+
+showProfileMessage(
+error.message,
+"error"
+);
+
+}finally{
+
+button.disabled=false;
+
+button.textContent=
+"Şifrəni dəyiş";
+
+}
+
+}
+
+
+function showProfileMessage(
+text,
+type
+){
+
+const box=
+document.getElementById(
+"profileMessage"
+);
+
+box.textContent=text;
+
+box.className=
+"message show "+
+type;
+
+}
+
+
+/* PAYMENT */
+
+async function loadPaymentInfo(){
+
+try{
+
+const data=
+await api(
+"/api/payment-info"
+);
+
+document.getElementById(
+"paymentCardNumber"
+).textContent=
+data.cardNumber||
+"Təyin edilməyib";
+
+/*
+  Serverdən Denix Cars və ya başqa ad gəlsə belə,
+  istifadəçiyə həmişə Unknown göstərilir.
+*/
+document.getElementById(
+"paymentCardName"
+).textContent=
+"Unknown";
+
+}catch(error){
+
+console.error(
+"loadPaymentInfo:",
+error
+);
+
+/*
+  Server xətası olsa belə kart sahibi
+  Unknown olaraq qalır.
+*/
+document.getElementById(
+"paymentCardName"
+).textContent=
+"Unknown";
+
+}
+
+}
+
+
+/* DEPOSITS */
+
+async function loadDeposits(){
+
+try{
+
+const data=
+await api(
+"/api/my-deposits"
+);
+
+const deposits=
+Array.isArray(data)
+?
+data
+:
+(
+data.deposits||
+data.data||
+[]
+);
+
+const container=
+document.getElementById(
+"depositHistory"
+);
+
+if(!deposits.length){
+
+container.innerHTML=
+`
+<div class="history-row">
+<div class="empty">
+Hələ deposit yoxdur.
+</div>
+</div>
+`;
+
+return;
+
+}
+
+container.innerHTML=
+deposits.map(
+deposit=>{
+
+const status=
+String(
+deposit.status||
+"pending"
+).toLowerCase();
+
+let statusText=
+"Gözləyir";
+
+if(status==="approved")
+statusText=
+"Təsdiqləndi";
+
+if(status==="rejected")
+statusText=
+"Rədd edildi";
+
+return`
+
+<div class="history-row">
+
+<div>
+${escapeHtml(
+deposit.order_id||
+("#"+deposit.id)
+)}
+</div>
+
+<div>
+${Number(
+deposit.amount||0
+).toFixed(2)}
+AZN
+</div>
+
+<div>
+
+<span
+class="status ${escapeHtml(status)}">
+
+${statusText}
+
+</span>
+
+</div>
+
+<div>
+
+${
+deposit.created_at
+?
+escapeHtml(
+formatDate(
+deposit.created_at
+)
+)
+:
+"-"
+}
+
+</div>
+
+</div>
+
+`;
+
+}
+).join("");
+
+}catch(error){
+
+document.getElementById(
+"depositHistory"
+).innerHTML=
+`
+<div class="history-row">
+<div class="empty">
+Deposit tarixçəsi yüklənmədi.
+</div>
+</div>
+`;
+
+}
+
+}
+
+
+/* WITHDRAWALS */
+
+async function loadWithdrawals(){
+
+try{
+
+const data=
+await api(
+"/api/my-withdrawals"
+);
+
+const withdrawals=
+Array.isArray(data)
+?
+data
+:
+(
+data.withdrawals||
+data.data||
+[]
+);
+
+const container=
+document.getElementById(
+"withdrawHistory"
+);
+
+if(!withdrawals.length){
+
+container.innerHTML=
+`
+<div class="history-row">
+<div class="empty">
+Hələ çıxarış yoxdur.
+</div>
+</div>
+`;
+
+return;
+
+}
+
+container.innerHTML=
+withdrawals.map(
+withdrawal=>{
+
+const status=
+String(
+withdrawal.status||
+"pending"
+).toLowerCase();
+
+let statusText=
+"Gözləyir";
+
+if(status==="approved")
+statusText=
+"Təsdiqləndi";
+
+if(status==="rejected")
+statusText=
+"Rədd edildi";
+
+return`
+
+<div class="history-row">
+
+<div>
+#${Number(
+withdrawal.id
+)}
+</div>
+
+<div>
+${Number(
+withdrawal.amount||0
+).toFixed(2)}
+AZN
+</div>
+
+<div>
+
+<span
+class="status ${escapeHtml(status)}">
+
+${statusText}
+
+</span>
+
+</div>
+
+<div>
+
+${
+withdrawal.created_at
+?
+escapeHtml(
+formatDate(
+withdrawal.created_at
+)
+)
+:
+"-"
+}
+
+</div>
+
+</div>
+
+`;
+
+}
+).join("");
+
+}catch(error){
+
+document.getElementById(
+"withdrawHistory"
+).innerHTML=
+`
+<div class="history-row">
+<div class="empty">
+Çıxarış tarixçəsi yüklənmədi.
+</div>
+</div>
+`;
+
+}
+
+}
+
+
+/* WITHDRAW MODAL */
+
+function openWithdraw(){
+
+closeMobileMenu();
+
+document.getElementById(
+"withdrawModal"
+).classList.add("active");
+
+document.getElementById(
+"withdrawBalance"
+).textContent=
+Number(
+currentUser?.balance||0
+).toFixed(8)+
+" AZN";
+
+}
+
+function closeWithdraw(){
+
+document.getElementById(
+"withdrawModal"
+).classList.remove("active");
+
+}
+
+
+async function submitWithdraw(){
+
+const amount=
+Number(
+document.getElementById(
+"withdrawAmount"
+).value
+);
+
+const method=
+document.getElementById(
+"withdrawMethod"
+).value.trim();
+
+const account=
+document.getElementById(
+"withdrawAccount"
+).value.trim();
+
+const button=
+document.getElementById(
+"submitWithdrawBtn"
+);
+
+if(
+!Number.isFinite(amount)||
+amount<40
+){
+
+showWithdrawMessage(
+"Minimum çıxarış 40 AZN-dir.",
+"error"
+);
+
+return;
+
+}
+
+if(
+amount>
+Number(
+currentUser?.balance||0
+)
+){
+
+showWithdrawMessage(
+"Balans kifayət etmir.",
+"error"
+);
+
+return;
+
+}
+
+if(!method||!account){
+
+showWithdrawMessage(
+"Bütün məlumatları doldur.",
+"error"
+);
+
+return;
+
+}
+
+button.disabled=true;
+
+button.textContent=
+"Göndərilir...";
+
+try{
+
+const data=
+await api(
+"/api/withdraw",
+{
+method:"POST",
+headers:{
+"Content-Type":
+"application/json"
+},
+body:JSON.stringify({
+amount,
+method,
+account
+})
+}
+);
+
+showWithdrawMessage(
+data.message||
+"Çıxarış sorğusu yaradıldı.",
+"success"
+);
+
+await loadUser();
+
+await loadWithdrawals();
+
+setTimeout(
+closeWithdraw,
+2000
+);
+
+}catch(error){
+
+showWithdrawMessage(
+error.message,
+"error"
+);
+
+}finally{
+
+button.disabled=false;
+
+button.textContent=
+"Çıxarış tələb et";
+
+}
+
+}
+
+
+function showWithdrawMessage(
+text,
+type
+){
+
+const box=
+document.getElementById(
+"withdrawMessage"
+);
+
+box.textContent=text;
+
+box.className=
+"message show "+
+type;
+
+}
+
+
+/* DEPOSIT */
+
+async function openDeposit(){
+
+closeMobileMenu();
+
+document.getElementById(
+"depositModal"
+).classList.add("active");
+
+document.getElementById(
+"depositAmount"
+).value="";
+
+document.getElementById(
+"receipt"
+).value="";
+
+await loadPaymentInfo();
+
+}
+
+function closeDeposit(){
+
+document.getElementById(
+"depositModal"
+).classList.remove("active");
+
+}
+
+
+async function submitDeposit(){
+
+const amount=
+Number(
+document.getElementById(
+"depositAmount"
+).value
+);
+
+const file=
+document.getElementById(
+"receipt"
+).files[0];
+
+const button=
+document.getElementById(
+"submitDepositBtn"
+);
+
+if(
+!Number.isFinite(amount)||
+amount<1
+){
+
+showDepositMessage(
+"Minimum deposit 1 AZN-dir.",
+"error"
+);
+
+return;
+
+}
+
+if(amount>10000){
+
+showDepositMessage(
+"Maksimum deposit 10000 AZN-dir.",
+"error"
+);
+
+return;
+
+}
+
+if(!file){
+
+showDepositMessage(
+"Ödəniş çekinin şəklini seç.",
+"error"
+);
+
+return;
+
+}
+
+button.disabled=true;
+
+button.textContent=
+"Göndərilir...";
+
+try{
+
+const createData=
+await api(
+"/api/deposit/manual",
+{
+method:"POST",
+headers:{
+"Content-Type":
+"application/json"
+},
+body:JSON.stringify({
+amount
+})
+}
+);
+
+const depositId=
+createData.deposit_id||
+createData.depositId||
+createData.id||
+(
+createData.deposit&&
+createData.deposit.id
+);
+
+if(!depositId){
+
+throw new Error(
+"Deposit ID serverdən gəlmədi."
+);
+
+}
+
+const formData=
+new FormData();
+
+formData.append(
+"receipt",
+file
+);
+
+await api(
+"/api/deposit/"+
+depositId+
+"/receipt",
+{
+method:"POST",
+body:formData
+}
+);
+
+showDepositMessage(
+"Deposit göndərildi! Admin yoxladıqdan sonra balansına əlavə olunacaq.",
+"success"
+);
+
+await loadDeposits();
+
+setTimeout(
+closeDeposit,
+2500
+);
+
+}catch(error){
+
+showDepositMessage(
+error.message,
+"error"
+);
+
+}finally{
+
+button.disabled=false;
+
+button.textContent=
+"Ödənişi göndər";
+
+}
+
+}
+
+
+function showDepositMessage(
+text,
+type
+){
+
+const box=
+document.getElementById(
+"depositMessage"
+);
+
+box.textContent=text;
+
+box.className=
+"message show "+
+type;
+
+}
+
+
+/* SUPPORT */
+
+function openSupport(){
+
+closeMobileMenu();
+
+document.getElementById(
+"supportModal"
+).classList.add("active");
+
+loadSupportTickets();
+
+}
+
+function closeSupport(){
+
+document.getElementById(
+"supportModal"
+).classList.remove("active");
+
+}
+
+
+async function loadSupportTickets(){
+
+const container=
+document.getElementById(
+"supportTickets"
+);
+
+container.innerHTML=
+'<div class="empty">Yüklənir...</div>';
+
+try{
+
+const data=
+await api(
+"/api/support/tickets"
+);
+
+const tickets=
+Array.isArray(data)
+?
+data
+:
+(
+data.tickets||
+data.data||
+[]
+);
+
+if(!tickets.length){
+
+container.innerHTML=
+'<div class="empty">Hələ support ticket yoxdur.</div>';
+
+return;
+
+}
+
+container.innerHTML=
+tickets.map(
+ticket=>{
+
+const status=
+String(
+ticket.status||
+"open"
+).toLowerCase();
+
+let statusText=
+"Açıq";
+
+if(
+status==="waiting"||
+status==="answered"
+){
+
+statusText=
+"Cavablandı";
+
+}
+
+if(status==="closed"){
+
+statusText=
+"Bağlandı";
+
+}
+
+return`
+
+<div
+class="ticket"
+onclick="openTicket(${Number(ticket.id)})">
+
+<div class="ticket-top">
+
+<div class="ticket-subject">
+
+#${Number(ticket.id)}
+-
+${escapeHtml(
+ticket.subject||
+"Support ticket"
+)}
+
+</div>
+
+<span
+class="status ${
+escapeHtml(
+status==="waiting"
+?"answered"
+:status
+)
+}">
+
+${statusText}
+
+</span>
+
+</div>
+
+<div class="ticket-date">
+
+${
+ticket.created_at
+?
+escapeHtml(
+formatDate(
+ticket.created_at
+)
+)
+:
+"-"
+}
+
+</div>
+
+<div class="ticket-message">
+
+${escapeHtml(
+ticket.message||
+""
+)}
+
+</div>
+
+</div>
+
+`;
+
+}
+).join("");
+
+}catch(error){
+
+container.innerHTML=
+`
+<div class="empty">
+Ticketlər yüklənmədi.
+</div>
+`;
+
+}
+
+}
+
+
+async function createTicket(){
+
+const subject=
+document.getElementById(
+"ticketSubject"
+).value.trim();
+
+const message=
+document.getElementById(
+"ticketMessage"
+).value.trim();
+
+const button=
+document.getElementById(
+"createTicketBtn"
+);
+
+if(!subject||!message){
+
+alert(
+"Mövzu və mesajı doldur."
+);
+
+return;
+
+}
+
+button.disabled=true;
+
+button.textContent=
+"Yaradılır...";
+
+try{
+
+const data=
+await api(
+"/api/support/tickets",
+{
+method:"POST",
+headers:{
+"Content-Type":
+"application/json"
+},
+body:JSON.stringify({
+subject,
+message
+})
+}
+);
+
+alert(
+data.message||
+"Ticket yaradıldı."
+);
+
+document.getElementById(
+"ticketSubject"
+).value="";
+
+document.getElementById(
+"ticketMessage"
+).value="";
+
+await loadSupportTickets();
+
+}catch(error){
+
+alert(error.message);
+
+}finally{
+
+button.disabled=false;
+
+button.textContent=
+"🎫 Ticket yarat";
+
+}
+
+}
+
+
+/* TICKET */
+
+async function openTicket(id){
+
+const modal=
+document.getElementById(
+"ticketModal"
+);
+
+const detail=
+document.getElementById(
+"ticketDetail"
+);
+
+modal.classList.add("active");
+
+detail.innerHTML=
+'<div class="empty">Yüklənir...</div>';
+
+try{
+
+const data=
+await api(
+"/api/support/tickets/"+
+Number(id)
+);
+
+const ticket=
+data.ticket||
+data;
+
+const status=
+String(
+ticket.status||
+"open"
+).toLowerCase();
+
+const messages=
+Array.isArray(
+ticket.messages
+)
+?
+ticket.messages
+:
+[];
+
+detail.innerHTML=`
+
+<div class="ticket">
+
+<div class="ticket-top">
+
+<div class="ticket-subject">
+
+#${Number(ticket.id)}
+-
+${escapeHtml(
+ticket.subject||
+"Ticket"
+)}
+
+</div>
+
+<span
+class="status ${
+escapeHtml(status)
+}">
+
+${escapeHtml(status)}
+
+</span>
+
+</div>
+
+<div class="ticket-date">
+
+${
+ticket.created_at
+?
+escapeHtml(
+formatDate(
+ticket.created_at
+)
+)
+:
+"-"
+}
+
+</div>
+
+<div class="ticket-message">
+
+<div class="ticket-user-label">
+SƏN
+</div>
+
+${escapeHtml(
+ticket.message||
+""
+)}
+
+</div>
+
+${
+messages.map(
+message=>`
+
+<div class="ticket-reply-box">
+
+<div class="ticket-admin-label">
+ADMIN
+</div>
+
+<div class="ticket-reply-text">
+
+${escapeHtml(
+message.message||
+message.text||
+""
+)}
+
+</div>
+
+</div>
+
+`
+).join("")
+}
+
+${
+status!=="closed"
+?
+`
+
+<div class="ticket-actions">
+
+<button
+class="ticket-close-btn"
+onclick="closeMyTicket(${Number(ticket.id)})">
+
+🔒 Ticketi bağla
+
+</button>
+
+</div>
+
+`
+:
+""
+}
+
+</div>
+
+`;
+
+}catch(error){
+
+detail.innerHTML=
+`
+<div class="empty">
+${escapeHtml(
+error.message
+)}
+</div>
+`;
+
+}
+
+}
+
+
+function closeTicket(){
+
+document.getElementById(
+"ticketModal"
+).classList.remove("active");
+
+}
+
+
+async function closeMyTicket(id){
+
+if(!confirm(
+"Bu ticketi bağlamaq istəyirsən?"
+))return;
+
+try{
+
+const data=
+await api(
+"/api/support/tickets/"+
+Number(id)+
+"/close",
+{
+method:"POST"
+}
+);
+
+alert(
+data.message||
+"Ticket bağlandı."
+);
+
+closeTicket();
+
+await loadSupportTickets();
+
+}catch(error){
+
+alert(error.message);
+
+}
+
+}
+
+
+/* HELPERS */
+
+function escapeHtml(value){
+
+return String(value)
+.replaceAll("&","&amp;")
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;")
+.replaceAll('"',"&quot;")
+.replaceAll("'","&#039;");
+
+}
+
+
+function formatDate(value){
+
+const date=
+parseServerDate(value);
+
+if(!date)
+return value;
+
+return date.toLocaleString(
+"az-AZ"
+);
+
+}
+
+
+/* LOGOUT */
+
+async function logout(){
+
+closeMobileMenu();
+
+try{
+
+await fetch(
+"/api/logout",
+{
+method:"POST",
+credentials:"include"
+}
+);
+
+}catch(error){}
+
+window.location.href=
+"/login.html";
+
+}
+
+
+/* MODALS */
+
+document.getElementById(
+"profileModal"
+).addEventListener(
+"click",
+function(event){
+
+if(event.target===this)
+closeProfile();
+
+}
+);
+
+document.getElementById(
+"depositModal"
+).addEventListener(
+"click",
+function(event){
+
+if(event.target===this)
+closeDeposit();
+
+}
+);
+
+document.getElementById(
+"withdrawModal"
+).addEventListener(
+"click",
+function(event){
+
+if(event.target===this)
+closeWithdraw();
+
+}
+);
+
+document.getElementById(
+"supportModal"
+).addEventListener(
+"click",
+function(event){
+
+if(event.target===this)
+closeSupport();
+
+}
+);
+
+document.getElementById(
+"ticketModal"
+).addEventListener(
+"click",
+function(event){
+
+if(event.target===this)
+closeTicket();
+
+}
+);
+
+
+/* START */
+
+async function refreshDashboard(){
+
+await loadUser();
+
+renderMyCars();
+
+await loadCars();
+
+await loadDeposits();
+
+await loadWithdrawals();
+
+await loadPaymentInfo();
+
+startLiveEarnings();
+
+}
+
+refreshDashboard();
+
+</script>
+
+</body>
+</html>

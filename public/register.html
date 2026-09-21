@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Register - CarCash</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-family: Arial, Helvetica, sans-serif;
+      color: white;
+
+      background:
+        radial-gradient(circle at top, #26336e 0%, #0b1025 42%, #03040a 100%);
+    }
+
+    .box {
+      width: min(420px, 92%);
+      padding: 35px;
+
+      background: rgba(17, 22, 44, 0.92);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 24px;
+
+      box-shadow:
+        0 30px 80px rgba(0,0,0,.45);
+    }
+
+    .logo {
+      text-align: center;
+      font-size: 30px;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .logo span {
+      color: #6877ff;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 0 0 25px;
+      font-size: 25px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 7px;
+      color: #aab1cf;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+
+      border-radius: 12px;
+      border: 1px solid #30385f;
+
+      background: #080c1a;
+      color: white;
+
+      outline: none;
+      font-size: 15px;
+    }
+
+    input:focus {
+      border-color: #6877ff;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 22px;
+      padding: 14px;
+
+      border: 0;
+      border-radius: 12px;
+
+      background: #6877ff;
+      color: white;
+
+      font-weight: 800;
+      font-size: 15px;
+
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: .9;
+    }
+
+    button:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    .error {
+      display: none;
+
+      margin-top: 15px;
+      padding: 12px;
+
+      border-radius: 10px;
+
+      background: rgba(255,70,70,.12);
+      border: 1px solid rgba(255,70,70,.3);
+
+      color: #ff8c8c;
+      text-align: center;
+    }
+
+    .success {
+      display: none;
+
+      margin-top: 15px;
+      padding: 12px;
+
+      border-radius: 10px;
+
+      background: rgba(50,220,140,.12);
+      border: 1px solid rgba(50,220,140,.3);
+
+      color: #65e6a5;
+      text-align: center;
+    }
+
+    .bottom {
+      margin-top: 20px;
+      text-align: center;
+      color: #8e98bb;
+      font-size: 14px;
+    }
+
+    .bottom a {
+      color: #7482ff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .home {
+      display: block;
+      text-align: center;
+      margin-top: 15px;
+
+      color: #8e98bb;
+      text-decoration: none;
+      font-size: 13px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="box">
+
+    <div class="logo">
+      Car<span>Cash</span>
+    </div>
+
+    <h1>Create Account</h1>
+
+    <form id="registerForm">
+
+      <label>Name</label>
+
+      <input
+        id="name"
+        type="text"
+        placeholder="Your name"
+        required
+      >
+
+      <label>Email</label>
+
+      <input
+        id="email"
+        type="email"
+        placeholder="your@email.com"
+        required
+      >
+
+      <label>Password</label>
+
+      <input
+        id="password"
+        type="password"
+        placeholder="Minimum 6 characters"
+        minlength="6"
+        required
+      >
+
+      <label>Confirm Password</label>
+
+      <input
+        id="confirmPassword"
+        type="password"
+        placeholder="Repeat your password"
+        minlength="6"
+        required
+      >
+
+      <button
+        id="registerButton"
+        type="submit">
+        Create Account
+      </button>
+
+    </form>
+
+    <div
+      id="error"
+      class="error">
+    </div>
+
+    <div
+      id="success"
+      class="success">
+    </div>
+
+    <div class="bottom">
+      Already have an account?
+      <a href="/login.html">
+        Login
+      </a>
+    </div>
+
+    <a
+      class="home"
+      href="/">
+      ← Back to CarCash
+    </a>
+
+  </div>
+
+<script>
+
+document
+  .getElementById("registerForm")
+  .addEventListener("submit", async function(e) {
+
+    e.preventDefault();
+
+    const name =
+      document
+        .getElementById("name")
+        .value
+        .trim();
+
+    const email =
+      document
+        .getElementById("email")
+        .value
+        .trim();
+
+    const password =
+      document
+        .getElementById("password")
+        .value;
+
+    const confirmPassword =
+      document
+        .getElementById("confirmPassword")
+        .value;
+
+    const errorBox =
+      document.getElementById("error");
+
+    const successBox =
+      document.getElementById("success");
+
+    const registerButton =
+      document.getElementById("registerButton");
+
+    errorBox.style.display = "none";
+    successBox.style.display = "none";
+
+    if (!name) {
+
+      errorBox.textContent =
+        "Adını daxil et.";
+
+      errorBox.style.display = "block";
+
+      return;
+    }
+
+    if (password !== confirmPassword) {
+
+      errorBox.textContent =
+        "Şifrələr eyni deyil.";
+
+      errorBox.style.display = "block";
+
+      return;
+    }
+
+    if (password.length < 6) {
+
+      errorBox.textContent =
+        "Şifrə minimum 6 simvol olmalıdır.";
+
+      errorBox.style.display = "block";
+
+      return;
+    }
+
+    registerButton.disabled = true;
+    registerButton.textContent = "Creating...";
+
+    try {
+
+      const response =
+        await fetch("/api/register", {
+
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body: JSON.stringify({
+            name,
+            email,
+            password
+          })
+
+        });
+
+      const data =
+        await response.json();
+
+      if (!response.ok) {
+
+        errorBox.textContent =
+          data.error ||
+          "Registration failed.";
+
+        errorBox.style.display = "block";
+
+        registerButton.disabled = false;
+        registerButton.textContent =
+          "Create Account";
+
+        return;
+      }
+
+      successBox.textContent =
+        "Hesab yaradıldı! Dashboard-a yönləndirilirsiniz...";
+
+      successBox.style.display = "block";
+
+      setTimeout(() => {
+
+        window.location.href =
+          "/dashboard.html";
+
+      }, 700);
+
+    } catch (error) {
+
+      console.error(error);
+
+      errorBox.textContent =
+        "Serverə qoşulmaq mümkün olmadı.";
+
+      errorBox.style.display = "block";
+
+      registerButton.disabled = false;
+      registerButton.textContent =
+        "Create Account";
+    }
+
+  });
+
+</script>
+
+</body>
+</html>

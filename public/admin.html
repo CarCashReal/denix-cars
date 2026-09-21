@@ -1,0 +1,2970 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CarCash Admin</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:
+        radial-gradient(circle at top left,#263b73 0%,transparent 35%),
+        radial-gradient(circle at bottom right,#17213f 0%,transparent 40%),
+        #080c18;
+    color:white;
+    min-height:100vh;
+}
+
+header{
+    height:70px;
+    padding:0 30px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:rgba(10,15,30,.9);
+    border-bottom:1px solid rgba(255,255,255,.08);
+    position:sticky;
+    top:0;
+    z-index:100;
+}
+
+.logo{
+    font-size:24px;
+    font-weight:800;
+}
+
+.logo span{
+    color:#5b8cff;
+}
+
+.header-right{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.admin-badge{
+    background:rgba(77,124,255,.15);
+    border:1px solid rgba(77,124,255,.3);
+    color:#8eafff;
+    padding:9px 13px;
+    border-radius:10px;
+    font-size:13px;
+    font-weight:700;
+}
+
+.logout-btn{
+    border:0;
+    background:#252b3d;
+    color:white;
+    padding:10px 15px;
+    border-radius:9px;
+    cursor:pointer;
+    font-weight:700;
+}
+
+.logout-btn:hover{
+    background:#343c52;
+}
+
+.container{
+    width:min(1250px,calc(100% - 30px));
+    margin:30px auto 60px;
+}
+
+.page-title{
+    margin-bottom:25px;
+}
+
+.page-title h1{
+    margin:0 0 8px;
+    font-size:32px;
+}
+
+.page-title p{
+    margin:0;
+    color:#929bb0;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+    margin-bottom:30px;
+}
+
+.stat{
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:18px;
+    padding:20px;
+}
+
+.stat-title{
+    color:#929bb0;
+    font-size:13px;
+    margin-bottom:8px;
+}
+
+.stat-value{
+    font-size:27px;
+    font-weight:800;
+}
+
+.section-title{
+    margin:30px 0 15px;
+    font-size:22px;
+}
+
+.panel{
+    background:rgba(255,255,255,.045);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:18px;
+    overflow:hidden;
+}
+
+.deposit-row{
+    display:grid;
+    grid-template-columns:1.1fr 1.2fr .8fr .8fr 1.4fr;
+    gap:12px;
+    padding:16px 18px;
+    border-bottom:1px solid rgba(255,255,255,.06);
+    align-items:center;
+}
+
+.deposit-row:last-child{
+    border-bottom:0;
+}
+
+.deposit-head,
+.withdraw-head,
+.user-head,
+.promo-head{
+    color:#929bb0;
+    font-size:12px;
+    font-weight:700;
+}
+
+.amount{
+    font-weight:800;
+}
+
+.status{
+    display:inline-block;
+    padding:5px 9px;
+    border-radius:8px;
+    font-size:12px;
+    font-weight:700;
+    width:fit-content;
+}
+
+.pending{
+    color:#ffc44d;
+    background:rgba(255,180,0,.12);
+}
+
+.approved,
+.active-status,
+.answered{
+    color:#42df96;
+    background:rgba(30,200,120,.12);
+}
+
+.rejected,
+.inactive-status,
+.closed{
+    color:#ff7777;
+    background:rgba(255,70,70,.12);
+}
+
+.open{
+    color:#ffc44d;
+    background:rgba(255,180,0,.12);
+}
+
+.actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+}
+
+.btn{
+    border:0;
+    padding:8px 11px;
+    border-radius:8px;
+    color:white;
+    cursor:pointer;
+    font-size:12px;
+    font-weight:700;
+}
+
+.btn:hover{
+    opacity:.85;
+}
+
+.view-btn{
+    background:#35405a;
+}
+
+.approve-btn{
+    background:#168c59;
+}
+
+.reject-btn{
+    background:#a93232;
+}
+
+.promo-create-btn{
+    background:linear-gradient(135deg,#5b8cff,#7b5cff);
+}
+
+.toggle-btn{
+    background:#39435c;
+}
+
+.delete-btn{
+    background:#a93232;
+}
+
+.ticket-reply-btn{
+    background:linear-gradient(135deg,#5b8cff,#7b5cff);
+}
+
+.ticket-close-btn{
+    background:#a93232;
+}
+
+.empty{
+    padding:30px;
+    text-align:center;
+    color:#8e97aa;
+}
+
+.message{
+    display:none;
+    margin-bottom:20px;
+    padding:13px;
+    border-radius:10px;
+}
+
+.message.show{
+    display:block;
+}
+
+.message.success{
+    background:rgba(30,200,120,.12);
+    border:1px solid rgba(30,200,120,.2);
+    color:#42df96;
+}
+
+.message.error{
+    background:rgba(255,70,70,.12);
+    border:1px solid rgba(255,70,70,.2);
+    color:#ff7777;
+}
+
+/* PROMO */
+
+.promo-create{
+    padding:20px;
+    border-bottom:1px solid rgba(255,255,255,.07);
+}
+
+.promo-create-title{
+    font-size:17px;
+    font-weight:800;
+    margin-bottom:15px;
+}
+
+.promo-form{
+    display:grid;
+    grid-template-columns:1.2fr .8fr .9fr auto;
+    gap:12px;
+    align-items:end;
+}
+
+.form-group{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+}
+
+.form-group label{
+    color:#929bb0;
+    font-size:12px;
+    font-weight:700;
+}
+
+.form-group input,
+.form-group select,
+.ticket-reply,
+.ticket-status-select{
+    width:100%;
+    padding:12px 13px;
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:10px;
+    background:#0d1324;
+    color:white;
+    outline:none;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.ticket-reply:focus,
+.ticket-status-select:focus{
+    border-color:#5b8cff;
+}
+
+.promo-help{
+    margin-top:10px;
+    color:#737d93;
+    font-size:12px;
+}
+
+.promo-row{
+    display:grid;
+    grid-template-columns:1.1fr .8fr 1fr .8fr .8fr 1.5fr;
+    gap:12px;
+    padding:16px 18px;
+    border-bottom:1px solid rgba(255,255,255,.06);
+    align-items:center;
+}
+
+.promo-row:last-child{
+    border-bottom:0;
+}
+
+.promo-code{
+    display:inline-flex;
+    align-items:center;
+    width:fit-content;
+    padding:7px 10px;
+    border-radius:9px;
+    background:rgba(91,140,255,.12);
+    border:1px solid rgba(91,140,255,.25);
+    color:#8eafff;
+    font-weight:800;
+    letter-spacing:.5px;
+}
+
+.promo-usage{
+    color:#dce2ef;
+    font-weight:700;
+}
+
+.promo-unlimited{
+    color:#8eafff;
+}
+
+.promo-section{
+    border:1px solid rgba(91,140,255,.16);
+    box-shadow:0 15px 40px rgba(0,0,0,.15);
+}
+
+/* WITHDRAW */
+
+.withdraw-row{
+    display:grid;
+    grid-template-columns:
+        1.25fr
+        .8fr
+        1.1fr
+        .8fr
+        .55fr
+        1.6fr;
+    gap:12px;
+    padding:16px 18px;
+    border-bottom:1px solid rgba(255,255,255,.06);
+    align-items:center;
+}
+
+.user-row{
+    display:grid;
+    grid-template-columns:1.5fr 1fr 1fr;
+    gap:15px;
+    padding:15px 18px;
+    border-bottom:1px solid rgba(255,255,255,.06);
+}
+
+.small-text{
+    color:#929bb0;
+    font-size:12px;
+    margin-top:4px;
+}
+
+/* SUPPORT */
+
+.ticket-panel{
+    border:1px solid rgba(91,140,255,.16);
+    box-shadow:0 15px 40px rgba(0,0,0,.15);
+}
+
+.ticket-row{
+    padding:20px;
+    border-bottom:1px solid rgba(255,255,255,.07);
+}
+
+.ticket-row:last-child{
+    border-bottom:0;
+}
+
+.ticket-top{
+    display:grid;
+    grid-template-columns:.45fr 1.4fr 1.6fr .8fr 1fr;
+    gap:15px;
+    align-items:center;
+    margin-bottom:14px;
+}
+
+.ticket-id{
+    color:#8eafff;
+    font-weight:800;
+}
+
+.ticket-user{
+    font-weight:700;
+}
+
+.ticket-subject{
+    font-weight:800;
+    color:#fff;
+}
+
+.ticket-date{
+    color:#929bb0;
+    font-size:12px;
+}
+
+.ticket-content{
+    background:rgba(0,0,0,.18);
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:12px;
+    padding:15px;
+    margin-bottom:14px;
+}
+
+.ticket-label{
+    color:#8e97aa;
+    font-size:11px;
+    font-weight:800;
+    text-transform:uppercase;
+    margin-bottom:7px;
+}
+
+.ticket-message{
+    white-space:pre-wrap;
+    line-height:1.55;
+    color:#e6eaf2;
+}
+
+.ticket-admin-reply{
+    background:rgba(91,140,255,.07);
+    border:1px solid rgba(91,140,255,.15);
+    border-radius:12px;
+    padding:15px;
+    margin-bottom:14px;
+}
+
+.ticket-admin-reply-text{
+    white-space:pre-wrap;
+    line-height:1.55;
+    color:#dce5ff;
+}
+
+.ticket-actions{
+    display:grid;
+    grid-template-columns:1fr auto auto;
+    gap:10px;
+    align-items:end;
+}
+
+.ticket-reply{
+    min-height:80px;
+    resize:vertical;
+    font-family:Arial,sans-serif;
+}
+
+.ticket-status-select{
+    min-width:150px;
+}
+
+.ticket-tools{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+/* MODAL */
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.8);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    z-index:999;
+}
+
+.modal.active{
+    display:flex;
+}
+
+.modal-box{
+    width:min(850px,100%);
+    max-height:90vh;
+    overflow:auto;
+    background:#11182b;
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:18px;
+    padding:20px;
+}
+
+.modal-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
+}
+
+.close{
+    width:36px;
+    height:36px;
+    border:0;
+    border-radius:9px;
+    background:#252d43;
+    color:white;
+    font-size:20px;
+    cursor:pointer;
+}
+
+.receipt-image{
+    width:100%;
+    max-height:70vh;
+    object-fit:contain;
+    border-radius:12px;
+    background:#080c18;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1100px){
+
+    .promo-form{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .promo-row{
+        grid-template-columns:1fr 1fr 1fr;
+    }
+
+    .promo-head{
+        display:none;
+    }
+
+    .ticket-top{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .ticket-actions{
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:1000px){
+
+    .withdraw-row{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .withdraw-head{
+        display:none;
+    }
+}
+
+@media(max-width:900px){
+
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+    .deposit-row{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .deposit-head{
+        display:none;
+    }
+}
+
+@media(max-width:600px){
+
+    header{
+        padding:0 12px;
+    }
+
+    .admin-badge{
+        display:none;
+    }
+
+    .container{
+        width:calc(100% - 20px);
+    }
+
+    .deposit-row,
+    .withdraw-row,
+    .user-row,
+    .promo-row,
+    .promo-form,
+    .ticket-top{
+        grid-template-columns:1fr;
+    }
+
+    .promo-create{
+        padding:15px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+        Car<span>Cash</span>
+    </div>
+
+    <div class="header-right">
+
+        <div class="admin-badge">
+            ADMIN PANEL
+        </div>
+
+        <button class="logout-btn" onclick="logout()">
+            Çıxış
+        </button>
+
+    </div>
+
+</header>
+
+
+<div class="container">
+
+    <div class="page-title">
+
+        <h1>CarCash Admin Panel</h1>
+
+        <p>
+            Depositləri, çıxarışları, istifadəçiləri, promo kodları və support ticketləri idarə et.
+        </p>
+
+    </div>
+
+
+    <div class="message" id="message"></div>
+
+
+    <!-- STATS -->
+
+    <div class="stats">
+
+        <div class="stat">
+
+            <div class="stat-title">
+                Gözləyən deposit
+            </div>
+
+            <div class="stat-value" id="pendingCount">
+                0
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-title">
+                Təsdiqlənmiş deposit
+            </div>
+
+            <div class="stat-value" id="approvedCount">
+                0
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-title">
+                Ümumi deposit
+            </div>
+
+            <div class="stat-value" id="totalAmount">
+                0.00 AZN
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- PROMO -->
+
+    <h2 class="section-title">
+        🎟️ Promo Kodlar
+    </h2>
+
+    <div class="panel promo-section">
+
+        <div class="promo-create">
+
+            <div class="promo-create-title">
+                Yeni promo kod yarat
+            </div>
+
+            <div class="promo-form">
+
+                <div class="form-group">
+
+                    <label>Promo kod</label>
+
+                    <input
+                        type="text"
+                        id="promoCode"
+                        placeholder="Məsələn: DENIX5"
+                        maxlength="50"
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Balans məbləği</label>
+
+                    <input
+                        type="number"
+                        id="promoAmount"
+                        placeholder="5"
+                        min="0.01"
+                        step="0.01"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>İstifadə limiti</label>
+
+                    <select id="promoMaxUses">
+
+                        <option value="1">1 istifadə</option>
+                        <option value="10">10 istifadə</option>
+                        <option value="100">100 istifadə</option>
+                        <option value="0">Limitsiz</option>
+
+                    </select>
+
+                </div>
+
+
+                <button
+                    class="btn promo-create-btn"
+                    onclick="createPromo()"
+                >
+                    + Kod yarat
+                </button>
+
+            </div>
+
+            <div class="promo-help">
+                0 seçsən promo kod limitsiz istifadə oluna bilər.
+                Hər istifadəçi eyni kodu yalnız 1 dəfə istifadə edə bilər.
+            </div>
+
+        </div>
+
+
+        <div class="promo-row promo-head">
+
+            <div>Kod</div>
+            <div>Məbləğ</div>
+            <div>İstifadə</div>
+            <div>Status</div>
+            <div>Yaradılıb</div>
+            <div>Əməliyyat</div>
+
+        </div>
+
+
+        <div id="promoCodes">
+
+            <div class="empty">
+                Promo kodlar yüklənir...
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SUPPORT -->
+
+    <h2 class="section-title">
+        🎫 Support Tickets
+    </h2>
+
+
+    <div class="panel ticket-panel">
+
+        <div id="supportTickets">
+
+            <div class="empty">
+                Support ticketlər yüklənir...
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- DEPOSITS -->
+
+    <h2 class="section-title">
+        Depositlər
+    </h2>
+
+
+    <div class="panel">
+
+        <div class="deposit-row deposit-head">
+
+            <div>İstifadəçi</div>
+            <div>Sifariş</div>
+            <div>Məbləğ</div>
+            <div>Status</div>
+            <div>Əməliyyat</div>
+
+        </div>
+
+        <div id="deposits">
+
+            <div class="empty">
+                Yüklənir...
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- WITHDRAWALS -->
+
+    <h2 class="section-title">
+        Çıxarışlar
+    </h2>
+
+
+    <div class="panel">
+
+        <div class="withdraw-row withdraw-head">
+
+            <div>İstifadəçi</div>
+            <div>Məbləğ</div>
+            <div>Ödəniş üsulu</div>
+            <div>Status</div>
+            <div>ID</div>
+            <div>Əməliyyat</div>
+
+        </div>
+
+        <div id="withdrawals">
+
+            <div class="empty">
+                Yüklənir...
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- USERS -->
+
+    <h2 class="section-title">
+        İstifadəçilər
+    </h2>
+
+
+    <div class="panel">
+
+        <div class="user-row user-head">
+
+            <div>Email</div>
+            <div>Balans</div>
+            <div>Qeydiyyat</div>
+
+        </div>
+
+        <div id="users">
+
+            <div class="empty">
+                Yüklənir...
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- RECEIPT MODAL -->
+
+<div class="modal" id="receiptModal">
+
+    <div class="modal-box">
+
+        <div class="modal-top">
+
+            <h2>
+                Ödəniş çeki
+            </h2>
+
+            <button
+                class="close"
+                onclick="closeReceipt()"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <img
+            id="receiptImage"
+            class="receipt-image"
+            src=""
+            alt="Receipt"
+        >
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================
+   API
+========================= */
+
+async function api(url, options = {}){
+
+    const response = await fetch(
+        url,
+        {
+            credentials:"include",
+            ...options
+        }
+    );
+
+    let data = {};
+
+    try{
+        data = await response.json();
+    }catch{
+        data = {};
+    }
+
+    if(!response.ok){
+
+        throw new Error(
+            data.error ||
+            data.message ||
+            "Server xətası"
+        );
+
+    }
+
+    return data;
+}
+
+
+/* =========================
+   MESSAGE
+========================= */
+
+function showMessage(text,type){
+
+    const box =
+        document.getElementById("message");
+
+    box.textContent = text;
+
+    box.className =
+        "message show " + type;
+
+    setTimeout(() => {
+        box.className = "message";
+    },5000);
+}
+
+
+/* =========================
+   PROMO
+========================= */
+
+async function loadPromoCodes(){
+
+    const container =
+        document.getElementById("promoCodes");
+
+    try{
+
+        const data =
+            await api("/api/admin/promo-codes");
+
+        const codes =
+            data.codes || [];
+
+        if(!Array.isArray(codes) || !codes.length){
+
+            container.innerHTML = `
+                <div class="empty">
+                    Hələ promo kod yoxdur.
+                </div>
+            `;
+
+            return;
+        }
+
+
+        container.innerHTML =
+            codes.map(promo => {
+
+                const active =
+                    Number(promo.active) === 1;
+
+                const maxUses =
+                    Number(promo.max_uses || 0);
+
+                const usedCount =
+                    Number(promo.used_count || 0);
+
+                const usageText =
+                    maxUses === 0
+                    ? `<span class="promo-unlimited">${usedCount} / ∞</span>`
+                    : `<span class="promo-usage">${usedCount} / ${maxUses}</span>`;
+
+                return `
+
+                    <div class="promo-row">
+
+                        <div>
+                            <span class="promo-code">
+                                ${escapeHtml(promo.code)}
+                            </span>
+                        </div>
+
+                        <div class="amount">
+                            ₼${Number(promo.amount || 0).toFixed(2)}
+                        </div>
+
+                        <div>
+                            ${usageText}
+                        </div>
+
+                        <div>
+                            <span class="status ${
+                                active
+                                ? "active-status"
+                                : "inactive-status"
+                            }">
+                                ${active ? "Aktiv" : "Deaktiv"}
+                            </span>
+                        </div>
+
+                        <div>
+                            <span class="small-text">
+                                ${
+                                    promo.created_at
+                                    ? escapeHtml(formatDate(promo.created_at))
+                                    : "-"
+                                }
+                            </span>
+                        </div>
+
+                        <div class="actions">
+
+                            <button
+                                class="btn toggle-btn"
+                                onclick="togglePromo(${Number(promo.id)})"
+                            >
+                                ${active ? "⏸ Deaktiv et" : "▶ Aktiv et"}
+                            </button>
+
+                            <button
+                                class="btn delete-btn"
+                                onclick="deletePromo(${Number(promo.id)}, '${escapeJs(promo.code)}')"
+                            >
+                                🗑 Sil
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }).join("");
+
+    }catch(error){
+
+        container.innerHTML = `
+            <div class="empty">
+                Promo kodlar yüklənmədi.
+                <br>
+                <small>${escapeHtml(error.message)}</small>
+            </div>
+        `;
+
+    }
+}
+
+
+async function createPromo(){
+
+    const codeInput =
+        document.getElementById("promoCode");
+
+    const amountInput =
+        document.getElementById("promoAmount");
+
+    const maxUsesInput =
+        document.getElementById("promoMaxUses");
+
+    const code =
+        String(codeInput.value || "")
+        .trim()
+        .toUpperCase();
+
+    const amount =
+        Number(amountInput.value);
+
+    const maxUses =
+        Number(maxUsesInput.value);
+
+    if(!code){
+
+        showMessage(
+            "Promo kod daxil et.",
+            "error"
+        );
+
+        codeInput.focus();
+
+        return;
+    }
+
+    if(!Number.isFinite(amount) || amount <= 0){
+
+        showMessage(
+            "Düzgün məbləğ daxil et.",
+            "error"
+        );
+
+        amountInput.focus();
+
+        return;
+    }
+
+    try{
+
+        await api(
+            "/api/admin/promo-codes",
+            {
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({
+                    code,
+                    amount,
+                    maxUses
+                })
+            }
+        );
+
+        showMessage(
+            `Promo kod ${code} uğurla yaradıldı.`,
+            "success"
+        );
+
+        codeInput.value = "";
+        amountInput.value = "";
+        maxUsesInput.value = "1";
+
+        await loadPromoCodes();
+
+    }catch(error){
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    }
+}
+
+
+async function togglePromo(id){
+
+    try{
+
+        await api(
+            "/api/admin/promo-codes/" +
+            id +
+            "/toggle",
+            {
+                method:"POST"
+            }
+        );
+
+        showMessage(
+            "Promo kod statusu dəyişdirildi.",
+            "success"
+        );
+
+        await loadPromoCodes();
+
+    }catch(error){
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    }
+}
+
+
+async function deletePromo(id,code){
+
+    if(!confirm(
+        `"${code}" promo kodunu silmək istəyirsən?\n\nBu kodun istifadə tarixçəsi də silinəcək.`
+    )){
+        return;
+    }
+
+    try{
+
+        await api(
+            "/api/admin/promo-codes/" + id,
+            {
+                method:"DELETE"
+            }
+        );
+
+        showMessage(
+            `"${code}" promo kodu silindi.`,
+            "success"
+        );
+
+        await loadPromoCodes();
+
+    }catch(error){
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    }
+}
+
+
+/* =========================
+   SUPPORT
+========================= */
+
+function ticketStatusText(status){
+
+    status =
+        String(status || "open")
+        .toLowerCase();
+
+    if(
+        status === "answered" ||
+        status === "waiting"
+    ){
+        return "Cavablandı";
+    }
+
+    if(status === "closed"){
+        return "Bağlandı";
+    }
+
+    return "Açıq";
+}
+
+
+function ticketStatusClass(status){
+
+    status =
+        String(status || "open")
+        .toLowerCase();
+
+    if(
+        status === "answered" ||
+        status === "waiting"
+    ){
+        return "answered";
+    }
+
+    if(status === "closed"){
+        return "closed";
+    }
+
+    return "open";
+}
+
+
+function getTicketMessages(ticket){
+
+    if(
+        ticket &&
+        Array.isArray(ticket.messages)
+    ){
+        return ticket.messages;
+    }
+
+    return [];
+}
+
+
+function getMessageText(message){
+
+    if(!message){
+        return "";
+    }
+
+    return String(
+        message.message ||
+        message.text ||
+        ""
+    );
+}
+
+
+function getSenderType(message){
+
+    if(!message){
+        return "";
+    }
+
+    return String(
+        message.sender_type ||
+        message.senderType ||
+        message.sender ||
+        ""
+    ).toLowerCase();
+}
+
+
+function getLatestMessage(messages,type){
+
+    for(
+        let i = messages.length - 1;
+        i >= 0;
+        i--
+    ){
+
+        const sender =
+            getSenderType(messages[i]);
+
+        if(type === "admin"){
+
+            if(sender === "admin"){
+                return getMessageText(messages[i]);
+            }
+
+        }else{
+
+            if(
+                sender === "user" ||
+                sender === "customer"
+            ){
+                return getMessageText(messages[i]);
+            }
+
+        }
+
+    }
+
+    return "";
+}
+
+
+/* =========================
+   LOAD SUPPORT
+========================= */
+
+async function loadSupportTickets(){
+
+    const container =
+        document.getElementById(
+            "supportTickets"
+        );
+
+    try{
+
+        const data =
+            await api(
+                "/api/admin/support/tickets"
+            );
+
+        const tickets =
+            data.tickets ||
+            data ||
+            [];
+
+
+        if(
+            !Array.isArray(tickets) ||
+            !tickets.length
+        ){
+
+            container.innerHTML = `
+                <div class="empty">
+                    🎫 Hələ support ticket yoxdur.
+                </div>
+            `;
+
+            return;
+        }
+
+
+        /*
+         * List endpointindən gələn ticketlərin
+         * hər birinin tam detailini alırıq.
+         *
+         * Çünki mesajlar support_messages
+         * cədvəlində saxlanılır.
+         */
+
+        const detailedTickets =
+            await Promise.all(
+
+                tickets.map(
+                    async ticket => {
+
+                        try{
+
+                            const detail =
+                                await api(
+                                    "/api/admin/support/tickets/" +
+                                    Number(ticket.id)
+                                );
+
+                            const detailTicket =
+                                detail.ticket || {};
+
+                            return {
+                                ...ticket,
+                                ...detailTicket,
+                                messages:
+                                    Array.isArray(detailTicket.messages)
+                                    ? detailTicket.messages
+                                    : (
+                                        Array.isArray(detail.messages)
+                                        ? detail.messages
+                                        : (
+                                            Array.isArray(ticket.messages)
+                                            ? ticket.messages
+                                            : []
+                                        )
+                                    )
+                            };
+
+                        }catch(error){
+
+                            console.warn(
+                                "Ticket detail yüklənmədi:",
+                                ticket.id,
+                                error
+                            );
+
+                            return {
+                                ...ticket,
+                                messages:
+                                    Array.isArray(ticket.messages)
+                                    ? ticket.messages
+                                    : []
+                            };
+
+                        }
+
+                    }
+                )
+
+            );
+
+
+        container.innerHTML =
+            detailedTickets.map(ticket => {
+
+                const id =
+                    Number(ticket.id);
+
+
+                const status =
+                    String(
+                        ticket.status ||
+                        "open"
+                    ).toLowerCase();
+
+
+                const name =
+                    ticket.name ||
+                    ticket.user_name ||
+                    "Naməlum istifadəçi";
+
+
+                const email =
+                    ticket.email ||
+                    ticket.user_email ||
+                    "Naməlum email";
+
+
+                const subject =
+                    ticket.subject ||
+                    "Mövzu yoxdur";
+
+
+                const messages =
+                    getTicketMessages(ticket);
+
+
+                /*
+                 * Ən son user mesajı
+                 */
+
+                let userMessage =
+                    getLatestMessage(
+                        messages,
+                        "user"
+                    );
+
+
+                /*
+                 * Əgər messages yoxdursa,
+                 * list endpointinin message sahəsindən istifadə et.
+                 */
+
+                if(!userMessage){
+
+                    userMessage =
+                        ticket.message ||
+                        ticket.last_message ||
+                        "Mesaj yoxdur.";
+
+                }
+
+
+                /*
+                 * Ən son admin cavabı
+                 */
+
+                let adminReply =
+                    getLatestMessage(
+                        messages,
+                        "admin"
+                    );
+
+
+                if(!adminReply){
+
+                    adminReply =
+                        ticket.admin_reply ||
+                        "";
+
+                }
+
+
+                const created =
+                    ticket.created_at
+                    ? formatDate(ticket.created_at)
+                    : "-";
+
+
+                const updated =
+                    ticket.updated_at
+                    ? formatDate(ticket.updated_at)
+                    : "-";
+
+
+                return `
+
+                    <div class="ticket-row">
+
+                        <div class="ticket-top">
+
+                            <div class="ticket-id">
+                                #${id}
+                            </div>
+
+
+                            <div class="ticket-user">
+
+                                ${escapeHtml(name)}
+
+                                <div class="small-text">
+                                    ${escapeHtml(email)}
+                                </div>
+
+                            </div>
+
+
+                            <div class="ticket-subject">
+                                ${escapeHtml(subject)}
+                            </div>
+
+
+                            <div>
+
+                                <span class="status ${ticketStatusClass(status)}">
+                                    ${ticketStatusText(status)}
+                                </span>
+
+                            </div>
+
+
+                            <div class="ticket-date">
+
+                                ${escapeHtml(created)}
+
+                                <div class="small-text">
+                                    Yenilənib:
+                                    ${escapeHtml(updated)}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="ticket-content">
+
+                            <div class="ticket-label">
+                                İstifadəçinin son mesajı
+                            </div>
+
+                            <div class="ticket-message">
+                                ${escapeHtml(userMessage)}
+                            </div>
+
+                        </div>
+
+
+                        ${
+                            adminReply
+                            ? `
+
+                                <div class="ticket-admin-reply">
+
+                                    <div class="ticket-label">
+                                        Admin cavabı
+                                    </div>
+
+                                    <div class="ticket-admin-reply-text">
+                                        ${escapeHtml(adminReply)}
+                                    </div>
+
+                                </div>
+
+                            `
+                            : ""
+                        }
+
+
+                        <div class="ticket-actions">
+
+                            <textarea
+                                class="ticket-reply"
+                                id="ticketReply-${id}"
+                                placeholder="İstifadəçiyə cavab yaz..."
+                                maxlength="5000"
+                            ></textarea>
+
+
+                            <select
+                                class="ticket-status-select"
+                                id="ticketStatus-${id}"
+                            >
+
+                                <option
+                                    value="open"
+                                    ${
+                                        status === "open"
+                                        ? "selected"
+                                        : ""
+                                    }
+                                >
+                                    Açıq
+                                </option>
+
+
+                                <option
+                                    value="answered"
+                                    ${
+                                        status === "answered" ||
+                                        status === "waiting"
+                                        ? "selected"
+                                        : ""
+                                    }
+                                >
+                                    Cavablandı
+                                </option>
+
+
+                                <option
+                                    value="closed"
+                                    ${
+                                        status === "closed"
+                                        ? "selected"
+                                        : ""
+                                    }
+                                >
+                                    Bağlandı
+                                </option>
+
+                            </select>
+
+
+                            <div class="ticket-tools">
+
+                                <button
+                                    class="btn ticket-reply-btn"
+                                    onclick="replySupportTicket(${id})"
+                                >
+                                    💬 Cavab göndər
+                                </button>
+
+
+                                <button
+                                    class="btn view-btn"
+                                    onclick="changeTicketStatus(${id})"
+                                >
+                                    🔄 Status
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }).join("");
+
+
+    }catch(error){
+
+        console.error(
+            "SUPPORT LOAD ERROR:",
+            error
+        );
+
+        container.innerHTML = `
+
+            <div class="empty">
+
+                Support ticketlər yüklənmədi.
+
+                <br>
+
+                <small>
+                    ${escapeHtml(error.message)}
+                </small>
+
+            </div>
+
+        `;
+
+    }
+}
+
+
+/* =========================
+   ADMIN REPLY
+========================= */
+
+async function replySupportTicket(id){
+
+    const replyBox =
+        document.getElementById(
+            "ticketReply-" + id
+        );
+
+
+    if(!replyBox){
+
+        showMessage(
+            "Cavab sahəsi tapılmadı.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const message =
+        String(
+            replyBox.value || ""
+        ).trim();
+
+
+    if(!message){
+
+        showMessage(
+            "Ticketə cavab yaz.",
+            "error"
+        );
+
+        replyBox.focus();
+
+        return;
+    }
+
+
+    /*
+     * Düyməni müvəqqəti deaktiv edirik ki,
+     * iki dəfə kliklə iki cavab göndərilməsin.
+     */
+
+    const buttons =
+        document.querySelectorAll(
+            `.ticket-row`
+        );
+
+
+    try{
+
+        /*
+         * DÜZGÜN SERVER ENDPOINT:
+         *
+         * POST
+         * /api/admin/support/tickets/:id/messages
+         *
+         * Body:
+         * { message: "..." }
+         */
+
+        await api(
+            "/api/admin/support/tickets/" +
+            id +
+            "/messages",
+            {
+                method:"POST",
+
+                headers:{
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:JSON.stringify({
+                    message:message
+                })
+            }
+        );
+
+
+        replyBox.value = "";
+
+
+        showMessage(
+            `#${id} ticketinə admin cavabı göndərildi.`,
+            "success"
+        );
+
+
+        /*
+         * Server admin reply etdikdən sonra
+         * ticket statusunu waiting edir.
+         *
+         * Frontend waiting-i "Cavablandı"
+         * kimi göstərir.
+         */
+
+        await loadSupportTickets();
+
+
+    }catch(error){
+
+        console.error(
+            "ADMIN REPLY ERROR:",
+            error
+        );
+
+        showMessage(
+            "Admin cavabı göndərilmədi: " +
+            error.message,
+            "error"
+        );
+
+    }
+}
+
+
+/* =========================
+   CHANGE STATUS
+========================= */
+
+async function changeTicketStatus(id){
+
+    const select =
+        document.getElementById(
+            "ticketStatus-" + id
+        );
+
+
+    if(!select){
+
+        showMessage(
+            "Status seçimi tapılmadı.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    let status =
+        String(
+            select.value || ""
+        ).toLowerCase();
+
+
+    /*
+     * Frontend:
+     * answered = Cavablandı
+     *
+     * Backend:
+     * waiting = Cavablandı
+     */
+
+    if(status === "answered"){
+        status = "waiting";
+    }
+
+
+    if(
+        !["open","waiting","closed"].includes(status)
+    ){
+
+        showMessage(
+            "Yanlış ticket statusu.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    try{
+
+        await api(
+            "/api/admin/support/tickets/" +
+            id +
+            "/status",
+            {
+                method:"POST",
+
+                headers:{
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:JSON.stringify({
+                    status:status
+                })
+            }
+        );
+
+
+        showMessage(
+            `#${id} ticket statusu "${ticketStatusText(status)}" edildi.`,
+            "success"
+        );
+
+
+        await loadSupportTickets();
+
+
+    }catch(error){
+
+        console.error(
+            "STATUS ERROR:",
+            error
+        );
+
+        showMessage(
+            "Status dəyişdirilmədi: " +
+            error.message,
+            "error"
+        );
+
+    }
+}
+
+
+/* =========================
+   DEPOSITS
+========================= */
+
+async function loadDeposits(){
+
+    try{
+
+        const data =
+            await api("/api/deposits");
+
+        const deposits =
+            data.deposits ||
+            data ||
+            [];
+
+        const container =
+            document.getElementById(
+                "deposits"
+            );
+
+
+        if(
+            !Array.isArray(deposits) ||
+            !deposits.length
+        ){
+
+            container.innerHTML = `
+                <div class="empty">
+                    Deposit yoxdur.
+                </div>
+            `;
+
+            updateStats([]);
+
+            return;
+        }
+
+
+        updateStats(deposits);
+
+
+        container.innerHTML =
+            deposits.map(deposit => {
+
+                const status =
+                    String(
+                        deposit.status ||
+                        "pending"
+                    ).toLowerCase();
+
+
+                let statusText =
+                    "Gözləyir";
+
+
+                if(status === "approved"){
+                    statusText =
+                        "Təsdiqləndi";
+                }
+
+
+                if(status === "rejected"){
+                    statusText =
+                        "Rədd edildi";
+                }
+
+
+                const email =
+                    deposit.email ||
+                    deposit.user_email ||
+                    "Naməlum";
+
+
+                const order =
+                    deposit.order_id ||
+                    deposit.orderId ||
+                    ("#" + deposit.id);
+
+
+                const amount =
+                    Number(
+                        deposit.amount || 0
+                    ).toFixed(2);
+
+
+                const receipt =
+                    deposit.receipt_path ||
+                    deposit.receiptPath ||
+                    "";
+
+
+                return `
+
+                    <div class="deposit-row">
+
+                        <div>
+                            ${escapeHtml(email)}
+                        </div>
+
+                        <div>
+                            ${escapeHtml(order)}
+                        </div>
+
+                        <div class="amount">
+                            ${amount} AZN
+                        </div>
+
+                        <div>
+
+                            <span class="status ${escapeHtml(status)}">
+                                ${statusText}
+                            </span>
+
+                        </div>
+
+                        <div class="actions">
+
+                            ${
+                                receipt
+                                ? `
+                                    <button
+                                        class="btn view-btn"
+                                        onclick="viewReceipt('${escapeJs(receipt)}')"
+                                    >
+                                        👁 Çek
+                                    </button>
+                                `
+                                : ""
+                            }
+
+
+                            ${
+                                status === "pending"
+                                ? `
+                                    <button
+                                        class="btn approve-btn"
+                                        onclick="approveDeposit(${Number(deposit.id)})"
+                                    >
+                                        ✓ Təsdiqlə
+                                    </button>
+
+                                    <button
+                                        class="btn reject-btn"
+                                        onclick="rejectDeposit(${Number(deposit.id)})"
+                                    >
+                                        ✕ Rədd et
+                                    </button>
+                                `
+                                : ""
+                            }
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }).join("");
+
+
+    }catch(error){
+
+        document.getElementById(
+            "deposits"
+        ).innerHTML = `
+
+            <div class="empty">
+
+                Depositlər yüklənmədi.
+
+                <br>
+
+                <small>
+                    ${escapeHtml(error.message)}
+                </small>
+
+            </div>
+
+        `;
+
+    }
+}
+
+
+function updateStats(deposits){
+
+    let pending = 0;
+    let approved = 0;
+    let total = 0;
+
+
+    deposits.forEach(deposit => {
+
+        const status =
+            String(
+                deposit.status ||
+                "pending"
+            ).toLowerCase();
+
+
+        const amount =
+            Number(
+                deposit.amount || 0
+            );
+
+
+        if(status === "pending"){
+            pending++;
+        }
+
+
+        if(status === "approved"){
+
+            approved++;
+            total += amount;
+
+        }
+
+    });
+
+
+    document.getElementById(
+        "pendingCount"
+    ).textContent = pending;
+
+
+    document.getElementById(
+        "approvedCount"
+    ).textContent = approved;
+
+
+    document.getElementById(
+        "totalAmount"
+    ).textContent =
+        total.toFixed(2) +
+        " AZN";
+}
+
+
+async function approveDeposit(id){
+
+    if(!confirm(
+        "Bu depositi təsdiqləmək istəyirsən?"
+    )){
+        return;
+    }
+
+
+    try{
+
+        await api(
+            "/api/admin/deposits/" +
+            id +
+            "/approve",
+            {
+                method:"POST"
+            }
+        );
+
+
+        showMessage(
+            "Deposit təsdiqləndi və balans əlavə edildi.",
+            "success"
+        );
+
+
+        await loadDeposits();
+        await loadUsers();
+
+
+    }catch(error){
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    }
+}
+
+
+async function rejectDeposit(id){
+
+    const note =
+        prompt(
+            "Rədd etmə səbəbi:"
+        );
+
+
+    if(note === null){
+        return;
+    }
+
+
+    try{
+
+        await api(
+            "/api/admin/deposits/" +
+            id +
+            "/reject",
+            {
+                method:"POST",
+
+                headers:{
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:JSON.stringify({
+                    note
+                })
+            }
+        );
+
+
+        showMessage(
+            "Deposit rədd edildi.",
+            "success"
+        );
+
+
+        await loadDeposits();
+
+
+    }catch(error){
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    }
+}
+
+
+/* =========================
+   WITHDRAWALS
+========================= */
+
+async function loadWithdrawals(){
+
+    try{
+
+        const data =
+            await api(
+                "/api/withdrawals"
+            );
+
+
+        const withdrawals =
+            data.withdrawals ||
+            data ||
+            [];
+
+
+        const container =
+            document.getElementById(
+                "withdrawals"
+            );
+
+
+        if(
+            !Array.isArray(withdrawals) ||
+            !withdrawals.length
+        ){
+
+            container.innerHTML = `
+                <div class="empty">
+                    Çıxarış yoxdur.
+                </div>
+            `;
+
+            return;
+        }
+
+
+        container.innerHTML =
+            withdrawals.map(
+                withdrawal => {
+
+                    const status =
+                        String(
+                            withdrawal.status ||
+                            "pending"
+                        ).toLowerCase();
+
+
+                    let statusText =
+                        "Gözləyir";
+
+
+                    if(status === "approved"){
+                        statusText =
+                            "Təsdiqləndi";
+                    }
+
+
+                    if(status === "rejected"){
+                        statusText =
+                            "Rədd edildi";
+                    }
+
+
+                    const email =
+                        withdrawal.email ||
+                        "Naməlum";
+
+
+                    const name =
+                        withdrawal.name ||
+                        "";
+
+
+                    const amount =
+                        Number(
+                            withdrawal.amount || 0
+                        ).toFixed(2);
+
+
+                    const method =
+                        withdrawal.method ||
+                        "-";
+
+
+                    const account =
+                        withdrawal.account ||
+                        "";
+
+
+                    return `
+
+                        <div class="withdraw-row">
+
+                            <div>
+
+                                ${escapeHtml(email)}
+
+                                ${
+                                    name
+                                    ? `
+                                        <div class="small-text">
+                                            ${escapeHtml(name)}
+                                        </div>
+                                    `
+                                    : ""
+                                }
+
+                            </div>
+
+
+                            <div class="amount">
+                                ${amount} AZN
+                            </div>
+
+
+                            <div>
+
+                                ${escapeHtml(method)}
+
+                                ${
+                                    account
+                                    ? `
+                                        <div class="small-text">
+                                            ${escapeHtml(account)}
+                                        </div>
+                                    `
+                                    : ""
+                                }
+
+                            </div>
+
+
+                            <div>
+
+                                <span class="status ${escapeHtml(status)}">
+                                    ${statusText}
+                                </span>
+
+                            </div>
+
+
+                            <div>
+                                #${Number(withdrawal.id)}
+                            </div>
+
+
+                            <div class="actions">
+
+                                ${
+                                    status === "pending"
+                                    ? `
+                                        <button
+                                            class="btn approve-btn"
+                                            onclick="approveWithdrawal(${Number(withdrawal.id)})"
+                                        >
+                                            ✓ Təsdiqlə
+                                        </button>
+
+                                        <button
+                                            class="btn reject-btn"
+                                            onclick="rejectWithdrawal(${Number(withdrawal.id)})"
+                                        >
+                                            ✕ Rədd et
+                                        </button>
+                                    `
+                                    : `
+                                        <span
+                                            style="
+                                                color:#777f92;
+                                                font-size:12px;
+                                            "
+                                        >
+                                            İşlənib
+                                        </span>
+                                    `
+                                }
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                }
+            ).join("");
+
+
+    }catch(error){
+
+        document.getElementById(
+            "withdrawals"
+        ).innerHTML = `
+
+            <div class="empty">
+
+                Çıxarışlar yüklənmədi.
+
+                <br>
+
+                <small>
+                    ${escapeHtml(error.message)}
+                </small>
+
+            </div>
+
+        `;
+
+    }
+}
+
+
+async function approveWithdrawal(id){
+
+    if(!confirm(
+        "Bu çıxarışı təsdiqləmək istəyirsən?"
+    )){
+        return;
+    }
+
+
+    try{
+
+        await api(
+            "/api/admin/withdrawals/" +
+            id +
+            "/approve",
+            {
+                method:"POST"
+            }
+        );
+
+
+        showMessage(
+            "Çıxarış təsdiqləndi.",
+            "success"
+        );
+
+
+        await loadWithdrawals();
+        await loadUsers();
+
+
+    }catch(error){
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    }
+}
+
+
+async function rejectWithdrawal(id){
+
+    const note =
+        prompt(
+            "Çıxarışı rədd etmə səbəbi:"
+        );
+
+
+    if(note === null){
+        return;
+    }
+
+
+    try{
+
+        await api(
+            "/api/admin/withdrawals/" +
+            id +
+            "/reject",
+            {
+                method:"POST",
+
+                headers:{
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:JSON.stringify({
+                    note
+                })
+            }
+        );
+
+
+        showMessage(
+            "Çıxarış rədd edildi və məbləğ balansına qaytarıldı.",
+            "success"
+        );
+
+
+        await loadWithdrawals();
+        await loadUsers();
+
+
+    }catch(error){
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    }
+}
+
+
+/* =========================
+   USERS
+========================= */
+
+async function loadUsers(){
+
+    try{
+
+        const data =
+            await api(
+                "/api/admin/users"
+            );
+
+
+        const users =
+            data.users ||
+            data ||
+            [];
+
+
+        const container =
+            document.getElementById(
+                "users"
+            );
+
+
+        if(
+            !Array.isArray(users) ||
+            !users.length
+        ){
+
+            container.innerHTML = `
+                <div class="empty">
+                    İstifadəçi yoxdur.
+                </div>
+            `;
+
+            return;
+        }
+
+
+        container.innerHTML =
+            users.map(user => {
+
+                const email =
+                    user.email ||
+                    "Naməlum";
+
+
+                const balance =
+                    Number(
+                        user.balance || 0
+                    ).toFixed(2);
+
+
+                const created =
+                    user.created_at ||
+                    "";
+
+
+                return `
+
+                    <div class="user-row">
+
+                        <div>
+                            ${escapeHtml(email)}
+                        </div>
+
+                        <div>
+                            <b>
+                                ${balance} AZN
+                            </b>
+                        </div>
+
+                        <div>
+                            ${
+                                created
+                                ? escapeHtml(
+                                    formatDate(created)
+                                  )
+                                : "-"
+                            }
+                        </div>
+
+                    </div>
+
+                `;
+
+            }).join("");
+
+
+    }catch(error){
+
+        document.getElementById(
+            "users"
+        ).innerHTML = `
+
+            <div class="empty">
+
+                İstifadəçilər yüklənmədi.
+
+                <br>
+
+                <small>
+                    ${escapeHtml(error.message)}
+                </small>
+
+            </div>
+
+        `;
+
+    }
+}
+
+
+/* =========================
+   RECEIPT
+========================= */
+
+function viewReceipt(receipt){
+
+    let path = receipt;
+
+    if(!path.startsWith("/")){
+        path = "/" + path;
+    }
+
+
+    document.getElementById(
+        "receiptImage"
+    ).src = path;
+
+
+    document.getElementById(
+        "receiptModal"
+    ).classList.add("active");
+}
+
+
+function closeReceipt(){
+
+    document.getElementById(
+        "receiptModal"
+    ).classList.remove("active");
+
+
+    document.getElementById(
+        "receiptImage"
+    ).src = "";
+}
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+async function logout(){
+
+    try{
+
+        await fetch(
+            "/api/logout",
+            {
+                method:"POST",
+                credentials:"include"
+            }
+        );
+
+    }catch{}
+
+    window.location.href =
+        "/login.html";
+}
+
+
+/* =========================
+   SECURITY
+========================= */
+
+function escapeHtml(value){
+
+    return String(value)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+
+}
+
+
+function escapeJs(value){
+
+    return String(value)
+        .replaceAll("\\","\\\\")
+        .replaceAll("'","\\'");
+
+}
+
+
+/* =========================
+   DATE
+========================= */
+
+function formatDate(value){
+
+    const date =
+        new Date(value);
+
+
+    if(
+        Number.isNaN(
+            date.getTime()
+        )
+    ){
+        return value;
+    }
+
+
+    return date.toLocaleString(
+        "az-AZ"
+    );
+}
+
+
+/* =========================
+   MODAL CLICK
+========================= */
+
+document.getElementById(
+    "receiptModal"
+).addEventListener(
+    "click",
+    function(event){
+
+        if(event.target === this){
+            closeReceipt();
+        }
+
+    }
+);
+
+
+/* =========================
+   PROMO ENTER
+========================= */
+
+document.getElementById(
+    "promoCode"
+).addEventListener(
+    "keydown",
+    function(event){
+
+        if(event.key === "Enter"){
+            createPromo();
+        }
+
+    }
+);
+
+
+/* =========================
+   START ADMIN
+========================= */
+
+async function startAdmin(){
+
+    await loadPromoCodes();
+
+    await loadSupportTickets();
+
+    await loadDeposits();
+
+    await loadWithdrawals();
+
+    await loadUsers();
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+startAdmin();
+
+</script>
+
+</body>
+</html>
