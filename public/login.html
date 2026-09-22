@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="az">
 <head>
   <meta charset="UTF-8">
@@ -23,6 +24,92 @@
 
       background:
         radial-gradient(circle at top, #26336e 0%, #0b1025 42%, #03040a 100%);
+    }
+
+    .language-box {
+      position: fixed;
+      top: 22px;
+      right: 22px;
+      z-index: 1000;
+    }
+
+    .language-button {
+      width: auto;
+      margin: 0;
+
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      padding: 10px 14px;
+
+      background: rgba(17, 22, 44, .95);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 12px;
+
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+
+      cursor: pointer;
+    }
+
+    .language-button:hover {
+      opacity: 1;
+      transform: none;
+    }
+
+    .language-menu {
+      display: none;
+
+      position: absolute;
+      top: 50px;
+      right: 0;
+
+      min-width: 145px;
+
+      padding: 7px;
+
+      background: rgba(10, 15, 30, .98);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 13px;
+
+      box-shadow: 0 15px 40px rgba(0,0,0,.5);
+    }
+
+    .language-menu.active {
+      display: block;
+    }
+
+    .language-option {
+      width: 100%;
+      margin: 0;
+
+      display: flex;
+      align-items: center;
+      gap: 9px;
+
+      padding: 10px;
+
+      background: transparent;
+      border: 0;
+      border-radius: 8px;
+
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .language-option:hover {
+      background: rgba(104,119,255,.15);
+      opacity: 1;
+    }
+
+    .flag {
+      font-size: 19px;
     }
 
     .box {
@@ -80,7 +167,7 @@
       border-color: #6877ff;
     }
 
-    button {
+    .login-button {
       width: 100%;
       margin-top: 22px;
       padding: 14px;
@@ -97,7 +184,7 @@
       cursor: pointer;
     }
 
-    button:hover {
+    .login-button:hover {
       opacity: .9;
     }
 
@@ -139,65 +226,303 @@
       font-size: 13px;
     }
   </style>
+
 </head>
 
 <body>
 
+  <div class="language-box">
+
+```
+<button
+  class="language-button"
+  onclick="toggleLanguageMenu()"
+  type="button">
+
+  <span id="currentFlag">🇦🇿</span>
+  <span id="currentLanguage">AZE</span>
+  <span>▼</span>
+
+</button>
+
+<div
+  class="language-menu"
+  id="languageMenu">
+
+  <button
+    class="language-option"
+    type="button"
+    onclick="changeLanguage('az')">
+
+    <span class="flag">🇦🇿</span>
+    <span>AZE</span>
+
+  </button>
+
+  <button
+    class="language-option"
+    type="button"
+    onclick="changeLanguage('en')">
+
+    <span class="flag">🇬🇧</span>
+    <span>ENG</span>
+
+  </button>
+
+  <button
+    class="language-option"
+    type="button"
+    onclick="changeLanguage('ru')">
+
+    <span class="flag">🇷🇺</span>
+    <span>RUS</span>
+
+  </button>
+
+</div>
+```
+
+  </div>
+
   <div class="box">
 
-    <div class="logo">
-      Car<span>Cash</span>
-    </div>
+```
+<div class="logo">
+  Car<span>Cash</span>
+</div>
 
-    <h1>Login</h1>
+<h1 id="loginTitle">Giriş</h1>
 
-    <form id="loginForm">
+<form id="loginForm">
 
-      <label>Email</label>
+  <label id="emailLabel">Email</label>
 
-      <input
-        id="email"
-        type="email"
-        placeholder="your@email.com"
-        required
-      >
+  <input
+    id="email"
+    type="email"
+    placeholder="your@email.com"
+    required
+  >
 
-      <label>Password</label>
+  <label id="passwordLabel">Şifrə</label>
 
-      <input
-        id="password"
-        type="password"
-        placeholder="Your password"
-        required
-      >
+  <input
+    id="password"
+    type="password"
+    placeholder="Şifrəniz"
+    required
+  >
 
-      <button type="submit">
-        Login
-      </button>
+  <button
+    class="login-button"
+    id="loginButton"
+    type="submit">
 
-    </form>
+    Giriş
 
-    <div
-      id="error"
-      class="error">
-    </div>
+  </button>
 
-    <div class="bottom">
-      Don't have an account?
-      <a href="/register.html">
-        Register
-      </a>
-    </div>
+</form>
 
-    <a
-      class="home"
-      href="/">
-      ← Back to CarCash
-    </a>
+
+<div
+  id="error"
+  class="error">
+</div>
+
+
+<div class="bottom">
+
+  <span id="noAccount">
+    Hesabın yoxdur?
+  </span>
+
+  <a
+    href="/register.html"
+    id="registerLink">
+
+    Qeydiyyat
+
+  </a>
+
+</div>
+
+
+<a
+  class="home"
+  href="/"
+  id="homeLink">
+
+  ← CarCash-a qayıt
+
+</a>
+```
 
   </div>
 
 <script>
+
+const translations = {
+
+  az: {
+    flag: "🇦🇿",
+    name: "AZE",
+
+    title: "Giriş",
+
+    emailLabel: "Email",
+
+    passwordLabel: "Şifrə",
+
+    passwordPlaceholder: "Şifrəniz",
+
+    loginButton: "Giriş",
+
+    noAccount: "Hesabın yoxdur?",
+
+    register: "Qeydiyyat",
+
+    home: "← CarCash-a qayıt",
+
+    loginFailed: "Giriş uğursuz oldu.",
+
+    serverError: "Serverə qoşulmaq mümkün olmadı."
+  },
+
+
+  en: {
+    flag: "🇬🇧",
+    name: "ENG",
+
+    title: "Login",
+
+    emailLabel: "Email",
+
+    passwordLabel: "Password",
+
+    passwordPlaceholder: "Your password",
+
+    loginButton: "Login",
+
+    noAccount: "Don't have an account?",
+
+    register: "Register",
+
+    home: "← Back to CarCash",
+
+    loginFailed: "Login failed.",
+
+    serverError: "Unable to connect to the server."
+  },
+
+
+  ru: {
+    flag: "🇷🇺",
+    name: "RUS",
+
+    title: "Вход",
+
+    emailLabel: "Email",
+
+    passwordLabel: "Пароль",
+
+    passwordPlaceholder: "Ваш пароль",
+
+    loginButton: "Войти",
+
+    noAccount: "Нет аккаунта?",
+
+    register: "Регистрация",
+
+    home: "← Вернуться в CarCash",
+
+    loginFailed: "Не удалось войти.",
+
+    serverError: "Не удалось подключиться к серверу."
+  }
+
+};
+
+
+function toggleLanguageMenu() {
+
+  document
+    .getElementById("languageMenu")
+    .classList.toggle("active");
+
+}
+
+
+function changeLanguage(language) {
+
+  const data = translations[language];
+
+  if (!data) return;
+
+
+  document.documentElement.lang = language;
+
+
+  document.getElementById("currentFlag").textContent =
+    data.flag;
+
+  document.getElementById("currentLanguage").textContent =
+    data.name;
+
+
+  document.getElementById("loginTitle").textContent =
+    data.title;
+
+  document.getElementById("emailLabel").textContent =
+    data.emailLabel;
+
+  document.getElementById("passwordLabel").textContent =
+    data.passwordLabel;
+
+  document.getElementById("password").placeholder =
+    data.passwordPlaceholder;
+
+  document.getElementById("loginButton").textContent =
+    data.loginButton;
+
+  document.getElementById("noAccount").textContent =
+    data.noAccount;
+
+  document.getElementById("registerLink").textContent =
+    data.register;
+
+  document.getElementById("homeLink").textContent =
+    data.home;
+
+
+  localStorage.setItem(
+    "carcash_language",
+    language
+  );
+
+
+  document
+    .getElementById("languageMenu")
+    .classList.remove("active");
+
+}
+
+
+document.addEventListener("click", function(event) {
+
+  const box =
+    document.querySelector(".language-box");
+
+  if (!box.contains(event.target)) {
+
+    document
+      .getElementById("languageMenu")
+      .classList.remove("active");
+
+  }
+
+});
+
 
 document
   .getElementById("loginForm")
@@ -205,21 +530,26 @@ document
 
     e.preventDefault();
 
+
     const email =
       document
         .getElementById("email")
         .value
         .trim();
 
+
     const password =
       document
         .getElementById("password")
         .value;
 
+
     const errorBox =
       document.getElementById("error");
 
+
     errorBox.style.display = "none";
+
 
     try {
 
@@ -239,30 +569,49 @@ document
 
         });
 
+
       const data =
         await response.json();
 
+
       if (!response.ok) {
 
+        const currentLanguage =
+          localStorage.getItem("carcash_language") || "az";
+
         errorBox.textContent =
-          data.error || "Login failed.";
+          data.error ||
+          translations[currentLanguage].loginFailed;
 
         errorBox.style.display = "block";
 
         return;
       }
 
-      window.location.href = "/dashboard.html";
+
+      window.location.href =
+        "/dashboard.html";
+
 
     } catch (error) {
 
+      const currentLanguage =
+        localStorage.getItem("carcash_language") || "az";
+
       errorBox.textContent =
-        "Serverə qoşulmaq mümkün olmadı.";
+        translations[currentLanguage].serverError;
 
       errorBox.style.display = "block";
+
     }
 
   });
+
+
+const savedLanguage =
+  localStorage.getItem("carcash_language") || "az";
+
+changeLanguage(savedLanguage);
 
 </script>
 
