@@ -1,7 +1,7 @@
 const express = require("express");
 const session = require("express-session");
 const bcrypt = require("bcryptjs");
-const Database = require("better-sqlite3");
+const { Pool } = require("pg");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
@@ -9,8 +9,27 @@ require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const HOST = "0.0.0.0";
 
-const db = new Database("denix.sqlite");
+/* =========================
+   POSTGRESQL
+========================= */
+
+if (!process.env.DATABASE_URL) {
+  console.error("DATABASE_URL tapılmadı.");
+  process.exit(1);
+}
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
+
+/* =========================
+   MIDDLEWARE
+========================= */
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -85,131 +104,108 @@ app.use(
 );
 
 /* =========================
-   DATABASE
+   DATABASE INIT
 ========================= */
 
-db.exec(`
-CREATE TABLE IF NOT EXISTS users (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL,
-  email TEXT UNIQUE NOT NULL,
-  password_hash TEXT NOT NULL,
-  balance REAL DEFAULT 0,
-  created_at TEXT DEFAULT CURRENT_TIMESTAMP
-);
+async function initDatabase() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS users (
+      id SERIAL PRIMARY KEY,
+      name TEXT NOT NULL,
+      email TEXT UNIQUE NOT NULL,
+      password_hash TEXT NOT NULL,
+      balance DOUBLE PRECISION DEFAULT 0,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
 
-CREATE TABLE IF NOT EXISTS cars (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT UNIQUE NOT NULL,
-  price REAL NOT NULL,
-  daily REAL NOT NULL
-);
+    CREATE TABLE IF NOT EXISTS cars (
+      id SERIAL PRIMARY KEY,
+      name TEXT UNIQUE NOT NULL,
+      price DOUBLE PRECISION NOT NULL,
+      daily DOUBLE PRECISION NOT NULL
+    );
 
-CREATE TABLE IF NOT EXISTS user_cars (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  user_id INTEGER NOT NULL,
-  car_id INTEGER NOT NULL,
-  purchased_at TEXT DEFAULT CURRENT_TIMESTAMP,
-  last_credited_at TEXT DEFAULT CURRENT_TIMESTAMP
-);
+    CREATE TABLE IF NOT EXISTS user_cars (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL,
+      car_id INTEGER NOT NULL,
+      purchased_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      last_credited_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
 
-CREATE TABLE IF NOT EXISTS deposits (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  user_id INTEGER NOT NULL,
-  amount REAL NOT NULL,
-  order_id TEXT,
-  transaction_id TEXT,
-  status TEXT DEFAULT 'pending',
-  receipt_path TEXT,
-  admin_note TEXT,
-  created_at TEXT DEFAULT CURRENT_TIMESTAMP
-);
+    CREATE TABLE IF NOT EXISTS deposits (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL,
+      amount DOUBLE PRECISION NOT NULL,
+      order_id TEXT,
+      transaction_id TEXT,
+      status TEXT DEFAULT 'pending',
+      receipt_path TEXT,
+      admin_note TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
 
-CREATE TABLE IF NOT EXISTS withdrawals (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  user_id INTEGER NOT NULL,
-  amount REAL NOT NULL,
-  method TEXT,
-  account TEXT,
-  payout_info TEXT,
-  status TEXT DEFAULT 'pending',
-  admin_note TEXT,
-  created_at TEXT DEFAULT CURRENT_TIMESTAMP
-);
+    CREATE TABLE IF NOT EXISTS withdrawals (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL,
+      amount DOUBLE PRECISION NOT NULL,
+      method TEXT,
+      account TEXT,
+      payout_info TEXT,
+      status TEXT DEFAULT 'pending',
+      admin_note TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
 
-CREATE TABLE IF NOT EXISTS promo_codes (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  code TEXT UNIQUE NOT NULL,
-  amount REAL NOT NULL,
-  max_uses INTEGER DEFAULT 1,
-  used_count INTEGER DEFAULT 0,
-  active INTEGER DEFAULT 1,
-  created_at TEXT DEFAULT CURRENT_TIMESTAMP
-);
+    CREATE TABLE IF NOT EXISTS promo_codes (
+      id SERIAL PRIMARY KEY,
+      code TEXT UNIQUE NOT NULL,
+      amount DOUBLE PRECISION NOT NULL,
+      max_uses INTEGER DEFAULT 1,
+      used_count INTEGER DEFAULT 0,
+      active INTEGER DEFAULT 1,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
 
-CREATE TABLE IF NOT EXISTS promo_code_uses (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  promo_id INTEGER NOT NULL,
-  user_id INTEGER NOT NULL,
-  amount REAL NOT NULL,
-  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    CREATE TABLE IF NOT EXISTS promo_code_uses (
+      id SERIAL PRIMARY KEY,
+      promo_id INTEGER NOT NULL,
+      user_id INTEGER NOT NULL,
+      amount DOUBLE PRECISION NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(promo_id, user_id),
+      FOREIGN KEY(promo_id)
+        REFERENCES promo_codes(id),
+      FOREIGN KEY(user_id)
+        REFERENCES users(id)
+    );
 
-  UNIQUE(promo_id, user_id),
+    CREATE TABLE IF NOT EXISTS support_tickets (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL,
+      subject TEXT NOT NULL,
+      category TEXT NOT NULL DEFAULT 'Other',
+      status TEXT NOT NULL DEFAULT 'open',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(user_id)
+        REFERENCES users(id)
+    );
 
-  FOREIGN KEY(promo_id)
-    REFERENCES promo_codes(id),
+    CREATE TABLE IF NOT EXISTS support_messages (
+      id SERIAL PRIMARY KEY,
+      ticket_id INTEGER NOT NULL,
+      sender_type TEXT NOT NULL,
+      sender_id INTEGER NOT NULL,
+      message TEXT NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(ticket_id)
+        REFERENCES support_tickets(id)
+    );
+  `);
 
-  FOREIGN KEY(user_id)
-    REFERENCES users(id)
-);
-
-CREATE TABLE IF NOT EXISTS support_tickets (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  user_id INTEGER NOT NULL,
-  subject TEXT NOT NULL,
-  category TEXT NOT NULL DEFAULT 'Other',
-  status TEXT NOT NULL DEFAULT 'open',
-  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-  updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-
-  FOREIGN KEY(user_id)
-    REFERENCES users(id)
-);
-
-CREATE TABLE IF NOT EXISTS support_messages (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  ticket_id INTEGER NOT NULL,
-  sender_type TEXT NOT NULL,
-  sender_id INTEGER NOT NULL,
-  message TEXT NOT NULL,
-  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-
-  FOREIGN KEY(ticket_id)
-    REFERENCES support_tickets(id)
-);
-`);
-
-/* =========================
-   OLD DATABASE COMPATIBILITY
-========================= */
-
-try {
-  db.prepare(
-    "ALTER TABLE deposits ADD COLUMN receipt_path TEXT"
-  ).run();
-} catch (e) {}
-
-try {
-  db.prepare(
-    "ALTER TABLE deposits ADD COLUMN admin_note TEXT"
-  ).run();
-} catch (e) {}
-
-try {
-  db.prepare(
-    "ALTER TABLE users ADD COLUMN name TEXT"
-  ).run();
-} catch (e) {}
+  await setupCars();
+}
 
 /* =========================
    LEVEL CAR SYSTEM
@@ -220,10 +216,9 @@ const cars = [
     oldName: "City Mini",
     name: "LEVEL 1",
     price: 5,
-    monthly: 7.50,
+    monthly: 7.5,
     image: "/cars/car-5.jpg"
   },
-
   {
     oldName: "Street X",
     name: "LEVEL 2",
@@ -231,7 +226,6 @@ const cars = [
     monthly: 17,
     image: "/cars/car-10.jpg"
   },
-
   {
     oldName: "Turbo S",
     name: "LEVEL 3",
@@ -239,7 +233,6 @@ const cars = [
     monthly: 35,
     image: "/cars/car-20.jpg"
   },
-
   {
     oldName: "Sport GT",
     name: "LEVEL 4",
@@ -247,7 +240,6 @@ const cars = [
     monthly: 95,
     image: "/cars/car-40.jpg"
   },
-
   {
     oldName: "Super R",
     name: "LEVEL 5",
@@ -255,7 +247,6 @@ const cars = [
     monthly: 195,
     image: "/cars/car-80.jpg"
   },
-
   {
     oldName: "Hyper X",
     name: "LEVEL 6",
@@ -263,7 +254,6 @@ const cars = [
     monthly: 495,
     image: "/cars/car-160.jpg"
   },
-
   {
     oldName: "Ultra G",
     name: "LEVEL 7",
@@ -271,7 +261,6 @@ const cars = [
     monthly: 1005,
     image: "/cars/car-320.jpg"
   },
-
   {
     oldName: "Luxury King",
     name: "LEVEL 8",
@@ -281,10 +270,6 @@ const cars = [
   }
 ];
 
-/* =========================
-   DAILY INCOME
-========================= */
-
 for (const car of cars) {
   car.daily = Number(
     (car.monthly / 30).toFixed(10)
@@ -292,373 +277,304 @@ for (const car of cars) {
 }
 
 /* =========================
-   CAR DATABASE CLEANUP
+   CAR SETUP
 ========================= */
 
-const setupCars = db.transaction(() => {
+async function setupCars() {
+  const client = await pool.connect();
 
-  /*
-    LEVEL adlarının siyahısı.
-  */
+  try {
+    await client.query("BEGIN");
 
-  const allowedNames =
-    cars.map(car => car.name);
+    const allowedNames =
+      cars.map(car => car.name);
 
-  const placeholders =
-    allowedNames
-      .map(() => "?")
-      .join(",");
+    for (const target of cars) {
+      const oldResult = await client.query(
+        `
+        SELECT *
+        FROM cars
+        WHERE name = $1
+        ORDER BY id ASC
+        LIMIT 1
+        `,
+        [target.oldName]
+      );
 
+      const levelResult = await client.query(
+        `
+        SELECT *
+        FROM cars
+        WHERE name = $1
+        ORDER BY id ASC
+        LIMIT 1
+        `,
+        [target.name]
+      );
 
-  /*
-    1. Köhnə maşınları LEVEL-lərə çevir.
-    
-    Əgər LEVEL artıq varsa:
-    köhnə maşına sahib istifadəçiləri
-    LEVEL maşınına keçir və köhnə sətri sil.
-  */
+      const oldCar = oldResult.rows[0];
+      const levelCar = levelResult.rows[0];
 
-  for (const target of cars) {
+      if (oldCar && !levelCar) {
+        await client.query(
+          `
+          UPDATE cars
+          SET name = $1,
+              price = $2,
+              daily = $3
+          WHERE id = $4
+          `,
+          [
+            target.name,
+            target.price,
+            target.daily,
+            oldCar.id
+          ]
+        );
+      }
 
-    const oldCar = db.prepare(`
-      SELECT *
-      FROM cars
-      WHERE name = ?
-      ORDER BY id ASC
-      LIMIT 1
-    `).get(target.oldName);
+      if (
+        oldCar &&
+        levelCar &&
+        Number(oldCar.id) !== Number(levelCar.id)
+      ) {
+        await client.query(
+          `
+          UPDATE user_cars
+          SET car_id = $1
+          WHERE car_id = $2
+          `,
+          [
+            levelCar.id,
+            oldCar.id
+          ]
+        );
 
-    const levelCar = db.prepare(`
-      SELECT *
-      FROM cars
-      WHERE name = ?
-      ORDER BY id ASC
-      LIMIT 1
-    `).get(target.name);
+        await client.query(
+          `
+          DELETE FROM cars
+          WHERE id = $1
+          `,
+          [oldCar.id]
+        );
+      }
+    }
 
+    for (const target of cars) {
+      const result = await client.query(
+        `
+        SELECT id
+        FROM cars
+        WHERE name = $1
+        ORDER BY id ASC
+        LIMIT 1
+        `,
+        [target.name]
+      );
 
-    /*
-      Köhnə maşın var,
-      LEVEL hələ yoxdur.
-    */
+      if (!result.rows[0]) {
+        await client.query(
+          `
+          INSERT INTO cars
+          (name, price, daily)
+          VALUES ($1, $2, $3)
+          `,
+          [
+            target.name,
+            target.price,
+            target.daily
+          ]
+        );
+      }
+    }
 
-    if (oldCar && !levelCar) {
-
-      db.prepare(`
+    for (const target of cars) {
+      await client.query(
+        `
         UPDATE cars
-        SET
-          name = ?,
-          price = ?,
-          daily = ?
-        WHERE id = ?
-      `).run(
-        target.name,
-        target.price,
-        target.daily,
-        oldCar.id
-      );
-
-      continue;
-    }
-
-
-    /*
-      Həm köhnə, həm LEVEL var.
-      Köhnə maşının sahibliyini LEVEL-ə keçir.
-    */
-
-    if (
-      oldCar &&
-      levelCar &&
-      Number(oldCar.id) !== Number(levelCar.id)
-    ) {
-
-      db.prepare(`
-        UPDATE user_cars
-        SET car_id = ?
-        WHERE car_id = ?
-      `).run(
-        levelCar.id,
-        oldCar.id
-      );
-
-
-      db.prepare(`
-        DELETE FROM cars
-        WHERE id = ?
-      `).run(
-        oldCar.id
+        SET price = $1,
+            daily = $2
+        WHERE name = $3
+        `,
+        [
+          target.price,
+          target.daily,
+          target.name
+        ]
       );
     }
-  }
 
+    for (const target of cars) {
+      const result = await client.query(
+        `
+        SELECT id
+        FROM cars
+        WHERE name = $1
+        ORDER BY id ASC
+        `,
+        [target.name]
+      );
 
-  /*
-    2. Çatışmayan LEVEL-ləri yarat.
-  */
+      if (result.rows.length > 1) {
+        const mainId =
+          result.rows[0].id;
 
-  for (const target of cars) {
+        for (
+          let i = 1;
+          i < result.rows.length;
+          i++
+        ) {
+          const duplicateId =
+            result.rows[i].id;
 
-    const existing = db.prepare(`
-      SELECT id
-      FROM cars
-      WHERE name = ?
-      ORDER BY id ASC
-      LIMIT 1
-    `).get(target.name);
+          await client.query(
+            `
+            UPDATE user_cars
+            SET car_id = $1
+            WHERE car_id = $2
+            `,
+            [
+              mainId,
+              duplicateId
+            ]
+          );
 
+          await client.query(
+            `
+            DELETE FROM cars
+            WHERE id = $1
+            `,
+            [duplicateId]
+          );
+        }
+      }
+    }
 
-    if (!existing) {
+    const extraResult =
+      await client.query(
+        `
+        SELECT id, name
+        FROM cars
+        WHERE name <> ALL($1::text[])
+        `,
+        [allowedNames]
+      );
 
-      db.prepare(`
-        INSERT INTO cars
-        (
-          name,
-          price,
-          daily
-        )
-        VALUES (?, ?, ?)
-      `).run(
-        target.name,
-        target.price,
-        target.daily
+    for (const extra of extraResult.rows) {
+      await client.query(
+        `
+        DELETE FROM user_cars
+        WHERE car_id = $1
+        `,
+        [extra.id]
       );
     }
-  }
 
-
-  /*
-    3. Bütün LEVEL-lərin qiymət və
-       daily gəlirini yenilə.
-  */
-
-  for (const target of cars) {
-
-    db.prepare(`
-      UPDATE cars
-      SET
-        price = ?,
-        daily = ?
-      WHERE name = ?
-    `).run(
-      target.price,
-      target.daily,
-      target.name
+    await client.query(
+      `
+      DELETE FROM cars
+      WHERE name <> ALL($1::text[])
+      `,
+      [allowedNames]
     );
-  }
 
-
-  /*
-    4. Duplicate LEVEL-ləri təmizlə.
-  */
-
-  for (const target of cars) {
-
-    const rows = db.prepare(`
-      SELECT id
-      FROM cars
-      WHERE name = ?
-      ORDER BY id ASC
-    `).all(target.name);
-
-
-    if (rows.length <= 1) {
-      continue;
-    }
-
-
-    const mainId =
-      rows[0].id;
-
-
-    for (let i = 1; i < rows.length; i++) {
-
-      const duplicateId =
-        rows[i].id;
-
-
-      /*
-        Duplicate LEVEL-ə sahib
-        istifadəçiləri əsas LEVEL-ə keçir.
-      */
-
-      db.prepare(`
-        UPDATE user_cars
-        SET car_id = ?
-        WHERE car_id = ?
-      `).run(
-        mainId,
-        duplicateId
+    for (const target of cars) {
+      const result = await client.query(
+        `
+        SELECT id
+        FROM cars
+        WHERE name = $1
+        ORDER BY id ASC
+        LIMIT 1
+        `,
+        [target.name]
       );
 
-
-      /*
-        Duplicate sətri sil.
-      */
-
-      db.prepare(`
-        DELETE FROM cars
-        WHERE id = ?
-      `).run(
-        duplicateId
-      );
+      if (!result.rows[0]) {
+        await client.query(
+          `
+          INSERT INTO cars
+          (name, price, daily)
+          VALUES ($1, $2, $3)
+          `,
+          [
+            target.name,
+            target.price,
+            target.daily
+          ]
+        );
+      } else {
+        await client.query(
+          `
+          UPDATE cars
+          SET price = $1,
+              daily = $2
+          WHERE id = $3
+          `,
+          [
+            target.price,
+            target.daily,
+            result.rows[0].id
+          ]
+        );
+      }
     }
-  }
 
-
-  /*
-    5. ƏN VACİB:
-    
-    LEVEL 1-8 xaricində qalan
-    bütün maşınları tap.
-  */
-
-  const extraCars = db.prepare(`
-    SELECT id, name
-    FROM cars
-    WHERE name NOT IN (${placeholders})
-  `).all(
-    ...allowedNames
-  );
-
-
-  /*
-    Əlavə maşınların user_cars
-    əlaqələrini sil.
-  */
-
-  for (const extraCar of extraCars) {
-
-    db.prepare(`
+    await client.query(
+      `
       DELETE FROM user_cars
-      WHERE car_id = ?
-    `).run(
-      extraCar.id
+      WHERE car_id IN (
+        SELECT id
+        FROM cars
+        WHERE name <> ALL($1::text[])
+      )
+      `,
+      [allowedNames]
     );
-  }
 
+    await client.query(
+      `
+      DELETE FROM cars
+      WHERE name <> ALL($1::text[])
+      `,
+      [allowedNames]
+    );
 
-  /*
-    İndi əlavə maşınların özlərini sil.
-  */
+    await client.query("COMMIT");
 
-  db.prepare(`
-    DELETE FROM cars
-    WHERE name NOT IN (${placeholders})
-  `).run(
-    ...allowedNames
-  );
-
-
-  /*
-    6. Son yoxlama:
-    LEVEL 1-8 hamısı mövcuddur.
-  */
-
-  for (const target of cars) {
-
-    const level = db.prepare(`
-      SELECT id
-      FROM cars
-      WHERE name = ?
-      ORDER BY id ASC
-      LIMIT 1
-    `).get(target.name);
-
-
-    if (!level) {
-
-      db.prepare(`
-        INSERT INTO cars
-        (
-          name,
-          price,
-          daily
-        )
-        VALUES (?, ?, ?)
-      `).run(
-        target.name,
-        target.price,
-        target.daily
+    const finalCars =
+      await pool.query(
+        `
+        SELECT id, name, price, daily
+        FROM cars
+        ORDER BY price ASC
+        `
       );
 
-    } else {
+    console.log("");
+    console.log("================================");
+    console.log(" CAR SYSTEM CLEANED");
+    console.log("================================");
 
-      db.prepare(`
-        UPDATE cars
-        SET
-          price = ?,
-          daily = ?
-        WHERE id = ?
-      `).run(
-        target.price,
-        target.daily,
-        level.id
+    for (const car of finalCars.rows) {
+      console.log(
+        `${car.name} | ₼${Number(car.price).toFixed(2)} | daily ₼${Number(car.daily).toFixed(8)}`
       );
     }
-  }
-
-
-  /*
-    7. Bir dəfə də son təmizləmə.
-  */
-
-  db.prepare(`
-    DELETE FROM user_cars
-    WHERE car_id IN (
-      SELECT id
-      FROM cars
-      WHERE name NOT IN (${placeholders})
-    )
-  `).run(
-    ...allowedNames
-  );
-
-
-  db.prepare(`
-    DELETE FROM cars
-    WHERE name NOT IN (${placeholders})
-  `).run(
-    ...allowedNames
-  );
-
-
-  /*
-    8. Terminalda nəticəni göstər.
-  */
-
-  const finalCars = db.prepare(`
-    SELECT
-      id,
-      name,
-      price,
-      daily
-    FROM cars
-    ORDER BY price ASC
-  `).all();
-
-
-  console.log("");
-  console.log("================================");
-  console.log("       CAR SYSTEM CLEANED");
-  console.log("================================");
-
-  for (const car of finalCars) {
 
     console.log(
-      `${car.name} | ₼${Number(car.price).toFixed(2)} | daily ₼${Number(car.daily).toFixed(8)}`
+      `TOTAL CARS: ${finalCars.rows.length}`
     );
+
+    console.log("================================");
+    console.log("");
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
   }
-
-  console.log(
-    `TOTAL CARS: ${finalCars.length}`
-  );
-
-  console.log("================================");
-  console.log("");
-});
-
-setupCars();
+}
 
 /* =========================
    TIME / EARNINGS
@@ -668,28 +584,23 @@ const DAY_MS =
   24 * 60 * 60 * 1000;
 
 function parseSqlDate(value) {
+  if (!value) return null;
 
-  if (!value) {
-    return null;
+  if (value instanceof Date) {
+    return value;
   }
 
   const text =
     String(value).trim();
 
-  if (!text) {
-    return null;
-  }
+  if (!text) return null;
 
   const date =
     new Date(
       text.replace(" ", "T") + "Z"
     );
 
-  if (
-    Number.isNaN(
-      date.getTime()
-    )
-  ) {
+  if (Number.isNaN(date.getTime())) {
     return null;
   }
 
@@ -700,31 +611,22 @@ function calculateCarEarned(
   lastCreditedAt,
   daily
 ) {
-
   const last =
-    parseSqlDate(
-      lastCreditedAt
-    );
+    parseSqlDate(lastCreditedAt);
 
-  if (!last) {
-    return 0;
-  }
+  if (!last) return 0;
 
   const elapsed =
     Date.now() -
     last.getTime();
 
-  if (elapsed <= 0) {
-    return 0;
-  }
+  if (elapsed <= 0) return 0;
 
   const dailyAmount =
     Number(daily || 0);
 
   if (
-    !Number.isFinite(
-      dailyAmount
-    ) ||
+    !Number.isFinite(dailyAmount) ||
     dailyAmount <= 0
   ) {
     return 0;
@@ -732,26 +634,38 @@ function calculateCarEarned(
 
   return Math.max(
     0,
-    (
-      elapsed /
-      DAY_MS
-    ) *
-    dailyAmount
+    (elapsed / DAY_MS) *
+      dailyAmount
   );
 }
 
 function getNowSql() {
-
-  return new Date()
-    .toISOString()
-    .slice(0, 19)
-    .replace("T", " ");
+  return new Date();
 }
 
-function getUserCarsWithEarnings(userId) {
+async function getUser(userId) {
+  const result =
+    await pool.query(
+      `
+      SELECT
+        id,
+        name,
+        email,
+        balance,
+        created_at
+      FROM users
+      WHERE id = $1
+      `,
+      [userId]
+    );
 
-  const userCars =
-    db.prepare(`
+  return result.rows[0];
+}
+
+async function getUserCarsWithEarnings(userId) {
+  const result =
+    await pool.query(
+      `
       SELECT
         uc.id,
         uc.purchased_at,
@@ -767,13 +681,14 @@ function getUserCarsWithEarnings(userId) {
       JOIN cars c
         ON c.id = uc.car_id
 
-      WHERE uc.user_id = ?
+      WHERE uc.user_id = $1
 
       ORDER BY c.price ASC, uc.id ASC
-    `).all(userId);
+      `,
+      [userId]
+    );
 
-  return userCars.map(car => {
-
+  return result.rows.map(car => {
     const earned =
       calculateCarEarned(
         car.last_credited_at,
@@ -802,26 +717,24 @@ function getUserCarsWithEarnings(userId) {
   });
 }
 
-function getTotalPendingEarnings(userId) {
-
-  const userCars =
-    db.prepare(`
+async function getTotalPendingEarnings(userId) {
+  const result =
+    await pool.query(
+      `
       SELECT
         uc.last_credited_at,
         c.daily
-
       FROM user_cars uc
-
       JOIN cars c
         ON c.id = uc.car_id
-
-      WHERE uc.user_id = ?
-    `).all(userId);
+      WHERE uc.user_id = $1
+      `,
+      [userId]
+    );
 
   let total = 0;
 
-  for (const car of userCars) {
-
+  for (const car of result.rows) {
     total +=
       calculateCarEarned(
         car.last_credited_at,
@@ -834,42 +747,19 @@ function getTotalPendingEarnings(userId) {
   );
 }
 
-/* =========================
-   USER HELPERS
-========================= */
-
-function getUser(userId) {
-
-  return db
-    .prepare(`
-      SELECT
-        id,
-        name,
-        email,
-        balance,
-        created_at
-      FROM users
-      WHERE id = ?
-    `)
-    .get(userId);
-}
-
-function getUserWithCars(userId) {
-
+async function getUserWithCars(userId) {
   const user =
-    getUser(userId);
+    await getUser(userId);
 
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
 
   const userCars =
-    getUserCarsWithEarnings(
+    await getUserCarsWithEarnings(
       userId
     );
 
   const pendingEarnings =
-    getTotalPendingEarnings(
+    await getTotalPendingEarnings(
       userId
     );
 
@@ -898,39 +788,37 @@ function getUserWithCars(userId) {
   };
 }
 
-function requireLogin(
+/* =========================
+   AUTH HELPERS
+========================= */
+
+async function requireLogin(
   req,
   res,
   next
 ) {
-
   if (!req.session.userId) {
-
     return res.status(401).json({
-      error:
-        "Giriş etməlisən."
+      error: "Giriş etməlisən."
     });
   }
 
   next();
 }
 
-function requireAdmin(
+async function requireAdmin(
   req,
   res,
   next
 ) {
-
   if (!req.session.userId) {
-
     return res.status(401).json({
-      error:
-        "Giriş etməlisən."
+      error: "Giriş etməlisən."
     });
   }
 
   const admin =
-    getUser(
+    await getUser(
       req.session.userId
     );
 
@@ -939,7 +827,6 @@ function requireAdmin(
     admin.email !==
       process.env.ADMIN_EMAIL
   ) {
-
     return res.status(403).json({
       error:
         "Admin icazəsi yoxdur."
@@ -950,15 +837,13 @@ function requireAdmin(
 }
 
 /* =========================
-   AUTH
+   REGISTER
 ========================= */
 
 app.post(
   "/api/register",
   async (req, res) => {
-
     try {
-
       const {
         name,
         email,
@@ -970,17 +855,13 @@ app.post(
         !email ||
         !password
       ) {
-
         return res.status(400).json({
           error:
             "Ad, email və şifrə daxil et."
         });
       }
 
-      if (
-        password.length < 6
-      ) {
-
+      if (password.length < 6) {
         return res.status(400).json({
           error:
             "Şifrə ən azı 6 simvol olmalıdır."
@@ -996,14 +877,16 @@ app.post(
           .toLowerCase();
 
       const exists =
-        db.prepare(
-          "SELECT id FROM users WHERE email = ?"
-        ).get(
-          cleanEmail
+        await pool.query(
+          `
+          SELECT id
+          FROM users
+          WHERE email = $1
+          `,
+          [cleanEmail]
         );
 
-      if (exists) {
-
+      if (exists.rows[0]) {
         return res.status(400).json({
           error:
             "Bu email artıq qeydiyyatdan keçib."
@@ -1017,30 +900,40 @@ app.post(
         );
 
       const result =
-        db.prepare(`
+        await pool.query(
+          `
           INSERT INTO users
-          (name, email, password_hash, balance)
-          VALUES (?, ?, ?, 0)
-        `).run(
-          cleanName,
-          cleanEmail,
-          hash
+          (
+            name,
+            email,
+            password_hash,
+            balance
+          )
+          VALUES ($1, $2, $3, 0)
+          RETURNING id
+          `,
+          [
+            cleanName,
+            cleanEmail,
+            hash
+          ]
         );
 
+      const userId =
+        result.rows[0].id;
+
       req.session.userId =
-        result.lastInsertRowid;
+        userId;
 
       res.json({
         ok: true,
 
         user:
-          getUserWithCars(
-            result.lastInsertRowid
+          await getUserWithCars(
+            userId
           )
       });
-
     } catch (error) {
-
       console.error(
         "REGISTER ERROR:",
         error
@@ -1054,12 +947,14 @@ app.post(
   }
 );
 
+/* =========================
+   LOGIN
+========================= */
+
 app.post(
   "/api/login",
   async (req, res) => {
-
     try {
-
       const {
         email,
         password
@@ -1069,35 +964,33 @@ app.post(
         !email ||
         !password
       ) {
-
         return res.status(400).json({
           error:
             "Email və şifrə daxil et."
         });
       }
 
-      const user =
-        db.prepare(
-          "SELECT * FROM users WHERE email = ?"
-        ).get(
-          String(email)
-            .trim()
-            .toLowerCase()
+      const result =
+        await pool.query(
+          `
+          SELECT *
+          FROM users
+          WHERE email = $1
+          `,
+          [
+            String(email)
+              .trim()
+              .toLowerCase()
+          ]
         );
 
-      if (!user) {
+      const user =
+        result.rows[0];
 
+      if (!user) {
         return res.status(401).json({
           error:
             "Email və ya şifrə yanlışdır."
-        });
-      }
-
-      if (!user.password_hash) {
-
-        return res.status(400).json({
-          error:
-            "Bu hesabda şifrə məlumatı tapılmadı."
         });
       }
 
@@ -1108,7 +1001,6 @@ app.post(
         );
 
       if (!valid) {
-
         return res.status(401).json({
           error:
             "Email və ya şifrə yanlışdır."
@@ -1122,13 +1014,11 @@ app.post(
         ok: true,
 
         user:
-          getUserWithCars(
+          await getUserWithCars(
             user.id
           )
       });
-
     } catch (error) {
-
       console.error(
         "LOGIN ERROR:",
         error
@@ -1142,12 +1032,14 @@ app.post(
   }
 );
 
+/* =========================
+   LOGOUT
+========================= */
+
 app.post(
   "/api/logout",
   (req, res) => {
-
     req.session.destroy(() => {
-
       res.json({
         ok: true
       });
@@ -1155,14 +1047,17 @@ app.post(
   }
 );
 
+/* =========================
+   ME
+========================= */
+
 app.get(
   "/api/me",
   requireLogin,
-  (req, res) => {
-
+  async (req, res) => {
     res.json({
       user:
-        getUserWithCars(
+        await getUserWithCars(
           req.session.userId
         )
     });
@@ -1176,31 +1071,23 @@ app.get(
 app.get(
   "/api/cars/earnings",
   requireLogin,
-  (req, res) => {
-
+  async (req, res) => {
     try {
-
-      const userId =
-        req.session.userId;
-
       const cars =
-        getUserCarsWithEarnings(
-          userId
+        await getUserCarsWithEarnings(
+          req.session.userId
         );
 
       const total =
         cars.reduce(
           (sum, car) =>
             sum +
-            Number(
-              car.earned || 0
-            ),
+            Number(car.earned || 0),
           0
         );
 
       res.json({
         ok: true,
-
         cars,
 
         total:
@@ -1208,9 +1095,7 @@ app.get(
             total.toFixed(8)
           )
       });
-
     } catch (error) {
-
       console.error(
         "LIVE EARNINGS ERROR:",
         error
@@ -1231,15 +1116,14 @@ app.get(
 app.get(
   "/api/profile",
   requireLogin,
-  (req, res) => {
-
+  async (req, res) => {
     try {
-
       const userId =
         req.session.userId;
 
-      const user =
-        db.prepare(`
+      const userResult =
+        await pool.query(
+          `
           SELECT
             id,
             name,
@@ -1247,19 +1131,24 @@ app.get(
             balance,
             created_at
           FROM users
-          WHERE id = ?
-        `).get(userId);
+          WHERE id = $1
+          `,
+          [userId]
+        );
+
+      const user =
+        userResult.rows[0];
 
       if (!user) {
-
         return res.status(404).json({
           error:
             "İstifadəçi tapılmadı."
         });
       }
 
-      const carStats =
-        db.prepare(`
+      const statsResult =
+        await pool.query(
+          `
           SELECT
             COUNT(*) AS car_count,
             COALESCE(
@@ -1269,30 +1158,30 @@ app.get(
           FROM user_cars uc
           JOIN cars c
             ON c.id = uc.car_id
-          WHERE uc.user_id = ?
-        `).get(userId);
+          WHERE uc.user_id = $1
+          `,
+          [userId]
+        );
+
+      const carStats =
+        statsResult.rows[0];
 
       const pending =
-        getTotalPendingEarnings(
+        await getTotalPendingEarnings(
           userId
         );
 
       res.json({
         profile: {
-
-          id:
-            user.id,
-
-          name:
-            user.name || "",
-
-          email:
-            user.email,
+          id: user.id,
+          name: user.name || "",
+          email: user.email,
 
           balance:
             Number(
-              Number(user.balance || 0)
-                .toFixed(8)
+              Number(
+                user.balance || 0
+              ).toFixed(8)
             ),
 
           pending_earnings:
@@ -1320,9 +1209,7 @@ app.get(
             )
         }
       });
-
     } catch (error) {
-
       console.error(
         "PROFILE GET ERROR:",
         error
@@ -1344,10 +1231,8 @@ app.get(
 app.put(
   "/api/profile",
   requireLogin,
-  (req, res) => {
-
+  async (req, res) => {
     try {
-
       const userId =
         req.session.userId;
 
@@ -1364,7 +1249,6 @@ app.put(
           .toLowerCase();
 
       if (!name) {
-
         return res.status(400).json({
           error:
             "Ad boş ola bilməz."
@@ -1372,7 +1256,6 @@ app.put(
       }
 
       if (name.length < 2) {
-
         return res.status(400).json({
           error:
             "Ad ən azı 2 simvol olmalıdır."
@@ -1380,42 +1263,45 @@ app.put(
       }
 
       if (!email) {
-
         return res.status(400).json({
           error:
             "Email daxil et."
         });
       }
 
-      const emailOwner =
-        db.prepare(`
+      const owner =
+        await pool.query(
+          `
           SELECT id
           FROM users
-          WHERE email = ?
-            AND id != ?
-        `).get(
-          email,
-          userId
+          WHERE email = $1
+            AND id != $2
+          `,
+          [
+            email,
+            userId
+          ]
         );
 
-      if (emailOwner) {
-
+      if (owner.rows[0]) {
         return res.status(400).json({
           error:
             "Bu email artıq başqa hesabda istifadə olunur."
         });
       }
 
-      db.prepare(`
+      await pool.query(
+        `
         UPDATE users
-        SET
-          name = ?,
-          email = ?
-        WHERE id = ?
-      `).run(
-        name,
-        email,
-        userId
+        SET name = $1,
+            email = $2
+        WHERE id = $3
+        `,
+        [
+          name,
+          email,
+          userId
+        ]
       );
 
       res.json({
@@ -1425,13 +1311,11 @@ app.put(
           "Profil məlumatları yeniləndi.",
 
         user:
-          getUserWithCars(
+          await getUserWithCars(
             userId
           )
       });
-
     } catch (error) {
-
       console.error(
         "PROFILE UPDATE ERROR:",
         error
@@ -1454,9 +1338,7 @@ app.put(
   "/api/profile/password",
   requireLogin,
   async (req, res) => {
-
     try {
-
       const userId =
         req.session.userId;
 
@@ -1474,34 +1356,35 @@ app.put(
         !currentPassword ||
         !newPassword
       ) {
-
         return res.status(400).json({
           error:
             "Cari və yeni şifrəni daxil et."
         });
       }
 
-      if (
-        newPassword.length < 6
-      ) {
-
+      if (newPassword.length < 6) {
         return res.status(400).json({
           error:
             "Yeni şifrə ən azı 6 simvol olmalıdır."
         });
       }
 
-      const user =
-        db.prepare(`
+      const result =
+        await pool.query(
+          `
           SELECT
             id,
             password_hash
           FROM users
-          WHERE id = ?
-        `).get(userId);
+          WHERE id = $1
+          `,
+          [userId]
+        );
+
+      const user =
+        result.rows[0];
 
       if (!user) {
-
         return res.status(404).json({
           error:
             "İstifadəçi tapılmadı."
@@ -1515,7 +1398,6 @@ app.put(
         );
 
       if (!valid) {
-
         return res.status(400).json({
           error:
             "Cari şifrə yanlışdır."
@@ -1528,13 +1410,16 @@ app.put(
           10
         );
 
-      db.prepare(`
+      await pool.query(
+        `
         UPDATE users
-        SET password_hash = ?
-        WHERE id = ?
-      `).run(
-        newHash,
-        userId
+        SET password_hash = $1
+        WHERE id = $2
+        `,
+        [
+          newHash,
+          userId
+        ]
       );
 
       res.json({
@@ -1543,9 +1428,7 @@ app.put(
         message:
           "Şifrə uğurla dəyişdirildi."
       });
-
     } catch (error) {
-
       console.error(
         "PASSWORD CHANGE ERROR:",
         error
@@ -1566,45 +1449,66 @@ app.put(
 
 app.get(
   "/api/cars",
-  (req, res) => {
+  async (req, res) => {
+    try {
+      const imageMap = {
+        "LEVEL 1":
+          "/cars/car-5.jpg",
+        "LEVEL 2":
+          "/cars/car-10.jpg",
+        "LEVEL 3":
+          "/cars/car-20.jpg",
+        "LEVEL 4":
+          "/cars/car-40.jpg",
+        "LEVEL 5":
+          "/cars/car-80.jpg",
+        "LEVEL 6":
+          "/cars/car-160.jpg",
+        "LEVEL 7":
+          "/cars/car-320.jpg",
+        "LEVEL 8":
+          "/cars/car-640.jpg"
+      };
 
-    const imageMap = {
-      "LEVEL 1": "/cars/car-5.jpg",
-      "LEVEL 2": "/cars/car-10.jpg",
-      "LEVEL 3": "/cars/car-20.jpg",
-      "LEVEL 4": "/cars/car-40.jpg",
-      "LEVEL 5": "/cars/car-80.jpg",
-      "LEVEL 6": "/cars/car-160.jpg",
-      "LEVEL 7": "/cars/car-320.jpg",
-      "LEVEL 8": "/cars/car-640.jpg"
-    };
+      const result =
+        await pool.query(
+          `
+          SELECT *
+          FROM cars
+          WHERE name IN (
+            'LEVEL 1',
+            'LEVEL 2',
+            'LEVEL 3',
+            'LEVEL 4',
+            'LEVEL 5',
+            'LEVEL 6',
+            'LEVEL 7',
+            'LEVEL 8'
+          )
+          ORDER BY price ASC
+          `
+        );
 
-    const rows =
-      db.prepare(`
-        SELECT *
-        FROM cars
-        WHERE name IN (
-          'LEVEL 1',
-          'LEVEL 2',
-          'LEVEL 3',
-          'LEVEL 4',
-          'LEVEL 5',
-          'LEVEL 6',
-          'LEVEL 7',
-          'LEVEL 8'
-        )
-        ORDER BY price ASC
-      `).all();
+      res.json(
+        result.rows.map(car => ({
+          ...car,
 
-    res.json(
-      rows.map(car => ({
-        ...car,
+          image:
+            imageMap[car.name] ||
+            "/cars/car-5.jpg"
+        }))
+      );
+    } catch (error) {
+      console.error(
+        "CARS LIST ERROR:",
+        error
+      );
 
-        image:
-          imageMap[car.name] ||
-          "/cars/car-5.jpg"
-      }))
-    );
+      res.status(500).json({
+        error:
+          "Maşınlar yüklənmədi."
+      });
+    }
   }
 );
 
@@ -1615,10 +1519,11 @@ app.get(
 app.post(
   "/api/cars/buy",
   requireLogin,
-  (req, res) => {
+  async (req, res) => {
+    const client =
+      await pool.connect();
 
     try {
-
       const userId =
         req.session.userId;
 
@@ -1627,21 +1532,19 @@ app.post(
           req.body.carId
         );
 
-      if (
-        !Number.isInteger(carId)
-      ) {
-
+      if (!Number.isInteger(carId)) {
         return res.status(400).json({
           error:
             "Maşın ID düzgün deyil."
         });
       }
 
-      const car =
-        db.prepare(`
+      const carResult =
+        await client.query(
+          `
           SELECT *
           FROM cars
-          WHERE id = ?
+          WHERE id = $1
             AND name IN (
               'LEVEL 1',
               'LEVEL 2',
@@ -1652,10 +1555,14 @@ app.post(
               'LEVEL 7',
               'LEVEL 8'
             )
-        `).get(carId);
+          `,
+          [carId]
+        );
+
+      const car =
+        carResult.rows[0];
 
       if (!car) {
-
         return res.status(404).json({
           error:
             "Maşın tapılmadı."
@@ -1663,10 +1570,9 @@ app.post(
       }
 
       const user =
-        getUser(userId);
+        await getUser(userId);
 
       if (!user) {
-
         return res.status(401).json({
           error:
             "İstifadəçi tapılmadı."
@@ -1677,46 +1583,48 @@ app.post(
         Number(user.balance) <
         Number(car.price)
       ) {
-
         return res.status(400).json({
           error:
             "Balans kifayət etmir."
         });
       }
 
+      await client.query("BEGIN");
+
       const now =
         getNowSql();
 
-      const transaction =
-        db.transaction(() => {
+      await client.query(
+        `
+        UPDATE users
+        SET balance = balance - $1
+        WHERE id = $2
+        `,
+        [
+          car.price,
+          userId
+        ]
+      );
 
-          db.prepare(`
-            UPDATE users
-            SET balance = balance - ?
-            WHERE id = ?
-          `).run(
-            car.price,
-            userId
-          );
+      await client.query(
+        `
+        INSERT INTO user_cars
+        (
+          user_id,
+          car_id,
+          purchased_at,
+          last_credited_at
+        )
+        VALUES ($1, $2, $3, $3)
+        `,
+        [
+          userId,
+          car.id,
+          now
+        ]
+      );
 
-          db.prepare(`
-            INSERT INTO user_cars
-            (
-              user_id,
-              car_id,
-              purchased_at,
-              last_credited_at
-            )
-            VALUES (?, ?, ?, ?)
-          `).run(
-            userId,
-            car.id,
-            now,
-            now
-          );
-        });
-
-      transaction();
+      await client.query("COMMIT");
 
       res.json({
         ok: true,
@@ -1725,12 +1633,12 @@ app.post(
           `${car.name} uğurla alındı.`,
 
         user:
-          getUserWithCars(
+          await getUserWithCars(
             userId
           )
       });
-
     } catch (error) {
+      await client.query("ROLLBACK");
 
       console.error(
         "BUY CAR ERROR:",
@@ -1741,6 +1649,8 @@ app.post(
         error:
           "Maşın alınarkən xəta baş verdi."
       });
+    } finally {
+      client.release();
     }
   }
 );
@@ -1752,15 +1662,17 @@ app.post(
 app.post(
   "/api/cars/collect-all",
   requireLogin,
-  (req, res) => {
+  async (req, res) => {
+    const client =
+      await pool.connect();
 
     try {
-
       const userId =
         req.session.userId;
 
-      const userCars =
-        db.prepare(`
+      const result =
+        await client.query(
+          `
           SELECT
             uc.id,
             uc.last_credited_at,
@@ -1768,11 +1680,15 @@ app.post(
           FROM user_cars uc
           JOIN cars c
             ON c.id = uc.car_id
-          WHERE uc.user_id = ?
-        `).all(userId);
+          WHERE uc.user_id = $1
+          `,
+          [userId]
+        );
+
+      const userCars =
+        result.rows;
 
       if (!userCars.length) {
-
         return res.status(400).json({
           error:
             "Sənin heç bir maşının yoxdur."
@@ -1782,7 +1698,6 @@ app.post(
       let total = 0;
 
       for (const car of userCars) {
-
         total +=
           calculateCarEarned(
             car.last_credited_at,
@@ -1796,52 +1711,49 @@ app.post(
         );
 
       if (total <= 0) {
-
         return res.status(400).json({
           error:
             "Hələ toplamaq üçün gəlir yaranmayıb."
         });
       }
 
-      const nowSql =
+      await client.query("BEGIN");
+
+      await client.query(
+        `
+        UPDATE users
+        SET balance = balance + $1
+        WHERE id = $2
+        `,
+        [
+          total,
+          userId
+        ]
+      );
+
+      const now =
         getNowSql();
 
-      const transaction =
-        db.transaction(() => {
-
-          db.prepare(`
-            UPDATE users
-            SET balance = balance + ?
-            WHERE id = ?
-          `).run(
-            total,
+      for (const car of userCars) {
+        await client.query(
+          `
+          UPDATE user_cars
+          SET last_credited_at = $1
+          WHERE id = $2
+            AND user_id = $3
+          `,
+          [
+            now,
+            car.id,
             userId
-          );
+          ]
+        );
+      }
 
-          const updateCar =
-            db.prepare(`
-              UPDATE user_cars
-              SET last_credited_at = ?
-              WHERE id = ?
-                AND user_id = ?
-            `);
-
-          for (const car of userCars) {
-
-            updateCar.run(
-              nowSql,
-              car.id,
-              userId
-            );
-          }
-        });
-
-      transaction();
+      await client.query("COMMIT");
 
       const updatedUser =
-        getUser(
-          userId
-        );
+        await getUser(userId);
 
       res.json({
         ok: true,
@@ -1860,12 +1772,12 @@ app.post(
           `Bütün maşınların gəlirindən ₼${total.toFixed(8)} balansa əlavə edildi.`,
 
         user:
-          getUserWithCars(
+          await getUserWithCars(
             userId
           )
       });
-
     } catch (error) {
+      await client.query("ROLLBACK");
 
       console.error(
         "COLLECT ALL ERROR:",
@@ -1876,21 +1788,24 @@ app.post(
         error:
           "Gəlir toplanarkən xəta baş verdi."
       });
+    } finally {
+      client.release();
     }
   }
 );
 
 /* =========================
-   COLLECT ONE CAR
+   COLLECT ONE
 ========================= */
 
 app.post(
   "/api/cars/:id/collect",
   requireLogin,
-  (req, res) => {
+  async (req, res) => {
+    const client =
+      await pool.connect();
 
     try {
-
       const userId =
         req.session.userId;
 
@@ -1899,42 +1814,38 @@ app.post(
           req.params.id
         );
 
-      if (
-        !Number.isInteger(
-          userCarId
-        )
-      ) {
-
+      if (!Number.isInteger(userCarId)) {
         return res.status(400).json({
           error:
             "Maşın ID düzgün deyil."
         });
       }
 
-      const userCar =
-        db.prepare(`
+      const result =
+        await client.query(
+          `
           SELECT
             uc.id,
             uc.user_id,
             uc.last_credited_at,
-
             c.name,
             c.daily
-
           FROM user_cars uc
-
           JOIN cars c
             ON c.id = uc.car_id
-
-          WHERE uc.id = ?
-            AND uc.user_id = ?
-        `).get(
-          userCarId,
-          userId
+          WHERE uc.id = $1
+            AND uc.user_id = $2
+          `,
+          [
+            userCarId,
+            userId
+          ]
         );
 
-      if (!userCar) {
+      const userCar =
+        result.rows[0];
 
+      if (!userCar) {
         return res.status(404).json({
           error:
             "Maşın tapılmadı."
@@ -1950,46 +1861,44 @@ app.post(
         );
 
       if (amount <= 0) {
-
         return res.status(400).json({
           error:
             "Hələ toplamaq üçün gəlir yaranmayıb."
         });
       }
 
-      const nowSql =
-        getNowSql();
+      await client.query("BEGIN");
 
-      const transaction =
-        db.transaction(() => {
+      await client.query(
+        `
+        UPDATE users
+        SET balance = balance + $1
+        WHERE id = $2
+        `,
+        [
+          amount,
+          userId
+        ]
+      );
 
-          db.prepare(`
-            UPDATE users
-            SET balance = balance + ?
-            WHERE id = ?
-          `).run(
-            amount,
-            userId
-          );
+      await client.query(
+        `
+        UPDATE user_cars
+        SET last_credited_at = $1
+        WHERE id = $2
+          AND user_id = $3
+        `,
+        [
+          getNowSql(),
+          userCar.id,
+          userId
+        ]
+      );
 
-          db.prepare(`
-            UPDATE user_cars
-            SET last_credited_at = ?
-            WHERE id = ?
-              AND user_id = ?
-          `).run(
-            nowSql,
-            userCar.id,
-            userId
-          );
-        });
-
-      transaction();
+      await client.query("COMMIT");
 
       const updatedUser =
-        getUser(
-          userId
-        );
+        await getUser(userId);
 
       res.json({
         ok: true,
@@ -2008,12 +1917,12 @@ app.post(
           `${userCar.name} gəlirindən ₼${amount.toFixed(8)} balansa əlavə edildi.`,
 
         user:
-          getUserWithCars(
+          await getUserWithCars(
             userId
           )
       });
-
     } catch (error) {
+      await client.query("ROLLBACK");
 
       console.error(
         "COLLECT ONE ERROR:",
@@ -2024,21 +1933,24 @@ app.post(
         error:
           "Gəlir toplanarkən xəta baş verdi."
       });
+    } finally {
+      client.release();
     }
   }
 );
 
 /* =========================
-   PROMO CODE
+   PROMO REDEEM
 ========================= */
 
 app.post(
   "/api/promo/redeem",
   requireLogin,
-  (req, res) => {
+  async (req, res) => {
+    const client =
+      await pool.connect();
 
     try {
-
       const userId =
         req.session.userId;
 
@@ -2050,23 +1962,27 @@ app.post(
           .toUpperCase();
 
       if (!code) {
-
         return res.status(400).json({
           error:
             "Promo kod daxil et."
         });
       }
 
-      const promo =
-        db.prepare(`
+      const promoResult =
+        await client.query(
+          `
           SELECT *
           FROM promo_codes
-          WHERE code = ?
+          WHERE code = $1
             AND active = 1
-        `).get(code);
+          `,
+          [code]
+        );
+
+      const promo =
+        promoResult.rows[0];
 
       if (!promo) {
-
         return res.status(404).json({
           error:
             "Promo kod tapılmadı və ya aktiv deyil."
@@ -2078,26 +1994,27 @@ app.post(
         Number(promo.used_count) >=
           Number(promo.max_uses)
       ) {
-
         return res.status(400).json({
           error:
             "Bu promo kodun istifadə limiti bitib."
         });
       }
 
-      const alreadyUsed =
-        db.prepare(`
+      const usedResult =
+        await client.query(
+          `
           SELECT id
           FROM promo_code_uses
-          WHERE promo_id = ?
-            AND user_id = ?
-        `).get(
-          promo.id,
-          userId
+          WHERE promo_id = $1
+            AND user_id = $2
+          `,
+          [
+            promo.id,
+            userId
+          ]
         );
 
-      if (alreadyUsed) {
-
+      if (usedResult.rows[0]) {
         return res.status(400).json({
           error:
             "Bu promo kodu artıq istifadə etmisən."
@@ -2111,69 +2028,66 @@ app.post(
         !Number.isFinite(amount) ||
         amount <= 0
       ) {
-
         return res.status(400).json({
           error:
             "Promo kod məbləği düzgün deyil."
         });
       }
 
-      const transaction =
-        db.transaction(() => {
+      await client.query("BEGIN");
 
-          db.prepare(`
-            UPDATE users
-            SET balance = balance + ?
-            WHERE id = ?
-          `).run(
-            amount,
-            userId
-          );
+      await client.query(
+        `
+        UPDATE users
+        SET balance = balance + $1
+        WHERE id = $2
+        `,
+        [
+          amount,
+          userId
+        ]
+      );
 
-          db.prepare(`
-            INSERT INTO promo_code_uses
-            (
-              promo_id,
-              user_id,
-              amount
-            )
-            VALUES (?, ?, ?)
-          `).run(
-            promo.id,
-            userId,
-            amount
-          );
+      await client.query(
+        `
+        INSERT INTO promo_code_uses
+        (
+          promo_id,
+          user_id,
+          amount
+        )
+        VALUES ($1, $2, $3)
+        `,
+        [
+          promo.id,
+          userId,
+          amount
+        ]
+      );
 
-          db.prepare(`
-            UPDATE promo_codes
-            SET used_count = used_count + 1
-            WHERE id = ?
-          `).run(
-            promo.id
-          );
+      const newCount =
+        Number(promo.used_count) + 1;
 
-          if (
-            Number(promo.max_uses) > 0 &&
-            Number(promo.used_count) + 1 >=
-              Number(promo.max_uses)
-          ) {
+      await client.query(
+        `
+        UPDATE promo_codes
+        SET used_count = used_count + 1,
+            active =
+              CASE
+                WHEN max_uses > 0
+                 AND used_count + 1 >= max_uses
+                THEN 0
+                ELSE active
+              END
+        WHERE id = $1
+        `,
+        [promo.id]
+      );
 
-            db.prepare(`
-              UPDATE promo_codes
-              SET active = 0
-              WHERE id = ?
-            `).run(
-              promo.id
-            );
-          }
-        });
-
-      transaction();
+      await client.query("COMMIT");
 
       const user =
-        getUser(
-          userId
-        );
+        await getUser(userId);
 
       res.json({
         ok: true,
@@ -2189,8 +2103,8 @@ app.post(
               .toFixed(8)
           )
       });
-
     } catch (error) {
+      await client.query("ROLLBACK");
 
       console.error(
         "PROMO REDEEM ERROR:",
@@ -2201,6 +2115,8 @@ app.post(
         error:
           "Promo kod istifadə edilərkən xəta baş verdi."
       });
+    } finally {
+      client.release();
     }
   }
 );
@@ -2212,12 +2128,11 @@ app.post(
 app.get(
   "/api/admin/promo-codes",
   requireAdmin,
-  (req, res) => {
-
+  async (req, res) => {
     try {
-
-      const codes =
-        db.prepare(`
+      const result =
+        await pool.query(
+          `
           SELECT
             id,
             code,
@@ -2228,14 +2143,14 @@ app.get(
             created_at
           FROM promo_codes
           ORDER BY id DESC
-        `).all();
+          `
+        );
 
       res.json({
-        codes
+        codes:
+          result.rows
       });
-
     } catch (error) {
-
       console.error(
         "ADMIN PROMO LIST ERROR:",
         error
@@ -2256,10 +2171,8 @@ app.get(
 app.post(
   "/api/admin/promo-codes",
   requireAdmin,
-  (req, res) => {
-
+  async (req, res) => {
     try {
-
       const code =
         String(
           req.body.code || ""
@@ -2268,27 +2181,19 @@ app.post(
           .toUpperCase();
 
       const amount =
-        Number(
-          req.body.amount
-        );
+        Number(req.body.amount);
 
       const maxUses =
-        Number(
-          req.body.maxUses
-        );
+        Number(req.body.maxUses);
 
       if (!code) {
-
         return res.status(400).json({
           error:
             "Promo kod daxil et."
         });
       }
 
-      if (
-        !/^[A-Z0-9_-]+$/.test(code)
-      ) {
-
+      if (!/^[A-Z0-9_-]+$/.test(code)) {
         return res.status(400).json({
           error:
             "Kod yalnız A-Z, 0-9, - və _ simvollarından ibarət ola bilər."
@@ -2299,7 +2204,6 @@ app.post(
         code.length < 3 ||
         code.length > 50
       ) {
-
         return res.status(400).json({
           error:
             "Promo kod 3-50 simvol arasında olmalıdır."
@@ -2310,7 +2214,6 @@ app.post(
         !Number.isFinite(amount) ||
         amount <= 0
       ) {
-
         return res.status(400).json({
           error:
             "Düzgün məbləğ daxil et."
@@ -2321,7 +2224,6 @@ app.post(
         !Number.isInteger(maxUses) ||
         maxUses < 0
       ) {
-
         return res.status(400).json({
           error:
             "İstifadə limiti düzgün deyil."
@@ -2329,14 +2231,16 @@ app.post(
       }
 
       const exists =
-        db.prepare(`
+        await pool.query(
+          `
           SELECT id
           FROM promo_codes
-          WHERE code = ?
-        `).get(code);
+          WHERE code = $1
+          `,
+          [code]
+        );
 
-      if (exists) {
-
+      if (exists.rows[0]) {
         return res.status(400).json({
           error:
             "Bu promo kod artıq mövcuddur."
@@ -2344,7 +2248,8 @@ app.post(
       }
 
       const result =
-        db.prepare(`
+        await pool.query(
+          `
           INSERT INTO promo_codes
           (
             code,
@@ -2353,11 +2258,14 @@ app.post(
             used_count,
             active
           )
-          VALUES (?, ?, ?, 0, 1)
-        `).run(
-          code,
-          amount,
-          maxUses
+          VALUES ($1, $2, $3, 0, 1)
+          RETURNING id
+          `,
+          [
+            code,
+            amount,
+            maxUses
+          ]
         );
 
       res.json({
@@ -2367,9 +2275,8 @@ app.post(
           "Promo kod yaradıldı.",
 
         promo: {
-
           id:
-            result.lastInsertRowid,
+            result.rows[0].id,
 
           code,
 
@@ -2385,9 +2292,7 @@ app.post(
             1
         }
       });
-
     } catch (error) {
-
       console.error(
         "CREATE PROMO ERROR:",
         error
@@ -2409,34 +2314,32 @@ app.post(
 app.post(
   "/api/admin/promo-codes/:id/toggle",
   requireAdmin,
-  (req, res) => {
-
+  async (req, res) => {
     try {
-
       const id =
-        Number(
-          req.params.id
-        );
+        Number(req.params.id);
 
-      if (
-        !Number.isInteger(id)
-      ) {
-
+      if (!Number.isInteger(id)) {
         return res.status(400).json({
           error:
             "Kod ID düzgün deyil."
         });
       }
 
-      const promo =
-        db.prepare(`
+      const result =
+        await pool.query(
+          `
           SELECT *
           FROM promo_codes
-          WHERE id = ?
-        `).get(id);
+          WHERE id = $1
+          `,
+          [id]
+        );
+
+      const promo =
+        result.rows[0];
 
       if (!promo) {
-
         return res.status(404).json({
           error:
             "Promo kod tapılmadı."
@@ -2449,7 +2352,6 @@ app.post(
         Number(promo.used_count) >=
           Number(promo.max_uses)
       ) {
-
         return res.status(400).json({
           error:
             "Bu kodun istifadə limiti artıq bitib."
@@ -2459,29 +2361,28 @@ app.post(
       const newStatus =
         promo.active ? 0 : 1;
 
-      db.prepare(`
+      await pool.query(
+        `
         UPDATE promo_codes
-        SET active = ?
-        WHERE id = ?
-      `).run(
-        newStatus,
-        id
+        SET active = $1
+        WHERE id = $2
+        `,
+        [
+          newStatus,
+          id
+        ]
       );
 
       res.json({
         ok: true,
-
-        active:
-          newStatus,
+        active: newStatus,
 
         message:
           newStatus
             ? "Promo kod aktiv edildi."
             : "Promo kod deaktiv edildi."
       });
-
     } catch (error) {
-
       console.error(
         "TOGGLE PROMO ERROR:",
         error
@@ -2502,55 +2403,57 @@ app.post(
 app.delete(
   "/api/admin/promo-codes/:id",
   requireAdmin,
-  (req, res) => {
+  async (req, res) => {
+    const client =
+      await pool.connect();
 
     try {
-
       const id =
-        Number(
-          req.params.id
-        );
+        Number(req.params.id);
 
-      if (
-        !Number.isInteger(id)
-      ) {
-
+      if (!Number.isInteger(id)) {
         return res.status(400).json({
           error:
             "Kod ID düzgün deyil."
         });
       }
 
-      const promo =
-        db.prepare(`
+      const result =
+        await client.query(
+          `
           SELECT id
           FROM promo_codes
-          WHERE id = ?
-        `).get(id);
+          WHERE id = $1
+          `,
+          [id]
+        );
 
-      if (!promo) {
-
+      if (!result.rows[0]) {
         return res.status(404).json({
           error:
             "Promo kod tapılmadı."
         });
       }
 
-      const transaction =
-        db.transaction(() => {
+      await client.query("BEGIN");
 
-          db.prepare(`
-            DELETE FROM promo_code_uses
-            WHERE promo_id = ?
-          `).run(id);
+      await client.query(
+        `
+        DELETE FROM promo_code_uses
+        WHERE promo_id = $1
+        `,
+        [id]
+      );
 
-          db.prepare(`
-            DELETE FROM promo_codes
-            WHERE id = ?
-          `).run(id);
-        });
+      await client.query(
+        `
+        DELETE FROM promo_codes
+        WHERE id = $1
+        `,
+        [id]
+      );
 
-      transaction();
+      await client.query("COMMIT");
 
       res.json({
         ok: true,
@@ -2558,8 +2461,8 @@ app.delete(
         message:
           "Promo kod silindi."
       });
-
     } catch (error) {
+      await client.query("ROLLBACK");
 
       console.error(
         "DELETE PROMO ERROR:",
@@ -2570,6 +2473,8 @@ app.delete(
         error:
           "Promo kod silinmədi."
       });
+    } finally {
+      client.release();
     }
   }
 );
@@ -2582,7 +2487,6 @@ app.get(
   "/api/payment-info",
   requireLogin,
   (req, res) => {
-
     res.json({
       cardNumber:
         process.env.PAYMENT_CARD_NUMBER ||
@@ -2602,10 +2506,8 @@ app.get(
 app.post(
   "/api/deposit/manual",
   requireLogin,
-  (req, res) => {
-
+  async (req, res) => {
     try {
-
       const amount =
         Number(
           req.body.amount
@@ -2615,7 +2517,6 @@ app.post(
         !Number.isFinite(amount) ||
         amount <= 0
       ) {
-
         return res.status(400).json({
           error:
             "Düzgün məbləğ daxil et."
@@ -2632,7 +2533,8 @@ app.post(
           .toUpperCase();
 
       const result =
-        db.prepare(`
+        await pool.query(
+          `
           INSERT INTO deposits
           (
             user_id,
@@ -2640,28 +2542,28 @@ app.post(
             order_id,
             status
           )
-          VALUES (?, ?, ?, 'pending')
-        `).run(
-          req.session.userId,
-          amount,
-          orderId
+          VALUES ($1, $2, $3, 'pending')
+          RETURNING id
+          `,
+          [
+            req.session.userId,
+            amount,
+            orderId
+          ]
         );
 
       res.json({
         ok: true,
 
         depositId:
-          result.lastInsertRowid,
+          result.rows[0].id,
 
-        orderId:
-          orderId,
+        orderId,
 
         message:
           "Deposit yaradıldı. İndi ödənişi edib qəbzi yüklə."
       });
-
     } catch (error) {
-
       console.error(
         "DEPOSIT ERROR:",
         error
@@ -2683,59 +2585,72 @@ app.post(
   "/api/deposit/:id/receipt",
   requireLogin,
   upload.single("receipt"),
-  (req, res) => {
+  async (req, res) => {
+    try {
+      const depositId =
+        Number(req.params.id);
 
-    const depositId =
-      Number(
-        req.params.id
+      if (!req.file) {
+        return res.status(400).json({
+          error:
+            "Qəbz şəkli seçilməyib."
+        });
+      }
+
+      const result =
+        await pool.query(
+          `
+          SELECT *
+          FROM deposits
+          WHERE id = $1
+            AND user_id = $2
+          `,
+          [
+            depositId,
+            req.session.userId
+          ]
+        );
+
+      if (!result.rows[0]) {
+        return res.status(404).json({
+          error:
+            "Deposit tapılmadı."
+        });
+      }
+
+      const receiptPath =
+        "/uploads/" +
+        req.file.filename;
+
+      await pool.query(
+        `
+        UPDATE deposits
+        SET receipt_path = $1
+        WHERE id = $2
+        `,
+        [
+          receiptPath,
+          depositId
+        ]
       );
 
-    if (!req.file) {
+      res.json({
+        ok: true,
 
-      return res.status(400).json({
-        error:
-          "Qəbz şəkli seçilməyib."
+        message:
+          "Qəbz uğurla yükləndi."
       });
-    }
-
-    const deposit =
-      db.prepare(`
-        SELECT *
-        FROM deposits
-        WHERE id = ?
-          AND user_id = ?
-      `).get(
-        depositId,
-        req.session.userId
+    } catch (error) {
+      console.error(
+        "RECEIPT ERROR:",
+        error
       );
 
-    if (!deposit) {
-
-      return res.status(404).json({
+      res.status(500).json({
         error:
-          "Deposit tapılmadı."
+          "Qəbz yüklənmədi."
       });
     }
-
-    const receiptPath =
-      "/uploads/" +
-      req.file.filename;
-
-    db.prepare(`
-      UPDATE deposits
-      SET receipt_path = ?
-      WHERE id = ?
-    `).run(
-      receiptPath,
-      depositId
-    );
-
-    res.json({
-      ok: true,
-
-      message:
-        "Qəbz uğurla yükləndi."
-    });
   }
 );
 
@@ -2746,21 +2661,29 @@ app.post(
 app.get(
   "/api/my-deposits",
   requireLogin,
-  (req, res) => {
+  async (req, res) => {
+    try {
+      const result =
+        await pool.query(
+          `
+          SELECT *
+          FROM deposits
+          WHERE user_id = $1
+          ORDER BY id DESC
+          `,
+          [req.session.userId]
+        );
 
-    const deposits =
-      db.prepare(`
-        SELECT *
-        FROM deposits
-        WHERE user_id = ?
-        ORDER BY id DESC
-      `).all(
-        req.session.userId
-      );
-
-    res.json({
-      deposits
-    });
+      res.json({
+        deposits:
+          result.rows
+      });
+    } catch (error) {
+      res.status(500).json({
+        error:
+          "Deposit tarixçəsi yüklənmədi."
+      });
+    }
   }
 );
 
@@ -2771,12 +2694,11 @@ app.get(
 app.get(
   "/api/deposits",
   requireAdmin,
-  (req, res) => {
-
+  async (req, res) => {
     try {
-
-      const deposits =
-        db.prepare(`
+      const result =
+        await pool.query(
+          `
           SELECT
             d.id,
             d.user_id,
@@ -2791,20 +2713,19 @@ app.get(
             u.name,
             u.email
 
-          FROM deposits AS d
+          FROM deposits d
 
-          LEFT JOIN users AS u
+          LEFT JOIN users u
             ON u.id = d.user_id
 
           ORDER BY d.id DESC
-        `).all();
+          `
+        );
 
       res.json(
-        deposits
+        result.rows
       );
-
     } catch (error) {
-
       console.error(
         "ADMIN DEPOSITS ERROR:",
         error
@@ -2826,77 +2747,72 @@ app.get(
 app.post(
   "/api/admin/deposits/:id/approve",
   requireAdmin,
-  (req, res) => {
+  async (req, res) => {
+    const client =
+      await pool.connect();
 
     try {
-
       const depositId =
-        Number(
-          req.params.id
-        );
+        Number(req.params.id);
 
-      if (
-        !Number.isInteger(
-          depositId
-        )
-      ) {
-
+      if (!Number.isInteger(depositId)) {
         return res.status(400).json({
           error:
             "Deposit ID düzgün deyil."
         });
       }
 
-      const deposit =
-        db.prepare(`
+      const result =
+        await client.query(
+          `
           SELECT *
           FROM deposits
-          WHERE id = ?
-        `).get(
-          depositId
+          WHERE id = $1
+          `,
+          [depositId]
         );
 
-      if (!deposit) {
+      const deposit =
+        result.rows[0];
 
+      if (!deposit) {
         return res.status(404).json({
           error:
             "Deposit tapılmadı."
         });
       }
 
-      if (
-        deposit.status !==
-        "pending"
-      ) {
-
+      if (deposit.status !== "pending") {
         return res.status(400).json({
           error:
             "Bu deposit artıq işlənib."
         });
       }
 
-      const transaction =
-        db.transaction(() => {
+      await client.query("BEGIN");
 
-          db.prepare(`
-            UPDATE deposits
-            SET status = 'approved'
-            WHERE id = ?
-          `).run(
-            depositId
-          );
+      await client.query(
+        `
+        UPDATE deposits
+        SET status = 'approved'
+        WHERE id = $1
+        `,
+        [depositId]
+      );
 
-          db.prepare(`
-            UPDATE users
-            SET balance = balance + ?
-            WHERE id = ?
-          `).run(
-            deposit.amount,
-            deposit.user_id
-          );
-        });
+      await client.query(
+        `
+        UPDATE users
+        SET balance = balance + $1
+        WHERE id = $2
+        `,
+        [
+          deposit.amount,
+          deposit.user_id
+        ]
+      );
 
-      transaction();
+      await client.query("COMMIT");
 
       res.json({
         ok: true,
@@ -2904,8 +2820,8 @@ app.post(
         message:
           "Deposit təsdiqləndi."
       });
-
     } catch (error) {
+      await client.query("ROLLBACK");
 
       console.error(
         "APPROVE DEPOSIT ERROR:",
@@ -2917,6 +2833,8 @@ app.post(
           "Deposit təsdiqlənmədi: " +
           error.message
       });
+    } finally {
+      client.release();
     }
   }
 );
@@ -2928,69 +2846,62 @@ app.post(
 app.post(
   "/api/admin/deposits/:id/reject",
   requireAdmin,
-  (req, res) => {
-
+  async (req, res) => {
     try {
-
       const depositId =
-        Number(
-          req.params.id
-        );
+        Number(req.params.id);
 
       const note =
         String(
           req.body.note || ""
         ).trim();
 
-      if (
-        !Number.isInteger(
-          depositId
-        )
-      ) {
-
+      if (!Number.isInteger(depositId)) {
         return res.status(400).json({
           error:
             "Deposit ID düzgün deyil."
         });
       }
 
-      const deposit =
-        db.prepare(`
+      const result =
+        await pool.query(
+          `
           SELECT *
           FROM deposits
-          WHERE id = ?
-        `).get(
-          depositId
+          WHERE id = $1
+          `,
+          [depositId]
         );
 
-      if (!deposit) {
+      const deposit =
+        result.rows[0];
 
+      if (!deposit) {
         return res.status(404).json({
           error:
             "Deposit tapılmadı."
         });
       }
 
-      if (
-        deposit.status !==
-        "pending"
-      ) {
-
+      if (deposit.status !== "pending") {
         return res.status(400).json({
           error:
             "Bu deposit artıq işlənib."
         });
       }
 
-      db.prepare(`
+      await pool.query(
+        `
         UPDATE deposits
         SET
           status = 'rejected',
-          admin_note = ?
-        WHERE id = ?
-      `).run(
-        note,
-        depositId
+          admin_note = $1
+        WHERE id = $2
+        `,
+        [
+          note,
+          depositId
+        ]
       );
 
       res.json({
@@ -2999,9 +2910,7 @@ app.post(
         message:
           "Deposit rədd edildi."
       });
-
     } catch (error) {
-
       console.error(
         "REJECT DEPOSIT ERROR:",
         error
@@ -3023,12 +2932,11 @@ app.post(
 app.get(
   "/api/admin/users",
   requireAdmin,
-  (req, res) => {
-
+  async (req, res) => {
     try {
-
-      const users =
-        db.prepare(`
+      const result =
+        await pool.query(
+          `
           SELECT
             id,
             name,
@@ -3037,14 +2945,14 @@ app.get(
             created_at
           FROM users
           ORDER BY id DESC
-        `).all();
+          `
+        );
 
       res.json({
-        users
+        users:
+          result.rows
       });
-
     } catch (error) {
-
       console.error(
         "ADMIN USERS ERROR:",
         error
@@ -3066,10 +2974,11 @@ app.get(
 app.post(
   "/api/withdraw",
   requireLogin,
-  (req, res) => {
+  async (req, res) => {
+    const client =
+      await pool.connect();
 
     try {
-
       const amount =
         Number(
           req.body.amount
@@ -3089,18 +2998,13 @@ app.post(
         !Number.isFinite(amount) ||
         amount < 40
       ) {
-
         return res.status(400).json({
           error:
             "Minimum çıxarış 40 AZN-dir."
         });
       }
 
-      if (
-        !method ||
-        !account
-      ) {
-
+      if (!method || !account) {
         return res.status(400).json({
           error:
             "Ödəniş üsulu və hesab daxil et."
@@ -3108,12 +3012,11 @@ app.post(
       }
 
       const user =
-        getUser(
+        await getUser(
           req.session.userId
         );
 
       if (!user) {
-
         return res.status(401).json({
           error:
             "İstifadəçi tapılmadı."
@@ -3124,7 +3027,6 @@ app.post(
         Number(user.balance) <
         amount
       ) {
-
         return res.status(400).json({
           error:
             "Balans kifayət etmir."
@@ -3137,39 +3039,44 @@ app.post(
           account
         });
 
-      const transaction =
-        db.transaction(() => {
+      await client.query("BEGIN");
 
-          db.prepare(`
-            UPDATE users
-            SET balance = balance - ?
-            WHERE id = ?
-          `).run(
-            amount,
-            req.session.userId
-          );
+      await client.query(
+        `
+        UPDATE users
+        SET balance = balance - $1
+        WHERE id = $2
+        `,
+        [
+          amount,
+          req.session.userId
+        ]
+      );
 
-          db.prepare(`
-            INSERT INTO withdrawals
-            (
-              user_id,
-              amount,
-              method,
-              account,
-              payout_info,
-              status
-            )
-            VALUES (?, ?, ?, ?, ?, 'pending')
-          `).run(
-            req.session.userId,
-            amount,
-            method,
-            account,
-            payoutInfo
-          );
-        });
+      await client.query(
+        `
+        INSERT INTO withdrawals
+        (
+          user_id,
+          amount,
+          method,
+          account,
+          payout_info,
+          status
+        )
+        VALUES
+        ($1, $2, $3, $4, $5, 'pending')
+        `,
+        [
+          req.session.userId,
+          amount,
+          method,
+          account,
+          payoutInfo
+        ]
+      );
 
-      transaction();
+      await client.query("COMMIT");
 
       res.json({
         ok: true,
@@ -3177,8 +3084,8 @@ app.post(
         message:
           "Çıxarış sorğusu yaradıldı."
       });
-
     } catch (error) {
+      await client.query("ROLLBACK");
 
       console.error(
         "WITHDRAW ERROR:",
@@ -3190,23 +3097,24 @@ app.post(
           "Çıxarış zamanı server xətası: " +
           error.message
       });
+    } finally {
+      client.release();
     }
   }
 );
 
 /* =========================
-   USER WITHDRAWAL HISTORY
+   USER WITHDRAWALS
 ========================= */
 
 app.get(
   "/api/my-withdrawals",
   requireLogin,
-  (req, res) => {
-
+  async (req, res) => {
     try {
-
-      const withdrawals =
-        db.prepare(`
+      const result =
+        await pool.query(
+          `
           SELECT
             id,
             amount,
@@ -3217,18 +3125,17 @@ app.get(
             admin_note,
             created_at
           FROM withdrawals
-          WHERE user_id = ?
+          WHERE user_id = $1
           ORDER BY id DESC
-        `).all(
-          req.session.userId
+          `,
+          [req.session.userId]
         );
 
       res.json({
-        withdrawals
+        withdrawals:
+          result.rows
       });
-
     } catch (error) {
-
       console.error(
         "MY WITHDRAWALS ERROR:",
         error
@@ -3250,12 +3157,11 @@ app.get(
 app.get(
   "/api/withdrawals",
   requireAdmin,
-  (req, res) => {
-
+  async (req, res) => {
     try {
-
-      const withdrawals =
-        db.prepare(`
+      const result =
+        await pool.query(
+          `
           SELECT
             w.id,
             w.user_id,
@@ -3276,14 +3182,14 @@ app.get(
             ON u.id = w.user_id
 
           ORDER BY w.id DESC
-        `).all();
+          `
+        );
 
       res.json({
-        withdrawals
+        withdrawals:
+          result.rows
       });
-
     } catch (error) {
-
       console.error(
         "ADMIN WITHDRAWALS ERROR:",
         error
@@ -3299,44 +3205,42 @@ app.get(
 );
 
 /* =========================
-   ADMIN APPROVE WITHDRAWAL
+   APPROVE WITHDRAWAL
 ========================= */
 
 app.post(
   "/api/admin/withdrawals/:id/approve",
   requireAdmin,
-  (req, res) => {
-
+  async (req, res) => {
     try {
-
       const withdrawalId =
-        Number(
-          req.params.id
-        );
+        Number(req.params.id);
 
       if (
         !Number.isInteger(
           withdrawalId
         )
       ) {
-
         return res.status(400).json({
           error:
             "Çıxarış ID düzgün deyil."
         });
       }
 
-      const withdrawal =
-        db.prepare(`
+      const result =
+        await pool.query(
+          `
           SELECT *
           FROM withdrawals
-          WHERE id = ?
-        `).get(
-          withdrawalId
+          WHERE id = $1
+          `,
+          [withdrawalId]
         );
 
-      if (!withdrawal) {
+      const withdrawal =
+        result.rows[0];
 
+      if (!withdrawal) {
         return res.status(404).json({
           error:
             "Çıxarış tapılmadı."
@@ -3347,19 +3251,19 @@ app.post(
         withdrawal.status !==
         "pending"
       ) {
-
         return res.status(400).json({
           error:
             "Bu çıxarış artıq işlənib."
         });
       }
 
-      db.prepare(`
+      await pool.query(
+        `
         UPDATE withdrawals
         SET status = 'approved'
-        WHERE id = ?
-      `).run(
-        withdrawalId
+        WHERE id = $1
+        `,
+        [withdrawalId]
       );
 
       res.json({
@@ -3368,9 +3272,7 @@ app.post(
         message:
           "Çıxarış təsdiqləndi."
       });
-
     } catch (error) {
-
       console.error(
         "APPROVE WITHDRAWAL ERROR:",
         error
@@ -3386,20 +3288,19 @@ app.post(
 );
 
 /* =========================
-   ADMIN REJECT WITHDRAWAL
+   REJECT WITHDRAWAL
 ========================= */
 
 app.post(
   "/api/admin/withdrawals/:id/reject",
   requireAdmin,
-  (req, res) => {
+  async (req, res) => {
+    const client =
+      await pool.connect();
 
     try {
-
       const withdrawalId =
-        Number(
-          req.params.id
-        );
+        Number(req.params.id);
 
       const note =
         String(
@@ -3411,24 +3312,26 @@ app.post(
           withdrawalId
         )
       ) {
-
         return res.status(400).json({
           error:
             "Çıxarış ID düzgün deyil."
         });
       }
 
-      const withdrawal =
-        db.prepare(`
+      const result =
+        await client.query(
+          `
           SELECT *
           FROM withdrawals
-          WHERE id = ?
-        `).get(
-          withdrawalId
+          WHERE id = $1
+          `,
+          [withdrawalId]
         );
 
-      if (!withdrawal) {
+      const withdrawal =
+        result.rows[0];
 
+      if (!withdrawal) {
         return res.status(404).json({
           error:
             "Çıxarış tapılmadı."
@@ -3439,38 +3342,41 @@ app.post(
         withdrawal.status !==
         "pending"
       ) {
-
         return res.status(400).json({
           error:
             "Bu çıxarış artıq işlənib."
         });
       }
 
-      const transaction =
-        db.transaction(() => {
+      await client.query("BEGIN");
 
-          db.prepare(`
-            UPDATE withdrawals
-            SET
-              status = 'rejected',
-              admin_note = ?
-            WHERE id = ?
-          `).run(
-            note,
-            withdrawalId
-          );
+      await client.query(
+        `
+        UPDATE withdrawals
+        SET
+          status = 'rejected',
+          admin_note = $1
+        WHERE id = $2
+        `,
+        [
+          note,
+          withdrawalId
+        ]
+      );
 
-          db.prepare(`
-            UPDATE users
-            SET balance = balance + ?
-            WHERE id = ?
-          `).run(
-            withdrawal.amount,
-            withdrawal.user_id
-          );
-        });
+      await client.query(
+        `
+        UPDATE users
+        SET balance = balance + $1
+        WHERE id = $2
+        `,
+        [
+          withdrawal.amount,
+          withdrawal.user_id
+        ]
+      );
 
-      transaction();
+      await client.query("COMMIT");
 
       res.json({
         ok: true,
@@ -3478,8 +3384,8 @@ app.post(
         message:
           "Çıxarış rədd edildi və məbləğ balansa qaytarıldı."
       });
-
     } catch (error) {
+      await client.query("ROLLBACK");
 
       console.error(
         "REJECT WITHDRAWAL ERROR:",
@@ -3491,12 +3397,14 @@ app.post(
           "Çıxarış rədd edilmədi: " +
           error.message
       });
+    } finally {
+      client.release();
     }
   }
 );
 
 /* =====================================================
-   SUPPORT TICKETS
+   SUPPORT
 ===================================================== */
 
 /* =========================
@@ -3506,10 +3414,11 @@ app.post(
 app.post(
   "/api/support/tickets",
   requireLogin,
-  (req, res) => {
+  async (req, res) => {
+    const client =
+      await pool.connect();
 
     try {
-
       const userId =
         req.session.userId;
 
@@ -3537,7 +3446,6 @@ app.post(
       ];
 
       if (!subject) {
-
         return res.status(400).json({
           error:
             "Ticket mövzusu daxil et."
@@ -3548,7 +3456,6 @@ app.post(
         subject.length < 3 ||
         subject.length > 150
       ) {
-
         return res.status(400).json({
           error:
             "Mövzu 3-150 simvol arasında olmalıdır."
@@ -3556,7 +3463,6 @@ app.post(
       }
 
       if (!message) {
-
         return res.status(400).json({
           error:
             "Mesaj daxil et."
@@ -3567,7 +3473,6 @@ app.post(
         message.length < 3 ||
         message.length > 5000
       ) {
-
         return res.status(400).json({
           error:
             "Mesaj 3-5000 simvol arasında olmalıdır."
@@ -3581,48 +3486,52 @@ app.post(
           ? category
           : "Other";
 
-      const transaction =
-        db.transaction(() => {
+      await client.query("BEGIN");
 
-          const ticketResult =
-            db.prepare(`
-              INSERT INTO support_tickets
-              (
-                user_id,
-                subject,
-                category,
-                status
-              )
-              VALUES (?, ?, ?, 'open')
-            `).run(
-              userId,
-              subject,
-              cleanCategory
-            );
-
-          const ticketId =
-            ticketResult.lastInsertRowid;
-
-          db.prepare(`
-            INSERT INTO support_messages
-            (
-              ticket_id,
-              sender_type,
-              sender_id,
-              message
-            )
-            VALUES (?, 'user', ?, ?)
-          `).run(
-            ticketId,
+      const ticketResult =
+        await client.query(
+          `
+          INSERT INTO support_tickets
+          (
+            user_id,
+            subject,
+            category,
+            status
+          )
+          VALUES
+          ($1, $2, $3, 'open')
+          RETURNING id
+          `,
+          [
             userId,
-            message
-          );
-
-          return ticketId;
-        });
+            subject,
+            cleanCategory
+          ]
+        );
 
       const ticketId =
-        transaction();
+        ticketResult.rows[0].id;
+
+      await client.query(
+        `
+        INSERT INTO support_messages
+        (
+          ticket_id,
+          sender_type,
+          sender_id,
+          message
+        )
+        VALUES
+        ($1, 'user', $2, $3)
+        `,
+        [
+          ticketId,
+          userId,
+          message
+        ]
+      );
+
+      await client.query("COMMIT");
 
       res.json({
         ok: true,
@@ -3632,8 +3541,8 @@ app.post(
 
         ticketId
       });
-
     } catch (error) {
+      await client.query("ROLLBACK");
 
       console.error(
         "CREATE SUPPORT TICKET ERROR:",
@@ -3645,6 +3554,8 @@ app.post(
           "Support ticket yaradılmadı: " +
           error.message
       });
+    } finally {
+      client.release();
     }
   }
 );
@@ -3656,15 +3567,11 @@ app.post(
 app.get(
   "/api/support/tickets",
   requireLogin,
-  (req, res) => {
-
+  async (req, res) => {
     try {
-
-      const userId =
-        req.session.userId;
-
-      const tickets =
-        db.prepare(`
+      const result =
+        await pool.query(
+          `
           SELECT
             t.id,
             t.subject,
@@ -3689,20 +3596,21 @@ app.get(
 
           FROM support_tickets t
 
-          WHERE t.user_id = ?
+          WHERE t.user_id = $1
 
           ORDER BY
             t.updated_at DESC,
             t.id DESC
-        `).all(userId);
+          `,
+          [req.session.userId]
+        );
 
       res.json({
         ok: true,
-        tickets
+        tickets:
+          result.rows
       });
-
     } catch (error) {
-
       console.error(
         "USER SUPPORT TICKETS ERROR:",
         error
@@ -3724,32 +3632,24 @@ app.get(
 app.get(
   "/api/support/tickets/:id",
   requireLogin,
-  (req, res) => {
-
+  async (req, res) => {
     try {
-
       const ticketId =
-        Number(
-          req.params.id
-        );
+        Number(req.params.id);
 
       const userId =
         req.session.userId;
 
-      if (
-        !Number.isInteger(
-          ticketId
-        )
-      ) {
-
+      if (!Number.isInteger(ticketId)) {
         return res.status(400).json({
           error:
             "Ticket ID düzgün deyil."
         });
       }
 
-      const ticket =
-        db.prepare(`
+      const ticketResult =
+        await pool.query(
+          `
           SELECT
             id,
             user_id,
@@ -3759,23 +3659,28 @@ app.get(
             created_at,
             updated_at
           FROM support_tickets
-          WHERE id = ?
-            AND user_id = ?
-        `).get(
-          ticketId,
-          userId
+          WHERE id = $1
+            AND user_id = $2
+          `,
+          [
+            ticketId,
+            userId
+          ]
         );
 
-      if (!ticket) {
+      const ticket =
+        ticketResult.rows[0];
 
+      if (!ticket) {
         return res.status(404).json({
           error:
             "Ticket tapılmadı."
         });
       }
 
-      const messages =
-        db.prepare(`
+      const messagesResult =
+        await pool.query(
+          `
           SELECT
             id,
             sender_type,
@@ -3783,10 +3688,10 @@ app.get(
             message,
             created_at
           FROM support_messages
-          WHERE ticket_id = ?
+          WHERE ticket_id = $1
           ORDER BY id ASC
-        `).all(
-          ticketId
+          `,
+          [ticketId]
         );
 
       res.json({
@@ -3794,12 +3699,11 @@ app.get(
 
         ticket: {
           ...ticket,
-          messages
+          messages:
+            messagesResult.rows
         }
       });
-
     } catch (error) {
-
       console.error(
         "USER SUPPORT TICKET DETAILS ERROR:",
         error
@@ -3815,20 +3719,19 @@ app.get(
 );
 
 /* =========================
-   USER REPLY TO TICKET
+   USER REPLY
 ========================= */
 
 app.post(
   "/api/support/tickets/:id/messages",
   requireLogin,
-  (req, res) => {
+  async (req, res) => {
+    const client =
+      await pool.connect();
 
     try {
-
       const ticketId =
-        Number(
-          req.params.id
-        );
+        Number(req.params.id);
 
       const userId =
         req.session.userId;
@@ -3838,12 +3741,7 @@ app.post(
           req.body.message || ""
         ).trim();
 
-      if (
-        !Number.isInteger(
-          ticketId
-        )
-      ) {
-
+      if (!Number.isInteger(ticketId)) {
         return res.status(400).json({
           error:
             "Ticket ID düzgün deyil."
@@ -3851,84 +3749,83 @@ app.post(
       }
 
       if (!message) {
-
         return res.status(400).json({
           error:
             "Mesaj daxil et."
         });
       }
 
-      if (
-        message.length < 1 ||
-        message.length > 5000
-      ) {
-
+      if (message.length > 5000) {
         return res.status(400).json({
           error:
             "Mesaj 1-5000 simvol arasında olmalıdır."
         });
       }
 
-      const ticket =
-        db.prepare(`
+      const result =
+        await client.query(
+          `
           SELECT *
           FROM support_tickets
-          WHERE id = ?
-            AND user_id = ?
-        `).get(
-          ticketId,
-          userId
+          WHERE id = $1
+            AND user_id = $2
+          `,
+          [
+            ticketId,
+            userId
+          ]
         );
 
-      if (!ticket) {
+      const ticket =
+        result.rows[0];
 
+      if (!ticket) {
         return res.status(404).json({
           error:
             "Ticket tapılmadı."
         });
       }
 
-      if (
-        ticket.status ===
-        "closed"
-      ) {
-
+      if (ticket.status === "closed") {
         return res.status(400).json({
           error:
             "Bu ticket bağlanıb. Yeni ticket aça bilərsən."
         });
       }
 
-      const transaction =
-        db.transaction(() => {
+      await client.query("BEGIN");
 
-          db.prepare(`
-            INSERT INTO support_messages
-            (
-              ticket_id,
-              sender_type,
-              sender_id,
-              message
-            )
-            VALUES (?, 'user', ?, ?)
-          `).run(
-            ticketId,
-            userId,
-            message
-          );
+      await client.query(
+        `
+        INSERT INTO support_messages
+        (
+          ticket_id,
+          sender_type,
+          sender_id,
+          message
+        )
+        VALUES
+        ($1, 'user', $2, $3)
+        `,
+        [
+          ticketId,
+          userId,
+          message
+        ]
+      );
 
-          db.prepare(`
-            UPDATE support_tickets
-            SET
-              status = 'open',
-              updated_at = CURRENT_TIMESTAMP
-            WHERE id = ?
-          `).run(
-            ticketId
-          );
-        });
+      await client.query(
+        `
+        UPDATE support_tickets
+        SET
+          status = 'open',
+          updated_at = CURRENT_TIMESTAMP
+        WHERE id = $1
+        `,
+        [ticketId]
+      );
 
-      transaction();
+      await client.query("COMMIT");
 
       res.json({
         ok: true,
@@ -3936,8 +3833,8 @@ app.post(
         message:
           "Mesaj göndərildi."
       });
-
     } catch (error) {
+      await client.query("ROLLBACK");
 
       console.error(
         "USER SUPPORT REPLY ERROR:",
@@ -3949,6 +3846,8 @@ app.post(
           "Mesaj göndərilmədi: " +
           error.message
       });
+    } finally {
+      client.release();
     }
   }
 );
@@ -3960,10 +3859,8 @@ app.post(
 app.post(
   "/api/support/tickets/:id/close",
   requireLogin,
-  (req, res) => {
-
+  async (req, res) => {
     try {
-
       const ticketId =
         Number(req.params.id);
 
@@ -3974,39 +3871,40 @@ app.post(
         !Number.isInteger(ticketId) ||
         ticketId <= 0
       ) {
-
         return res.status(400).json({
           error:
             "Ticket ID düzgün deyil."
         });
       }
 
-      const ticket =
-        db.prepare(`
+      const result =
+        await pool.query(
+          `
           SELECT
             id,
             user_id,
             status
           FROM support_tickets
-          WHERE id = ?
-            AND user_id = ?
-        `).get(
-          ticketId,
-          userId
+          WHERE id = $1
+            AND user_id = $2
+          `,
+          [
+            ticketId,
+            userId
+          ]
         );
 
-      if (!ticket) {
+      const ticket =
+        result.rows[0];
 
+      if (!ticket) {
         return res.status(404).json({
           error:
             "Ticket tapılmadı."
         });
       }
 
-      if (
-        ticket.status === "closed"
-      ) {
-
+      if (ticket.status === "closed") {
         return res.json({
           ok: true,
           message:
@@ -4014,32 +3912,33 @@ app.post(
         });
       }
 
-      db.prepare(`
+      await pool.query(
+        `
         UPDATE support_tickets
         SET
           status = 'closed',
           updated_at = CURRENT_TIMESTAMP
-        WHERE id = ?
-          AND user_id = ?
-      `).run(
-        ticketId,
-        userId
+        WHERE id = $1
+          AND user_id = $2
+        `,
+        [
+          ticketId,
+          userId
+        ]
       );
 
-      return res.json({
+      res.json({
         ok: true,
         message:
           "Ticket uğurla bağlandı."
       });
-
     } catch (error) {
-
       console.error(
         "USER CLOSE TICKET ERROR:",
         error
       );
 
-      return res.status(500).json({
+      res.status(500).json({
         error:
           "Ticket bağlanarkən server xətası: " +
           error.message
@@ -4055,12 +3954,11 @@ app.post(
 app.get(
   "/api/admin/support/tickets",
   requireAdmin,
-  (req, res) => {
-
+  async (req, res) => {
     try {
-
-      const tickets =
-        db.prepare(`
+      const result =
+        await pool.query(
+          `
           SELECT
             t.id,
             t.user_id,
@@ -4094,21 +3992,23 @@ app.get(
 
           ORDER BY
             CASE
-              WHEN t.status = 'open' THEN 0
-              WHEN t.status = 'waiting' THEN 1
+              WHEN t.status = 'open'
+                THEN 0
+              WHEN t.status = 'waiting'
+                THEN 1
               ELSE 2
             END,
             t.updated_at DESC,
             t.id DESC
-        `).all();
+          `
+        );
 
       res.json({
         ok: true,
-        tickets
+        tickets:
+          result.rows
       });
-
     } catch (error) {
-
       console.error(
         "ADMIN SUPPORT TICKETS ERROR:",
         error
@@ -4130,29 +4030,21 @@ app.get(
 app.get(
   "/api/admin/support/tickets/:id",
   requireAdmin,
-  (req, res) => {
-
+  async (req, res) => {
     try {
-
       const ticketId =
-        Number(
-          req.params.id
-        );
+        Number(req.params.id);
 
-      if (
-        !Number.isInteger(
-          ticketId
-        )
-      ) {
-
+      if (!Number.isInteger(ticketId)) {
         return res.status(400).json({
           error:
             "Ticket ID düzgün deyil."
         });
       }
 
-      const ticket =
-        db.prepare(`
+      const ticketResult =
+        await pool.query(
+          `
           SELECT
             t.id,
             t.user_id,
@@ -4170,21 +4062,24 @@ app.get(
           LEFT JOIN users u
             ON u.id = t.user_id
 
-          WHERE t.id = ?
-        `).get(
-          ticketId
+          WHERE t.id = $1
+          `,
+          [ticketId]
         );
 
-      if (!ticket) {
+      const ticket =
+        ticketResult.rows[0];
 
+      if (!ticket) {
         return res.status(404).json({
           error:
             "Ticket tapılmadı."
         });
       }
 
-      const messages =
-        db.prepare(`
+      const messagesResult =
+        await pool.query(
+          `
           SELECT
             id,
             sender_type,
@@ -4192,10 +4087,10 @@ app.get(
             message,
             created_at
           FROM support_messages
-          WHERE ticket_id = ?
+          WHERE ticket_id = $1
           ORDER BY id ASC
-        `).all(
-          ticketId
+          `,
+          [ticketId]
         );
 
       res.json({
@@ -4203,12 +4098,11 @@ app.get(
 
         ticket: {
           ...ticket,
-          messages
+          messages:
+            messagesResult.rows
         }
       });
-
     } catch (error) {
-
       console.error(
         "ADMIN SUPPORT TICKET DETAILS ERROR:",
         error
@@ -4224,20 +4118,19 @@ app.get(
 );
 
 /* =========================
-   ADMIN REPLY TO TICKET
+   ADMIN REPLY
 ========================= */
 
 app.post(
   "/api/admin/support/tickets/:id/messages",
   requireAdmin,
-  (req, res) => {
+  async (req, res) => {
+    const client =
+      await pool.connect();
 
     try {
-
       const ticketId =
-        Number(
-          req.params.id
-        );
+        Number(req.params.id);
 
       const adminId =
         req.session.userId;
@@ -4247,12 +4140,7 @@ app.post(
           req.body.message || ""
         ).trim();
 
-      if (
-        !Number.isInteger(
-          ticketId
-        )
-      ) {
-
+      if (!Number.isInteger(ticketId)) {
         return res.status(400).json({
           error:
             "Ticket ID düzgün deyil."
@@ -4260,82 +4148,79 @@ app.post(
       }
 
       if (!message) {
-
         return res.status(400).json({
           error:
             "Mesaj daxil et."
         });
       }
 
-      if (
-        message.length < 1 ||
-        message.length > 5000
-      ) {
-
+      if (message.length > 5000) {
         return res.status(400).json({
           error:
             "Mesaj 1-5000 simvol arasında olmalıdır."
         });
       }
 
-      const ticket =
-        db.prepare(`
+      const result =
+        await client.query(
+          `
           SELECT *
           FROM support_tickets
-          WHERE id = ?
-        `).get(
-          ticketId
+          WHERE id = $1
+          `,
+          [ticketId]
         );
 
-      if (!ticket) {
+      const ticket =
+        result.rows[0];
 
+      if (!ticket) {
         return res.status(404).json({
           error:
             "Ticket tapılmadı."
         });
       }
 
-      if (
-        ticket.status ===
-        "closed"
-      ) {
-
+      if (ticket.status === "closed") {
         return res.status(400).json({
           error:
             "Bu ticket bağlanıb."
         });
       }
 
-      const transaction =
-        db.transaction(() => {
+      await client.query("BEGIN");
 
-          db.prepare(`
-            INSERT INTO support_messages
-            (
-              ticket_id,
-              sender_type,
-              sender_id,
-              message
-            )
-            VALUES (?, 'admin', ?, ?)
-          `).run(
-            ticketId,
-            adminId,
-            message
-          );
+      await client.query(
+        `
+        INSERT INTO support_messages
+        (
+          ticket_id,
+          sender_type,
+          sender_id,
+          message
+        )
+        VALUES
+        ($1, 'admin', $2, $3)
+        `,
+        [
+          ticketId,
+          adminId,
+          message
+        ]
+      );
 
-          db.prepare(`
-            UPDATE support_tickets
-            SET
-              status = 'waiting',
-              updated_at = CURRENT_TIMESTAMP
-            WHERE id = ?
-          `).run(
-            ticketId
-          );
-        });
+      await client.query(
+        `
+        UPDATE support_tickets
+        SET
+          status = 'waiting',
+          updated_at = CURRENT_TIMESTAMP
+        WHERE id = $1
+        `,
+        [ticketId]
+      );
 
-      transaction();
+      await client.query("COMMIT");
 
       res.json({
         ok: true,
@@ -4343,8 +4228,8 @@ app.post(
         message:
           "Admin cavabı göndərildi."
       });
-
     } catch (error) {
+      await client.query("ROLLBACK");
 
       console.error(
         "ADMIN SUPPORT REPLY ERROR:",
@@ -4356,25 +4241,23 @@ app.post(
           "Cavab göndərilmədi: " +
           error.message
       });
+    } finally {
+      client.release();
     }
   }
 );
 
 /* =========================
-   ADMIN CHANGE TICKET STATUS
+   ADMIN CHANGE STATUS
 ========================= */
 
 app.post(
   "/api/admin/support/tickets/:id/status",
   requireAdmin,
-  (req, res) => {
-
+  async (req, res) => {
     try {
-
       const ticketId =
-        Number(
-          req.params.id
-        );
+        Number(req.params.id);
 
       const status =
         String(
@@ -4389,12 +4272,7 @@ app.post(
         "closed"
       ];
 
-      if (
-        !Number.isInteger(
-          ticketId
-        )
-      ) {
-
+      if (!Number.isInteger(ticketId)) {
         return res.status(400).json({
           error:
             "Ticket ID düzgün deyil."
@@ -4406,39 +4284,41 @@ app.post(
           status
         )
       ) {
-
         return res.status(400).json({
           error:
             "Status düzgün deyil."
         });
       }
 
-      const ticket =
-        db.prepare(`
+      const result =
+        await pool.query(
+          `
           SELECT id
           FROM support_tickets
-          WHERE id = ?
-        `).get(
-          ticketId
+          WHERE id = $1
+          `,
+          [ticketId]
         );
 
-      if (!ticket) {
-
+      if (!result.rows[0]) {
         return res.status(404).json({
           error:
             "Ticket tapılmadı."
         });
       }
 
-      db.prepare(`
+      await pool.query(
+        `
         UPDATE support_tickets
         SET
-          status = ?,
+          status = $1,
           updated_at = CURRENT_TIMESTAMP
-        WHERE id = ?
-      `).run(
-        status,
-        ticketId
+        WHERE id = $2
+        `,
+        [
+          status,
+          ticketId
+        ]
       );
 
       res.json({
@@ -4449,9 +4329,7 @@ app.post(
         message:
           "Ticket statusu dəyişdirildi."
       });
-
     } catch (error) {
-
       console.error(
         "ADMIN SUPPORT STATUS ERROR:",
         error
@@ -4472,63 +4350,57 @@ app.post(
 app.delete(
   "/api/admin/support/tickets/:id",
   requireAdmin,
-  (req, res) => {
+  async (req, res) => {
+    const client =
+      await pool.connect();
 
     try {
-
       const ticketId =
-        Number(
-          req.params.id
-        );
+        Number(req.params.id);
 
-      if (
-        !Number.isInteger(
-          ticketId
-        )
-      ) {
-
+      if (!Number.isInteger(ticketId)) {
         return res.status(400).json({
           error:
             "Ticket ID düzgün deyil."
         });
       }
 
-      const ticket =
-        db.prepare(`
+      const result =
+        await client.query(
+          `
           SELECT id
           FROM support_tickets
-          WHERE id = ?
-        `).get(
-          ticketId
+          WHERE id = $1
+          `,
+          [ticketId]
         );
 
-      if (!ticket) {
-
+      if (!result.rows[0]) {
         return res.status(404).json({
           error:
             "Ticket tapılmadı."
         });
       }
 
-      const transaction =
-        db.transaction(() => {
+      await client.query("BEGIN");
 
-          db.prepare(`
-            DELETE FROM support_messages
-            WHERE ticket_id = ?
-          `).run(
-            ticketId
-          );
+      await client.query(
+        `
+        DELETE FROM support_messages
+        WHERE ticket_id = $1
+        `,
+        [ticketId]
+      );
 
-          db.prepare(`
-            DELETE FROM support_tickets
-            WHERE id = ?
-          `).run(
-            ticketId
-          );
-        });
+      await client.query(
+        `
+        DELETE FROM support_tickets
+        WHERE id = $1
+        `,
+        [ticketId]
+      );
 
-      transaction();
+      await client.query("COMMIT");
 
       res.json({
         ok: true,
@@ -4536,8 +4408,8 @@ app.delete(
         message:
           "Support ticket silindi."
       });
-
     } catch (error) {
+      await client.query("ROLLBACK");
 
       console.error(
         "DELETE SUPPORT TICKET ERROR:",
@@ -4548,6 +4420,8 @@ app.delete(
         error:
           "Ticket silinmədi."
       });
+    } finally {
+      client.release();
     }
   }
 );
@@ -4560,7 +4434,6 @@ app.post(
   "/api/deposit/epoint",
   requireLogin,
   (req, res) => {
-
     return res.status(400).json({
       error:
         "Hazırda manual deposit sistemindən istifadə et."
@@ -4575,9 +4448,23 @@ app.post(
 app.post(
   "/api/payment/callback",
   (req, res) => {
-
     res.json({
       ok: true
+    });
+  }
+);
+
+/* =========================
+   HEALTH CHECK
+========================= */
+
+app.get(
+  "/api/health",
+  (req, res) => {
+    res.json({
+      ok: true,
+      service: "CarCash",
+      status: "online"
     });
   }
 );
@@ -4586,23 +4473,43 @@ app.post(
    START
 ========================= */
 
-const HOST = "0.0.0.0";
+initDatabase()
+  .then(() => {
+    app.listen(
+      PORT,
+      HOST,
+      () => {
+        console.log("");
+        console.log(
+          "================================"
+        );
+        console.log(
+          "          CARCASH ONLINE"
+        );
+        console.log(
+          "================================"
+        );
+        console.log(
+          `HOST: ${HOST}`
+        );
+        console.log(
+          `PORT: ${PORT}`
+        );
+        console.log(
+          "DATABASE: NEON POSTGRESQL"
+        );
+        console.log(
+          "================================"
+        );
+        console.log("");
+      }
+    );
+  })
+  .catch(error => {
+    console.error(
+      "DATABASE INIT ERROR:",
+      error
+    );
 
-app.get("/api/health", (req, res) => {
-  res.json({
-    ok: true,
-    service: "CarCash",
-    status: "online"
+    process.exit(1);
   });
-});
-
-app.listen(PORT, HOST, () => {
-  console.log("");
-  console.log("================================");
-  console.log("          CARCASH ONLINE");
-  console.log("================================");
-  console.log(`HOST: ${HOST}`);
-  console.log(`PORT: ${PORT}`);
-  console.log("================================");
-  console.log("");
-});
