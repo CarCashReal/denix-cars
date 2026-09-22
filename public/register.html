@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="az">
 <head>
   <meta charset="UTF-8">
@@ -23,6 +24,92 @@
 
       background:
         radial-gradient(circle at top, #26336e 0%, #0b1025 42%, #03040a 100%);
+    }
+
+    .language-box {
+      position: fixed;
+      top: 22px;
+      right: 22px;
+      z-index: 1000;
+    }
+
+    .language-button {
+      width: auto;
+      margin: 0;
+
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      padding: 10px 14px;
+
+      background: rgba(17, 22, 44, .95);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 12px;
+
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+
+      cursor: pointer;
+    }
+
+    .language-button:hover {
+      opacity: 1;
+      transform: none;
+    }
+
+    .language-menu {
+      display: none;
+
+      position: absolute;
+      top: 50px;
+      right: 0;
+
+      min-width: 145px;
+
+      padding: 7px;
+
+      background: rgba(10, 15, 30, .98);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 13px;
+
+      box-shadow: 0 15px 40px rgba(0,0,0,.5);
+    }
+
+    .language-menu.active {
+      display: block;
+    }
+
+    .language-option {
+      width: 100%;
+      margin: 0;
+
+      display: flex;
+      align-items: center;
+      gap: 9px;
+
+      padding: 10px;
+
+      background: transparent;
+      border: 0;
+      border-radius: 8px;
+
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .language-option:hover {
+      background: rgba(104,119,255,.15);
+      opacity: 1;
+    }
+
+    .flag {
+      font-size: 19px;
     }
 
     .box {
@@ -80,7 +167,7 @@
       border-color: #6877ff;
     }
 
-    button {
+    .register-button {
       width: 100%;
       margin-top: 22px;
       padding: 14px;
@@ -97,11 +184,11 @@
       cursor: pointer;
     }
 
-    button:hover {
+    .register-button:hover {
       opacity: .9;
     }
 
-    button:disabled {
+    .register-button:disabled {
       opacity: .6;
       cursor: not-allowed;
     }
@@ -159,92 +246,396 @@
       font-size: 13px;
     }
   </style>
+
 </head>
 
 <body>
 
+  <div class="language-box">
+
+
+<button
+  class="language-button"
+  onclick="toggleLanguageMenu()"
+  type="button">
+
+  <span id="currentFlag">🇦🇿</span>
+  <span id="currentLanguage">AZE</span>
+  <span>▼</span>
+
+</button>
+
+<div
+  class="language-menu"
+  id="languageMenu">
+
+  <button
+    class="language-option"
+    type="button"
+    onclick="changeLanguage('az')">
+
+    <span class="flag">🇦🇿</span>
+    <span>AZE</span>
+
+  </button>
+
+  <button
+    class="language-option"
+    type="button"
+    onclick="changeLanguage('en')">
+
+    <span class="flag">🇬🇧</span>
+    <span>ENG</span>
+
+  </button>
+
+  <button
+    class="language-option"
+    type="button"
+    onclick="changeLanguage('ru')">
+
+    <span class="flag">🇷🇺</span>
+    <span>RUS</span>
+
+  </button>
+
+</div>
+
+
+  </div>
+
   <div class="box">
 
-    <div class="logo">
-      Car<span>Cash</span>
-    </div>
 
-    <h1>Create Account</h1>
+<div class="logo">
+  Car<span>Cash</span>
+</div>
 
-    <form id="registerForm">
+<h1 id="registerTitle">
+  Hesab yarat
+</h1>
 
-      <label>Name</label>
 
-      <input
-        id="name"
-        type="text"
-        placeholder="Your name"
-        required
-      >
+<form id="registerForm">
 
-      <label>Email</label>
+  <label id="nameLabel">
+    Ad
+  </label>
 
-      <input
-        id="email"
-        type="email"
-        placeholder="your@email.com"
-        required
-      >
+  <input
+    id="name"
+    type="text"
+    placeholder="Adınız"
+    required
+  >
 
-      <label>Password</label>
 
-      <input
-        id="password"
-        type="password"
-        placeholder="Minimum 6 characters"
-        minlength="6"
-        required
-      >
+  <label id="emailLabel">
+    Email
+  </label>
 
-      <label>Confirm Password</label>
+  <input
+    id="email"
+    type="email"
+    placeholder="your@email.com"
+    required
+  >
 
-      <input
-        id="confirmPassword"
-        type="password"
-        placeholder="Repeat your password"
-        minlength="6"
-        required
-      >
 
-      <button
-        id="registerButton"
-        type="submit">
-        Create Account
-      </button>
+  <label id="passwordLabel">
+    Şifrə
+  </label>
 
-    </form>
+  <input
+    id="password"
+    type="password"
+    placeholder="Minimum 6 simvol"
+    minlength="6"
+    required
+  >
 
-    <div
-      id="error"
-      class="error">
-    </div>
 
-    <div
-      id="success"
-      class="success">
-    </div>
+  <label id="confirmPasswordLabel">
+    Şifrəni təsdiqlə
+  </label>
 
-    <div class="bottom">
-      Already have an account?
-      <a href="/login.html">
-        Login
-      </a>
-    </div>
+  <input
+    id="confirmPassword"
+    type="password"
+    placeholder="Şifrənizi təkrar yazın"
+    minlength="6"
+    required
+  >
 
-    <a
-      class="home"
-      href="/">
-      ← Back to CarCash
-    </a>
+
+  <button
+    id="registerButton"
+    class="register-button"
+    type="submit">
+
+    Hesab yarat
+
+  </button>
+
+</form>
+
+
+<div
+  id="error"
+  class="error">
+</div>
+
+
+<div
+  id="success"
+  class="success">
+</div>
+
+
+<div class="bottom">
+
+  <span id="alreadyAccount">
+    Artıq hesabınız var?
+  </span>
+
+  <a
+    href="/login.html"
+    id="loginLink">
+
+    Giriş
+
+  </a>
+
+</div>
+
+
+<a
+  class="home"
+  href="/"
+  id="homeLink">
+
+  ← CarCash-a qayıt
+
+</a>
+
 
   </div>
 
 <script>
+
+const translations = {
+
+  az: {
+
+    flag: "🇦🇿",
+    name: "AZE",
+
+    title: "Hesab yarat",
+
+    nameLabel: "Ad",
+    namePlaceholder: "Adınız",
+
+    emailLabel: "Email",
+
+    passwordLabel: "Şifrə",
+    passwordPlaceholder: "Minimum 6 simvol",
+
+    confirmPasswordLabel: "Şifrəni təsdiqlə",
+    confirmPasswordPlaceholder: "Şifrənizi təkrar yazın",
+
+    registerButton: "Hesab yarat",
+    creating: "Yaradılır...",
+
+    alreadyAccount: "Artıq hesabınız var?",
+    login: "Giriş",
+
+    home: "← CarCash-a qayıt",
+
+    nameRequired: "Adınızı daxil edin.",
+    passwordMismatch: "Şifrələr eyni deyil.",
+    passwordLength: "Şifrə minimum 6 simvol olmalıdır.",
+
+    registerFailed: "Qeydiyyat uğursuz oldu.",
+    success: "Hesab yaradıldı! Dashboard-a yönləndirilirsiniz...",
+
+    serverError: "Serverə qoşulmaq mümkün olmadı."
+  },
+
+
+  en: {
+
+    flag: "🇬🇧",
+    name: "ENG",
+
+    title: "Create Account",
+
+    nameLabel: "Name",
+    namePlaceholder: "Your name",
+
+    emailLabel: "Email",
+
+    passwordLabel: "Password",
+    passwordPlaceholder: "Minimum 6 characters",
+
+    confirmPasswordLabel: "Confirm Password",
+    confirmPasswordPlaceholder: "Repeat your password",
+
+    registerButton: "Create Account",
+    creating: "Creating...",
+
+    alreadyAccount: "Already have an account?",
+    login: "Login",
+
+    home: "← Back to CarCash",
+
+    nameRequired: "Please enter your name.",
+    passwordMismatch: "Passwords do not match.",
+    passwordLength: "Password must be at least 6 characters.",
+
+    registerFailed: "Registration failed.",
+    success: "Account created! Redirecting to dashboard...",
+
+    serverError: "Unable to connect to the server."
+  },
+
+
+  ru: {
+
+    flag: "🇷🇺",
+    name: "RUS",
+
+    title: "Создать аккаунт",
+
+    nameLabel: "Имя",
+    namePlaceholder: "Ваше имя",
+
+    emailLabel: "Email",
+
+    passwordLabel: "Пароль",
+    passwordPlaceholder: "Минимум 6 символов",
+
+    confirmPasswordLabel: "Подтвердите пароль",
+    confirmPasswordPlaceholder: "Повторите пароль",
+
+    registerButton: "Создать аккаунт",
+    creating: "Создание...",
+
+    alreadyAccount: "Уже есть аккаунт?",
+    login: "Войти",
+
+    home: "← Вернуться в CarCash",
+
+    nameRequired: "Введите ваше имя.",
+    passwordMismatch: "Пароли не совпадают.",
+    passwordLength: "Пароль должен содержать минимум 6 символов.",
+
+    registerFailed: "Регистрация не удалась.",
+    success: "Аккаунт создан! Переход в панель управления...",
+
+    serverError: "Не удалось подключиться к серверу."
+  }
+
+};
+
+
+function toggleLanguageMenu() {
+
+  document
+    .getElementById("languageMenu")
+    .classList.toggle("active");
+
+}
+
+
+function changeLanguage(language) {
+
+  const data = translations[language];
+
+  if (!data) return;
+
+
+  document.documentElement.lang = language;
+
+
+  document.getElementById("currentFlag").textContent =
+    data.flag;
+
+  document.getElementById("currentLanguage").textContent =
+    data.name;
+
+
+  document.getElementById("registerTitle").textContent =
+    data.title;
+
+
+  document.getElementById("nameLabel").textContent =
+    data.nameLabel;
+
+  document.getElementById("name").placeholder =
+    data.namePlaceholder;
+
+
+  document.getElementById("emailLabel").textContent =
+    data.emailLabel;
+
+
+  document.getElementById("passwordLabel").textContent =
+    data.passwordLabel;
+
+  document.getElementById("password").placeholder =
+    data.passwordPlaceholder;
+
+
+  document.getElementById("confirmPasswordLabel").textContent =
+    data.confirmPasswordLabel;
+
+  document.getElementById("confirmPassword").placeholder =
+    data.confirmPasswordPlaceholder;
+
+
+  document.getElementById("registerButton").textContent =
+    data.registerButton;
+
+
+  document.getElementById("alreadyAccount").textContent =
+    data.alreadyAccount;
+
+  document.getElementById("loginLink").textContent =
+    data.login;
+
+
+  document.getElementById("homeLink").textContent =
+    data.home;
+
+
+  localStorage.setItem(
+    "carcash_language",
+    language
+  );
+
+
+  document
+    .getElementById("languageMenu")
+    .classList.remove("active");
+
+}
+
+
+document.addEventListener("click", function(event) {
+
+  const box =
+    document.querySelector(".language-box");
+
+  if (!box.contains(event.target)) {
+
+    document
+      .getElementById("languageMenu")
+      .classList.remove("active");
+
+  }
+
+});
+
 
 document
   .getElementById("registerForm")
@@ -252,11 +643,13 @@ document
 
     e.preventDefault();
 
+
     const name =
       document
         .getElementById("name")
         .value
         .trim();
+
 
     const email =
       document
@@ -264,60 +657,84 @@ document
         .value
         .trim();
 
+
     const password =
       document
         .getElementById("password")
         .value;
+
 
     const confirmPassword =
       document
         .getElementById("confirmPassword")
         .value;
 
+
     const errorBox =
       document.getElementById("error");
+
 
     const successBox =
       document.getElementById("success");
 
+
     const registerButton =
       document.getElementById("registerButton");
+
+
+    const currentLanguage =
+      localStorage.getItem("carcash_language") || "az";
+
+
+    const data =
+      translations[currentLanguage];
+
 
     errorBox.style.display = "none";
     successBox.style.display = "none";
 
+
     if (!name) {
 
       errorBox.textContent =
-        "Adını daxil et.";
+        data.nameRequired;
 
-      errorBox.style.display = "block";
+      errorBox.style.display =
+        "block";
 
       return;
     }
+
 
     if (password !== confirmPassword) {
 
       errorBox.textContent =
-        "Şifrələr eyni deyil.";
+        data.passwordMismatch;
 
-      errorBox.style.display = "block";
+      errorBox.style.display =
+        "block";
 
       return;
     }
+
 
     if (password.length < 6) {
 
       errorBox.textContent =
-        "Şifrə minimum 6 simvol olmalıdır.";
+        data.passwordLength;
 
-      errorBox.style.display = "block";
+      errorBox.style.display =
+        "block";
 
       return;
     }
 
+
     registerButton.disabled = true;
-    registerButton.textContent = "Creating...";
+
+    registerButton.textContent =
+      data.creating;
+
 
     try {
 
@@ -338,28 +755,37 @@ document
 
         });
 
-      const data =
+
+      const result =
         await response.json();
+
 
       if (!response.ok) {
 
         errorBox.textContent =
-          data.error ||
-          "Registration failed.";
+          result.error ||
+          data.registerFailed;
 
-        errorBox.style.display = "block";
+        errorBox.style.display =
+          "block";
 
-        registerButton.disabled = false;
+
+        registerButton.disabled =
+          false;
+
         registerButton.textContent =
-          "Create Account";
+          data.registerButton;
 
         return;
       }
 
-      successBox.textContent =
-        "Hesab yaradıldı! Dashboard-a yönləndirilirsiniz...";
 
-      successBox.style.display = "block";
+      successBox.textContent =
+        data.success;
+
+      successBox.style.display =
+        "block";
+
 
       setTimeout(() => {
 
@@ -368,21 +794,34 @@ document
 
       }, 700);
 
+
     } catch (error) {
 
       console.error(error);
 
+
       errorBox.textContent =
-        "Serverə qoşulmaq mümkün olmadı.";
+        data.serverError;
 
-      errorBox.style.display = "block";
+      errorBox.style.display =
+        "block";
 
-      registerButton.disabled = false;
+
+      registerButton.disabled =
+        false;
+
       registerButton.textContent =
-        "Create Account";
+        data.registerButton;
+
     }
 
   });
+
+
+const savedLanguage =
+  localStorage.getItem("carcash_language") || "az";
+
+changeLanguage(savedLanguage);
 
 </script>
 
