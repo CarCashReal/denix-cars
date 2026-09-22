@@ -84,26 +84,49 @@ justify-content:flex-end;
 gap:8px;
 }
 
-.language-select{
-height:42px;
-padding:0 10px;
-border-radius:10px;
-border:1px solid #29344d;
-background:#11182a;
-color:#fff;
-font-size:13px;
-font-weight:700;
-outline:none;
-cursor:pointer;
+/* LANGUAGE FLAGS */
+
+.language-flags{
+position:fixed;
+right:18px;
+top:50%;
+transform:translateY(-50%);
+display:flex;
+flex-direction:column;
+gap:10px;
+z-index:10000;
 }
 
-.language-select:focus{
+.language-flag{
+width:44px;
+height:44px;
+border-radius:50%;
+overflow:hidden;
+border:2px solid rgba(255,255,255,.18);
+background:#11182a;
+color:#fff;
+padding:0;
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+box-shadow:0 5px 18px rgba(0,0,0,.35);
+transition:.2s ease;
+font-size:25px;
+line-height:1;
+}
+
+.language-flag:hover{
+transform:scale(1.12);
 border-color:#5b8cff;
 }
 
-.language-select option{
-background:#11182a;
-color:#fff;
+.language-flag.active{
+transform:scale(1.12);
+border-color:#5b8cff;
+box-shadow:
+0 0 0 3px rgba(91,140,255,.18),
+0 6px 20px rgba(0,0,0,.4);
 }
 
 .balance-box{
@@ -850,6 +873,7 @@ color:#8d97aa;
 font-size:12px;
 line-height:1.6;
 margin-top:12px;
+white-space:pre-line;
 }
 
 .profile-divider{
@@ -992,7 +1016,37 @@ text-align:center;
 line-height:1.6;
 }
 
-/* MOBILE */
+/* TELEGRAM */
+
+.telegram-float{
+position:fixed;
+right:20px;
+bottom:20px;
+width:52px;
+height:52px;
+border-radius:50%;
+background:#229ED9;
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:9999;
+box-shadow:0 6px 20px rgba(0,0,0,.35);
+cursor:pointer;
+transition:transform .2s ease,box-shadow .2s ease;
+text-decoration:none;
+overflow:hidden;
+}
+
+.telegram-float:hover{
+transform:scale(1.08);
+box-shadow:0 8px 25px rgba(34,158,217,.5);
+}
+
+.telegram-float svg{
+width:29px;
+height:29px;
+fill:#fff;
+}
 
 @media(max-width:1050px){
 
@@ -1053,11 +1107,6 @@ z-index:101;
 display:flex;
 }
 
-.language-select{
-width:100%;
-height:44px;
-}
-
 .balance-box{
 width:100%;
 min-width:0;
@@ -1071,6 +1120,29 @@ min-width:0;
 width:100%;
 min-height:44px;
 text-align:center;
+}
+
+.language-flags{
+right:9px;
+gap:7px;
+}
+
+.language-flag{
+width:39px;
+height:39px;
+font-size:22px;
+}
+
+.telegram-float{
+width:48px;
+height:48px;
+right:15px;
+bottom:15px;
+}
+
+.telegram-float svg{
+width:26px;
+height:26px;
 }
 
 .container{
@@ -1326,18 +1398,6 @@ onclick="toggleMobileMenu()">
 class="header-right"
 id="headerRight">
 
-<select
-class="language-select"
-id="languageSelect"
-onchange="changeLanguage(this.value)"
-aria-label="Language">
-
-<option value="az">🇦🇿 AZE</option>
-<option value="en">🇬🇧 ENG</option>
-<option value="ru">🇷🇺 RUS</option>
-
-</select>
-
 <div class="balance-box">
 
 <small id="headerBalanceLabel">BALANS</small>
@@ -1388,6 +1448,41 @@ onclick="logout()">
 </div>
 
 </header>
+
+<!-- LANGUAGE FLAGS -->
+
+<div
+class="language-flags"
+id="languageFlags">
+
+<button
+class="language-flag"
+data-lang="az"
+onclick="changeLanguage('az')"
+title="Azərbaycan dili"
+aria-label="Azərbaycan dili">
+🇦🇿
+</button>
+
+<button
+class="language-flag"
+data-lang="en"
+onclick="changeLanguage('en')"
+title="English"
+aria-label="English">
+🇬🇧
+</button>
+
+<button
+class="language-flag"
+data-lang="ru"
+onclick="changeLanguage('ru')"
+title="Русский"
+aria-label="Русский">
+🇷🇺
+</button>
+
+</div>
 
 <div class="container">
 
@@ -2139,7 +2234,6 @@ let liveEarningsTimer=null;
 const translations={
 
 az:{
-
 dashboard:"Dashboard",
 welcome:"Xoş gəlmisən!",
 welcomeUser:"Xoş gəlmisən, {name}",
@@ -2274,11 +2368,9 @@ depositIdMissing:"Deposit ID serverdən gəlmədi.",
 profileLoading:"Yüklənir...",
 ticketLoading:"Yüklənir...",
 serverError:"Server xətası"
-
 },
 
 en:{
-
 dashboard:"Dashboard",
 welcome:"Welcome!",
 welcomeUser:"Welcome, {name}",
@@ -2413,11 +2505,9 @@ depositIdMissing:"Deposit ID was not returned by the server.",
 profileLoading:"Loading...",
 ticketLoading:"Loading...",
 serverError:"Server error"
-
 },
 
 ru:{
-
 dashboard:"Панель",
 welcome:"Добро пожаловать!",
 welcomeUser:"Добро пожаловать, {name}",
@@ -2552,7 +2642,6 @@ depositIdMissing:"ID депозита не получен от сервера.",
 profileLoading:"Загрузка...",
 ticketLoading:"Загрузка...",
 serverError:"Ошибка сервера"
-
 }
 
 };
@@ -2693,16 +2782,23 @@ getLanguage();
 document.documentElement.lang=
 lang;
 
-const select=
-document.getElementById(
-"languageSelect"
+/* ACTIVE LANGUAGE FLAG */
+
+const languageFlags=
+document.querySelectorAll(
+".language-flag"
 );
 
-if(select){
+languageFlags.forEach(
+flag=>{
 
-select.value=lang;
+flag.classList.toggle(
+"active",
+flag.dataset.lang===lang
+);
 
 }
+);
 
 document.title=
 "CarCash";
@@ -2720,310 +2816,67 @@ el.textContent=t(key);
 
 };
 
-setText(
-"dashboardTitle",
-"dashboard"
-);
-
-setText(
-"balanceStatTitle",
-"balance"
-);
-
-setText(
-"carsCountTitle",
-"carCount"
-);
-
-setText(
-"dailyIncomeTitle",
-"dailyIncome"
-);
-
-setText(
-"earnedIncomeTitle",
-"earnedIncome"
-);
-
-setText(
-"collectAllButton",
-"collect"
-);
-
-setText(
-"headerBalanceLabel",
-"balanceLabel"
-);
-
-setText(
-"profileHeaderButton",
-"profile"
-);
-
-setText(
-"supportHeaderButton",
-"support"
-);
-
-setText(
-"depositHeaderButton",
-"deposit"
-);
-
-setText(
-"withdrawHeaderButton",
-"withdraw"
-);
-
-setText(
-"logoutHeaderButton",
-"logout"
-);
-
-setText(
-"promoTitle",
-"promoTitle"
-);
-
-setText(
-"promoSubtitle",
-"promoSubtitle"
-);
-
-setText(
-"promoButton",
-"usePromo"
-);
-
-setText(
-"carsSectionTitle",
-"cars"
-);
-
-setText(
-"myCarsSectionTitle",
-"myCars"
-);
-
-setText(
-"depositHistoryTitle",
-"depositHistory"
-);
-
-setText(
-"withdrawHistoryTitle",
-"withdrawHistory"
-);
-
-setText(
-"depositOrderHead",
-"order"
-);
-
-setText(
-"depositAmountHead",
-"amount"
-);
-
-setText(
-"depositStatusHead",
-"status"
-);
-
-setText(
-"depositDateHead",
-"date"
-);
-
-setText(
-"withdrawIdHead",
-"id"
-);
-
-setText(
-"withdrawAmountHead",
-"amount"
-);
-
-setText(
-"withdrawStatusHead",
-"status"
-);
-
-setText(
-"withdrawDateHead",
-"date"
-);
-
-setText(
-"profileModalTitle",
-"profile"
-);
-
-setText(
-"profileBalanceLabel",
-"balance"
-);
-
-setText(
-"profileCarsLabel",
-"carCount"
-);
-
-setText(
-"profileDailyLabel",
-"dailyIncome"
-);
-
-setText(
-"profileCreatedLabel",
-"date"
-);
-
-setText(
-"profileInfoTitle",
-"profileInfo"
-);
-
-setText(
-"profileNameLabel",
-"name"
-);
-
-setText(
-"profileEmailLabel",
-"email"
-);
-
-setText(
-"saveProfileBtn",
-"saveProfile"
-);
-
-setText(
-"changePasswordTitle",
-"passwordChange"
-);
-
-setText(
-"currentPasswordLabel",
-"currentPassword"
-);
-
-setText(
-"newPasswordLabel",
-"newPassword"
-);
-
-setText(
-"confirmPasswordLabel",
-"confirmPassword"
-);
-
-setText(
-"changePasswordBtn",
-"changePassword"
-);
-
-setText(
-"profileCloseButton",
-"close"
-);
-
-setText(
-"supportModalTitle",
-"support"
-);
-
-setText(
-"newTicketTitle",
-"newTicket"
-);
-
-setText(
-"ticketSubjectLabel",
-"subject"
-);
-
-setText(
-"ticketMessageLabel",
-"message"
-);
-
-setText(
-"createTicketBtn",
-"createTicket"
-);
-
-setText(
-"myTicketsTitle",
-"myTickets"
-);
-
-setText(
-"ticketModalTitle",
-"ticket"
-);
-
-setText(
-"withdrawModalTitle",
-"withdraw"
-);
-
-setText(
-"availableBalanceLabel",
-"availableBalance"
-);
-
-setText(
-"withdrawAmountLabel",
-"withdrawAmount"
-);
-
-setText(
-"withdrawMethodLabel",
-"paymentMethod"
-);
-
-setText(
-"withdrawAccountLabel",
-"accountInfo"
-);
-
-setText(
-"submitWithdrawBtn",
-"requestWithdraw"
-);
-
-setText(
-"depositModalTitle",
-"deposit"
-);
-
-setText(
-"paymentCardLabel",
-"paymentCard"
-);
-
-setText(
-"cardOwnerLabel",
-"cardOwner"
-);
-
-setText(
-"depositAmountLabel",
-"depositAmount"
-);
-
-setText(
-"receiptLabel",
-"receipt"
-);
-
-setText(
-"submitDepositBtn",
-"sendPayment"
-);
+setText("dashboardTitle","dashboard");
+setText("balanceStatTitle","balance");
+setText("carsCountTitle","carCount");
+setText("dailyIncomeTitle","dailyIncome");
+setText("earnedIncomeTitle","earnedIncome");
+setText("collectAllButton","collect");
+setText("headerBalanceLabel","balanceLabel");
+setText("profileHeaderButton","profile");
+setText("supportHeaderButton","support");
+setText("depositHeaderButton","deposit");
+setText("withdrawHeaderButton","withdraw");
+setText("logoutHeaderButton","logout");
+setText("promoTitle","promoTitle");
+setText("promoSubtitle","promoSubtitle");
+setText("promoButton","usePromo");
+setText("carsSectionTitle","cars");
+setText("myCarsSectionTitle","myCars");
+setText("depositHistoryTitle","depositHistory");
+setText("withdrawHistoryTitle","withdrawHistory");
+setText("depositOrderHead","order");
+setText("depositAmountHead","amount");
+setText("depositStatusHead","status");
+setText("depositDateHead","date");
+setText("withdrawIdHead","id");
+setText("withdrawAmountHead","amount");
+setText("withdrawStatusHead","status");
+setText("withdrawDateHead","date");
+setText("profileModalTitle","profile");
+setText("profileBalanceLabel","balance");
+setText("profileCarsLabel","carCount");
+setText("profileDailyLabel","dailyIncome");
+setText("profileCreatedLabel","date");
+setText("profileInfoTitle","profileInfo");
+setText("profileNameLabel","name");
+setText("profileEmailLabel","email");
+setText("saveProfileBtn","saveProfile");
+setText("changePasswordTitle","passwordChange");
+setText("currentPasswordLabel","currentPassword");
+setText("newPasswordLabel","newPassword");
+setText("confirmPasswordLabel","confirmPassword");
+setText("changePasswordBtn","changePassword");
+setText("profileCloseButton","close");
+setText("supportModalTitle","support");
+setText("newTicketTitle","newTicket");
+setText("ticketSubjectLabel","subject");
+setText("ticketMessageLabel","message");
+setText("createTicketBtn","createTicket");
+setText("myTicketsTitle","myTickets");
+setText("ticketModalTitle","ticket");
+setText("withdrawModalTitle","withdraw");
+setText("availableBalanceLabel","availableBalance");
+setText("withdrawAmountLabel","withdrawAmount");
+setText("withdrawMethodLabel","paymentMethod");
+setText("withdrawAccountLabel","accountInfo");
+setText("submitWithdrawBtn","requestWithdraw");
+setText("depositModalTitle","deposit");
+setText("paymentCardLabel","paymentCard");
+setText("cardOwnerLabel","cardOwner");
+setText("depositAmountLabel","depositAmount");
+setText("receiptLabel","receipt");
+setText("submitDepositBtn","sendPayment");
 
 const welcome=
 document.getElementById(
@@ -3444,29 +3297,14 @@ String(name||"")
 
 const imageMap={
 
-"LEVEL 1":
-"/cars/car-5.jpg",
-
-"LEVEL 2":
-"/cars/car-10.jpg",
-
-"LEVEL 3":
-"/cars/car-20.jpg",
-
-"LEVEL 4":
-"/cars/car-40.jpg",
-
-"LEVEL 5":
-"/cars/car-80.jpg",
-
-"LEVEL 6":
-"/cars/car-160.jpg",
-
-"LEVEL 7":
-"/cars/car-320.jpg",
-
-"LEVEL 8":
-"/cars/car-640.jpg"
+"LEVEL 1":"/cars/car-5.jpg",
+"LEVEL 2":"/cars/car-10.jpg",
+"LEVEL 3":"/cars/car-20.jpg",
+"LEVEL 4":"/cars/car-40.jpg",
+"LEVEL 5":"/cars/car-80.jpg",
+"LEVEL 6":"/cars/car-160.jpg",
+"LEVEL 7":"/cars/car-320.jpg",
+"LEVEL 8":"/cars/car-640.jpg"
 
 };
 
@@ -4250,6 +4088,7 @@ await loadProfile();
 
 }
 
+
 function closeProfile(){
 
 document.getElementById(
@@ -4257,6 +4096,7 @@ document.getElementById(
 ).classList.remove("active");
 
 }
+
 
 async function loadProfile(){
 
@@ -4664,11 +4504,15 @@ if(!deposits.length){
 
 container.innerHTML=
 `
+
 <div class="history-row">
+
 <div class="empty">
 ${t("noDeposit")}
 </div>
+
 </div>
+
 `;
 
 return;
@@ -4754,11 +4598,15 @@ document.getElementById(
 "depositHistory"
 ).innerHTML=
 `
+
 <div class="history-row">
+
 <div class="empty">
 ${t("depositLoadError")}
 </div>
+
 </div>
+
 `;
 
 }
@@ -4797,11 +4645,15 @@ if(!withdrawals.length){
 
 container.innerHTML=
 `
+
 <div class="history-row">
+
 <div class="empty">
 ${t("noWithdraw")}
 </div>
+
 </div>
+
 `;
 
 return;
@@ -4886,11 +4738,15 @@ document.getElementById(
 "withdrawHistory"
 ).innerHTML=
 `
+
 <div class="history-row">
+
 <div class="empty">
 ${t("withdrawLoadError")}
 </div>
+
 </div>
+
 `;
 
 }
@@ -4917,6 +4773,7 @@ currentUser?.balance||0
 " AZN";
 
 }
+
 
 function closeWithdraw(){
 
@@ -5090,6 +4947,7 @@ document.getElementById(
 await loadPaymentInfo();
 
 }
+
 
 function closeDeposit(){
 
@@ -5276,6 +5134,7 @@ loadSupportTickets();
 
 }
 
+
 function closeSupport(){
 
 document.getElementById(
@@ -5379,8 +5238,10 @@ ticket.subject||
 class="status ${
 escapeHtml(
 status==="waiting"
-?"answered"
-:status
+?
+"answered"
+:
+status
 )
 }">
 
@@ -5426,9 +5287,11 @@ ticket.message||
 
 container.innerHTML=
 `
+
 <div class="empty">
 ${t("ticketsLoadError")}
 </div>
+
 `;
 
 }
@@ -5593,6 +5456,7 @@ detail.innerHTML=`
 
 #${Number(ticket.id)}
 -
+
 ${escapeHtml(
 ticket.subject||
 "Ticket"
@@ -5604,8 +5468,10 @@ ticket.subject||
 class="status ${
 escapeHtml(
 status==="waiting"
-?"answered"
-:status
+?
+"answered"
+:
+status
 )
 }">
 
@@ -5673,6 +5539,7 @@ message.text||
 ${
 status!=="closed"
 ?
+
 `
 
 <div class="ticket-actions">
@@ -5688,6 +5555,7 @@ ${t("closeTicket")}
 </div>
 
 `
+
 :
 ""
 }
@@ -5700,11 +5568,13 @@ ${t("closeTicket")}
 
 detail.innerHTML=
 `
+
 <div class="empty">
 ${escapeHtml(
 error.message
 )}
 </div>
+
 `;
 
 }
@@ -5831,6 +5701,7 @@ closeProfile();
 }
 );
 
+
 document.getElementById(
 "depositModal"
 ).addEventListener(
@@ -5842,6 +5713,7 @@ closeDeposit();
 
 }
 );
+
 
 document.getElementById(
 "withdrawModal"
@@ -5855,6 +5727,7 @@ closeWithdraw();
 }
 );
 
+
 document.getElementById(
 "supportModal"
 ).addEventListener(
@@ -5866,6 +5739,7 @@ closeSupport();
 
 }
 );
+
 
 document.getElementById(
 "ticketModal"
@@ -5907,62 +5781,24 @@ applyLanguage();
 refreshDashboard();
 
 </script>
-<style>
-.telegram-float {
-    position: fixed;
-    right: 20px;
-    bottom: 20px;
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    background: #229ED9;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    text-decoration: none;
-    overflow: hidden;
-}
 
-.telegram-float:hover {
-    transform: scale(1.08);
-    box-shadow: 0 8px 25px rgba(34, 158, 217, 0.5);
-}
 
-.telegram-float svg {
-    width: 29px;
-    height: 29px;
-    fill: white;
-}
-
-@media (max-width: 600px) {
-    .telegram-float {
-        width: 48px;
-        height: 48px;
-        right: 15px;
-        bottom: 15px;
-    }
-
-    .telegram-float svg {
-        width: 26px;
-        height: 26px;
-    }
-}
-</style>
+<!-- TELEGRAM BUTTON -->
 
 <a
-    class="telegram-float"
-    href="https://t.me/carcashreal"
-    target="_blank"
-    rel="noopener noreferrer"
-    aria-label="CarCash Telegram"
->
-    <svg viewBox="0 0 24 24">
-        <path d="M21.5 3.5 2.9 10.7c-1.3.5-1.3 1.2-.2 1.5l4.8 1.5 1.8 5.7c.2.6.1.8.7.8.5 0 .7-.2 1-.5.3l2.3-2.2 4.8 3.5c.9.5 1.5.2 1.7-.8l3.1-15.4c.3-1.2-.5-1.7-1.6-1.3ZM8.2 13.3l10.9-6.9c.5-.3 1-.1.6.2l-8.8 8-.3 3.5-1.7-4.8-1-.3c-.7-.2-.7-.5.3-.7Z"/>
-    </svg>
+class="telegram-float"
+href="https://t.me/carcashreal"
+target="_blank"
+rel="noopener noreferrer"
+aria-label="CarCash Telegram">
+
+<svg viewBox="0 0 24 24" aria-hidden="true">
+
+<path d="M21.5 3.5 2.9 10.7c-1.3.5-1.3 1.2-.2 1.5l4.8 1.5 1.8 5.7c.2.6.1.8.7.8.5 0 .7-.2 1-.5.3.3-.1.7-.1 1 .7l2.3-2.2 4.8 3.5c.9.5 1.5.2 1.7-.8l3.1-15.4c.3-1.2-.5-1.7-1.6-1.3ZM8.2 13.3l10.9-6.9c.5-.3 1-.1.6.2l-8.8 8-.3 3.5-1.7-4.8-1-.3c-.7-.2-.7-.5.3-.7Z"/>
+
+</svg>
+
 </a>
+
 </body>
 </html>
