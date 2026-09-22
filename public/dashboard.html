@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="az">
 <head>
@@ -30,7 +31,7 @@ min-height:100vh;
 overflow-x:hidden;
 }
 
-button,input,textarea{
+button,input,textarea,select{
 font:inherit;
 }
 
@@ -82,6 +83,28 @@ display:flex;
 align-items:center;
 justify-content:flex-end;
 gap:8px;
+}
+
+.language-select{
+height:42px;
+padding:0 10px;
+border-radius:10px;
+border:1px solid #29344d;
+background:#11182a;
+color:#fff;
+font-size:13px;
+font-weight:700;
+outline:none;
+cursor:pointer;
+}
+
+.language-select:focus{
+border-color:#5b8cff;
+}
+
+.language-select option{
+background:#11182a;
+color:#fff;
 }
 
 .balance-box{
@@ -1031,6 +1054,11 @@ z-index:101;
 display:flex;
 }
 
+.language-select{
+width:100%;
+height:44px;
+}
+
 .balance-box{
 width:100%;
 min-width:0;
@@ -1299,9 +1327,21 @@ onclick="toggleMobileMenu()">
 class="header-right"
 id="headerRight">
 
+<select
+class="language-select"
+id="languageSelect"
+onchange="changeLanguage(this.value)"
+aria-label="Language">
+
+<option value="az">🇦🇿 AZE</option>
+<option value="en">🇬🇧 ENG</option>
+<option value="ru">🇷🇺 RUS</option>
+
+</select>
+
 <div class="balance-box">
 
-<small>BALANS</small>
+<small id="headerBalanceLabel">BALANS</small>
 
 <div
 class="balance"
@@ -1313,30 +1353,35 @@ id="headerBalance">
 
 <button
 class="profile-btn"
+id="profileHeaderButton"
 onclick="openProfile();closeMobileMenu()">
 👤 Profil
 </button>
 
 <button
 class="support-btn"
+id="supportHeaderButton"
 onclick="openSupport();closeMobileMenu()">
 🎫 Support
 </button>
 
 <button
 class="deposit-btn"
+id="depositHeaderButton"
 onclick="openDeposit();closeMobileMenu()">
 + Deposit
 </button>
 
 <button
 class="withdraw-btn"
+id="withdrawHeaderButton"
 onclick="openWithdraw();closeMobileMenu()">
 - Çıxarış
 </button>
 
 <button
 class="logout-btn"
+id="logoutHeaderButton"
 onclick="logout()">
 Çıxış
 </button>
@@ -1349,7 +1394,7 @@ onclick="logout()">
 
 <div class="welcome">
 
-<h1>Dashboard</h1>
+<h1 id="dashboardTitle">Dashboard</h1>
 
 <p id="welcomeText">
 Xoş gəlmisən!
@@ -1361,7 +1406,7 @@ Xoş gəlmisən!
 
 <div class="stat">
 
-<div class="stat-title">
+<div class="stat-title" id="balanceStatTitle">
 Balans
 </div>
 
@@ -1381,7 +1426,7 @@ Balans
 
 <div class="stat">
 
-<div class="stat-title">
+<div class="stat-title" id="carsCountTitle">
 Maşın sayı
 </div>
 
@@ -1395,7 +1440,7 @@ id="statCars">
 
 <div class="stat">
 
-<div class="stat-title">
+<div class="stat-title" id="dailyIncomeTitle">
 Gündəlik gəlir
 </div>
 
@@ -1409,7 +1454,7 @@ id="statDaily">
 
 <div class="stat">
 
-<div class="stat-title">
+<div class="stat-title" id="earnedIncomeTitle">
 Yığılan gəlir
 </div>
 
@@ -1436,11 +1481,11 @@ TOPLA
 
 <div class="promo-content">
 
-<div class="promo-title">
+<div class="promo-title" id="promoTitle">
 🎁 Promo kod
 </div>
 
-<div class="promo-subtitle">
+<div class="promo-subtitle" id="promoSubtitle">
 Promo kodunu daxil et və balansına bonus əlavə et.
 </div>
 
@@ -1472,7 +1517,7 @@ id="promoMessage">
 
 </div>
 
-<h2 class="section-title">
+<h2 class="section-title" id="carsSectionTitle">
 Maşınlar
 </h2>
 
@@ -1482,7 +1527,7 @@ id="cars">
 Yüklənir...
 </div>
 
-<h2 class="section-title">
+<h2 class="section-title" id="myCarsSectionTitle">
 Mənim maşınlarım
 </h2>
 
@@ -1490,13 +1535,13 @@ Mənim maşınlarım
 class="my-cars"
 id="myCars">
 
-<div class="empty">
+<div class="empty" id="myCarsLoading">
 Yüklənir...
 </div>
 
 </div>
 
-<h2 class="section-title">
+<h2 class="section-title" id="depositHistoryTitle">
 Deposit tarixçəsi
 </h2>
 
@@ -1504,10 +1549,10 @@ Deposit tarixçəsi
 
 <div class="history-row history-head">
 
-<div>Sifariş</div>
-<div>Məbləğ</div>
-<div>Status</div>
-<div>Tarix</div>
+<div id="depositOrderHead">Sifariş</div>
+<div id="depositAmountHead">Məbləğ</div>
+<div id="depositStatusHead">Status</div>
+<div id="depositDateHead">Tarix</div>
 
 </div>
 
@@ -1515,7 +1560,7 @@ Deposit tarixçəsi
 
 <div class="history-row">
 
-<div>
+<div id="depositLoading">
 Yüklənir...
 </div>
 
@@ -1525,7 +1570,7 @@ Yüklənir...
 
 </div>
 
-<h2 class="section-title">
+<h2 class="section-title" id="withdrawHistoryTitle">
 Çıxarış tarixçəsi
 </h2>
 
@@ -1533,10 +1578,10 @@ Yüklənir...
 
 <div class="history-row history-head">
 
-<div>ID</div>
-<div>Məbləğ</div>
-<div>Status</div>
-<div>Tarix</div>
+<div id="withdrawIdHead">ID</div>
+<div id="withdrawAmountHead">Məbləğ</div>
+<div id="withdrawStatusHead">Status</div>
+<div id="withdrawDateHead">Tarix</div>
 
 </div>
 
@@ -1544,7 +1589,7 @@ Yüklənir...
 
 <div class="history-row">
 
-<div class="empty">
+<div class="empty" id="withdrawEmpty">
 Hələ çıxarış yoxdur.
 </div>
 
@@ -1566,7 +1611,7 @@ id="profileModal">
 
 <div class="modal-header">
 
-<h2>👤 Profil</h2>
+<h2 id="profileModalTitle">👤 Profil</h2>
 
 <button
 class="close"
@@ -1613,7 +1658,7 @@ Yüklənir...
 
 <div class="profile-info">
 
-<small>
+<small id="profileBalanceLabel">
 Balans
 </small>
 
@@ -1625,7 +1670,7 @@ Balans
 
 <div class="profile-info">
 
-<small>
+<small id="profileCarsLabel">
 Maşın sayı
 </small>
 
@@ -1637,7 +1682,7 @@ Maşın sayı
 
 <div class="profile-info">
 
-<small>
+<small id="profileDailyLabel">
 Gündəlik gəlir
 </small>
 
@@ -1649,7 +1694,7 @@ Gündəlik gəlir
 
 <div class="profile-info">
 
-<small>
+<small id="profileCreatedLabel">
 Hesab tarixi
 </small>
 
@@ -1665,13 +1710,13 @@ Hesab tarixi
 
 <div class="profile-divider"></div>
 
-<div class="profile-section-title">
+<div class="profile-section-title" id="profileInfoTitle">
 Profil məlumatları
 </div>
 
 <div class="input-group">
 
-<label>
+<label id="profileNameLabel">
 Ad / istifadəçi adı
 </label>
 
@@ -1685,7 +1730,7 @@ placeholder="Adını daxil et">
 
 <div class="input-group">
 
-<label>
+<label id="profileEmailLabel">
 Email
 </label>
 
@@ -1706,13 +1751,13 @@ Profil məlumatlarını yadda saxla
 
 <div class="profile-divider"></div>
 
-<div class="profile-section-title">
+<div class="profile-section-title" id="changePasswordTitle">
 🔒 Şifrəni dəyiş
 </div>
 
 <div class="input-group">
 
-<label>
+<label id="currentPasswordLabel">
 Hazırkı şifrə
 </label>
 
@@ -1725,7 +1770,7 @@ placeholder="Hazırkı şifrə">
 
 <div class="input-group">
 
-<label>
+<label id="newPasswordLabel">
 Yeni şifrə
 </label>
 
@@ -1739,7 +1784,7 @@ placeholder="Minimum 6 simvol">
 
 <div class="input-group">
 
-<label>
+<label id="confirmPasswordLabel">
 Yeni şifrəni təkrar yaz
 </label>
 
@@ -1760,6 +1805,7 @@ onclick="changePassword()">
 
 <button
 class="danger-btn"
+id="profileCloseButton"
 onclick="closeProfile()">
 Bağla
 </button>
@@ -1778,7 +1824,7 @@ id="supportModal">
 
 <div class="modal-header">
 
-<h2>
+<h2 id="supportModalTitle">
 🎫 Support
 </h2>
 
@@ -1797,13 +1843,13 @@ id="supportMessage">
 
 <div class="support-create">
 
-<div class="profile-section-title">
+<div class="profile-section-title" id="newTicketTitle">
 Yeni support ticket
 </div>
 
 <div class="input-group">
 
-<label>
+<label id="ticketSubjectLabel">
 Mövzu
 </label>
 
@@ -1817,7 +1863,7 @@ placeholder="Məsələn: Deposit problemim var">
 
 <div class="input-group">
 
-<label>
+<label id="ticketMessageLabel">
 Mesaj
 </label>
 
@@ -1837,7 +1883,7 @@ onclick="createTicket()">
 
 </div>
 
-<div class="profile-section-title">
+<div class="profile-section-title" id="myTicketsTitle">
 Mənim ticketlərim
 </div>
 
@@ -1865,7 +1911,7 @@ id="ticketModal">
 
 <div class="modal-header">
 
-<h2>
+<h2 id="ticketModalTitle">
 🎫 Ticket
 </h2>
 
@@ -1893,7 +1939,7 @@ id="withdrawModal">
 
 <div class="modal-header">
 
-<h2>
+<h2 id="withdrawModalTitle">
 Çıxarış et
 </h2>
 
@@ -1912,7 +1958,7 @@ id="withdrawMessage">
 
 <div class="payment-box">
 
-<div class="payment-label">
+<div class="payment-label" id="availableBalanceLabel">
 Mövcud balans
 </div>
 
@@ -1926,7 +1972,7 @@ id="withdrawBalance">
 
 <div class="input-group">
 
-<label>
+<label id="withdrawAmountLabel">
 Məbləğ (AZN)
 </label>
 
@@ -1941,7 +1987,7 @@ placeholder="Minimum 40 AZN">
 
 <div class="input-group">
 
-<label>
+<label id="withdrawMethodLabel">
 Ödəniş üsulu
 </label>
 
@@ -1954,7 +2000,7 @@ placeholder="Məsələn: Bank kartı">
 
 <div class="input-group">
 
-<label>
+<label id="withdrawAccountLabel">
 Hesab / kart məlumatı
 </label>
 
@@ -1972,7 +2018,7 @@ onclick="submitWithdraw()">
 Çıxarış tələb et
 </button>
 
-<div class="note">
+<div class="note" id="withdrawNote">
 Minimum çıxarış məbləği 40 AZN-dir.
 Sorğu admin tərəfindən yoxlanıldıqdan sonra təsdiqlənəcək.
 </div>
@@ -1991,7 +2037,7 @@ id="depositModal">
 
 <div class="modal-header">
 
-<h2>
+<h2 id="depositModalTitle">
 Deposit et
 </h2>
 
@@ -2010,7 +2056,7 @@ id="depositMessage">
 
 <div class="payment-box">
 
-<div class="payment-label">
+<div class="payment-label" id="paymentCardLabel">
 Ödəniş kartı
 </div>
 
@@ -2020,7 +2066,7 @@ id="paymentCardNumber">
 Yüklənir...
 </div>
 
-<div class="payment-label">
+<div class="payment-label" id="cardOwnerLabel">
 Kart sahibi
 </div>
 
@@ -2034,7 +2080,7 @@ Unknown
 
 <div class="input-group">
 
-<label>
+<label id="depositAmountLabel">
 Məbləğ (AZN)
 </label>
 
@@ -2050,7 +2096,7 @@ placeholder="Məsələn: 10">
 
 <div class="input-group">
 
-<label>
+<label id="receiptLabel">
 Ödəniş çeki / screenshot
 </label>
 
@@ -2068,7 +2114,7 @@ onclick="submitDeposit()">
 Ödənişi göndər
 </button>
 
-<div class="note">
+<div class="note" id="depositNote">
 Əvvəlcə yuxarıda göstərilən karta ödəniş et.
 Daha sonra məbləği daxil edib çekin şəklini yüklə.
 Admin ödənişi yoxladıqdan sonra məbləğ balansına əlavə olunacaq.
@@ -2087,12 +2133,1112 @@ const DAY_MS=24*60*60*1000;
 let liveEarningsTimer=null;
 
 
+/* =========================
+   LANGUAGE
+========================= */
+
+const translations={
+
+az:{
+
+dashboard:"Dashboard",
+welcome:"Xoş gəlmisən!",
+welcomeUser:"Xoş gəlmisən, {name}",
+balance:"Balans",
+exactBalance:"Dəqiq balans: {value}",
+carCount:"Maşın sayı",
+dailyIncome:"Gündəlik gəlir",
+earnedIncome:"Yığılan gəlir",
+collect:"TOPLA",
+collecting:"TOPLANIR...",
+promoTitle:"🎁 Promo kod",
+promoSubtitle:"Promo kodunu daxil et və balansına bonus əlavə et.",
+promoPlaceholder:"Promo kodunu daxil et",
+usePromo:"Kodu istifadə et",
+checking:"Yoxlanılır...",
+cars:"Maşınlar",
+myCars:"Mənim maşınlarım",
+depositHistory:"Deposit tarixçəsi",
+withdrawHistory:"Çıxarış tarixçəsi",
+loading:"Yüklənir...",
+notFound:"Maşın tapılmadı.",
+carsLoadError:"Maşınlar yüklənmədi.",
+noCars:"Hələ maşının yoxdur.",
+price:"Qiymət",
+daily:"Gündəlik",
+monthly:"Aylıq gəlir",
+buy:"Al",
+buyConfirm:"Bu maşını almaq istəyirsən?",
+carBought:"Maşın alındı!",
+accumulated:"Yığılmış",
+perDay:"AZN/gün",
+monthlyShort:"📅 Aylıq:",
+collectingIncome:"Gəlir toplanarkən xəta baş verdi.",
+incomeAdded:"Gəlir balansa əlavə edildi.",
+allIncomeAdded:"Bütün gəlirlər balansa əlavə edildi.",
+promoEnter:"Promo kodunu daxil et.",
+promoSuccess:"Promo kod uğurla istifadə edildi!",
+promoError:"Promo kod istifadə edilə bilmədi.",
+order:"Sifariş",
+amount:"Məbləğ",
+status:"Status",
+date:"Tarix",
+id:"ID",
+noDeposit:"Hələ deposit yoxdur.",
+depositLoadError:"Deposit tarixçəsi yüklənmədi.",
+noWithdraw:"Hələ çıxarış yoxdur.",
+withdrawLoadError:"Çıxarış tarixçəsi yüklənmədi.",
+pending:"Gözləyir",
+approved:"Təsdiqləndi",
+rejected:"Rədd edildi",
+open:"Açıq",
+answered:"Cavablandı",
+closed:"Bağlandı",
+profile:"Profil",
+profileInfo:"Profil məlumatları",
+name:"Ad / istifadəçi adı",
+email:"Email",
+namePlaceholder:"Adını daxil et",
+emailPlaceholder:"Email daxil et",
+saveProfile:"Profil məlumatlarını yadda saxla",
+saving:"Yadda saxlanılır...",
+profileUpdated:"Profil məlumatları yeniləndi.",
+passwordChange:"🔒 Şifrəni dəyiş",
+currentPassword:"Hazırkı şifrə",
+newPassword:"Yeni şifrə",
+confirmPassword:"Yeni şifrəni təkrar yaz",
+currentPasswordPlaceholder:"Hazırkı şifrə",
+minPassword:"Minimum 6 simvol",
+newPasswordPlaceholder:"Yeni şifrə",
+changePassword:"Şifrəni dəyiş",
+changing:"Dəyişdirilir...",
+passwordChanged:"Şifrə uğurla dəyişdirildi.",
+close:"Bağla",
+user:"İstifadəçi",
+invalidName:"Adı daxil et.",
+invalidEmail:"Düzgün email daxil et.",
+currentPasswordRequired:"Hazırkı şifrəni daxil et.",
+passwordMin:"Yeni şifrə minimum 6 simvol olmalıdır.",
+passwordMismatch:"Yeni şifrələr eyni deyil.",
+support:"Support",
+newTicket:"Yeni support ticket",
+subject:"Mövzu",
+message:"Mesaj",
+subjectPlaceholder:"Məsələn: Deposit problemim var",
+messagePlaceholder:"Problemini ətraflı yaz...",
+createTicket:"🎫 Ticket yarat",
+creating:"Yaradılır...",
+myTickets:"Mənim ticketlərim",
+noTickets:"Hələ support ticket yoxdur.",
+ticketsLoadError:"Ticketlər yüklənmədi.",
+ticket:"🎫 Ticket",
+you:"SƏN",
+admin:"ADMIN",
+closeTicket:"🔒 Ticketi bağla",
+closeTicketConfirm:"Bu ticketi bağlamaq istəyirsən?",
+ticketClosed:"Ticket bağlandı.",
+ticketCreated:"Ticket yaradıldı.",
+topicMessageRequired:"Mövzu və mesajı doldur.",
+withdraw:"Çıxarış et",
+availableBalance:"Mövcud balans",
+withdrawAmount:"Məbləğ (AZN)",
+minWithdrawPlaceholder:"Minimum 40 AZN",
+paymentMethod:"Ödəniş üsulu",
+paymentMethodPlaceholder:"Məsələn: Bank kartı",
+accountInfo:"Hesab / kart məlumatı",
+accountPlaceholder:"Kart nömrəsi və ya hesab",
+requestWithdraw:"Çıxarış tələb et",
+sending:"Göndərilir...",
+minWithdraw:"Minimum çıxarış məbləği 40 AZN-dir.",
+withdrawNote:"Sorğu admin tərəfindən yoxlanıldıqdan sonra təsdiqlənəcək.",
+withdrawMinError:"Minimum çıxarış 40 AZN-dir.",
+insufficientBalance:"Balans kifayət etmir.",
+fillAll:"Bütün məlumatları doldur.",
+withdrawCreated:"Çıxarış sorğusu yaradıldı.",
+deposit:"Deposit et",
+paymentCard:"Ödəniş kartı",
+cardOwner:"Kart sahibi",
+notSet:"Təyin edilməyib",
+depositAmount:"Məbləğ (AZN)",
+depositAmountPlaceholder:"Məsələn: 10",
+receipt:"Ödəniş çeki / screenshot",
+sendPayment:"Ödənişi göndər",
+depositMinError:"Minimum deposit 1 AZN-dir.",
+depositMaxError:"Maksimum deposit 10000 AZN-dir.",
+selectReceipt:"Ödəniş çekinin şəklini seç.",
+depositSent:"Deposit göndərildi! Admin yoxladıqdan sonra balansına əlavə olunacaq.",
+depositNote:"Əvvəlcə yuxarıda göstərilən karta ödəniş et.\nDaha sonra məbləği daxil edib çekin şəklini yüklə.\nAdmin ödənişi yoxladıqdan sonra məbləğ balansına əlavə olunacaq.",
+balanceLabel:"BALANS",
+logout:"Çıxış",
+logoutError:"Server xətası",
+depositIdMissing:"Deposit ID serverdən gəlmədi.",
+profileLoading:"Yüklənir...",
+ticketLoading:"Yüklənir...",
+serverError:"Server xətası"
+
+},
+
+en:{
+
+dashboard:"Dashboard",
+welcome:"Welcome!",
+welcomeUser:"Welcome, {name}",
+balance:"Balance",
+exactBalance:"Exact balance: {value}",
+carCount:"Cars",
+dailyIncome:"Daily income",
+earnedIncome:"Accumulated income",
+collect:"COLLECT",
+collecting:"COLLECTING...",
+promoTitle:"🎁 Promo code",
+promoSubtitle:"Enter your promo code and add a bonus to your balance.",
+promoPlaceholder:"Enter promo code",
+usePromo:"Use code",
+checking:"Checking...",
+cars:"Cars",
+myCars:"My cars",
+depositHistory:"Deposit history",
+withdrawHistory:"Withdrawal history",
+loading:"Loading...",
+notFound:"No cars found.",
+carsLoadError:"Cars could not be loaded.",
+noCars:"You don't have any cars yet.",
+price:"Price",
+daily:"Daily",
+monthly:"Monthly income",
+buy:"Buy",
+buyConfirm:"Do you want to buy this car?",
+carBought:"Car purchased!",
+accumulated:"Accumulated",
+perDay:"AZN/day",
+monthlyShort:"📅 Monthly:",
+collectingIncome:"An error occurred while collecting income.",
+incomeAdded:"Income added to balance.",
+allIncomeAdded:"All income was added to your balance.",
+promoEnter:"Enter a promo code.",
+promoSuccess:"Promo code successfully used!",
+promoError:"Promo code could not be used.",
+order:"Order",
+amount:"Amount",
+status:"Status",
+date:"Date",
+id:"ID",
+noDeposit:"No deposits yet.",
+depositLoadError:"Deposit history could not be loaded.",
+noWithdraw:"No withdrawals yet.",
+withdrawLoadError:"Withdrawal history could not be loaded.",
+pending:"Pending",
+approved:"Approved",
+rejected:"Rejected",
+open:"Open",
+answered:"Answered",
+closed:"Closed",
+profile:"Profile",
+profileInfo:"Profile information",
+name:"Name / username",
+email:"Email",
+namePlaceholder:"Enter your name",
+emailPlaceholder:"Enter your email",
+saveProfile:"Save profile information",
+saving:"Saving...",
+profileUpdated:"Profile information updated.",
+passwordChange:"🔒 Change password",
+currentPassword:"Current password",
+newPassword:"New password",
+confirmPassword:"Repeat new password",
+currentPasswordPlaceholder:"Current password",
+minPassword:"Minimum 6 characters",
+newPasswordPlaceholder:"New password",
+changePassword:"Change password",
+changing:"Changing...",
+passwordChanged:"Password changed successfully.",
+close:"Close",
+user:"User",
+invalidName:"Enter your name.",
+invalidEmail:"Enter a valid email.",
+currentPasswordRequired:"Enter your current password.",
+passwordMin:"New password must be at least 6 characters.",
+passwordMismatch:"New passwords do not match.",
+support:"Support",
+newTicket:"New support ticket",
+subject:"Subject",
+message:"Message",
+subjectPlaceholder:"Example: I have a deposit problem",
+messagePlaceholder:"Describe your problem in detail...",
+createTicket:"🎫 Create ticket",
+creating:"Creating...",
+myTickets:"My tickets",
+noTickets:"No support tickets yet.",
+ticketsLoadError:"Tickets could not be loaded.",
+ticket:"🎫 Ticket",
+you:"YOU",
+admin:"ADMIN",
+closeTicket:"🔒 Close ticket",
+closeTicketConfirm:"Do you want to close this ticket?",
+ticketClosed:"Ticket closed.",
+ticketCreated:"Ticket created.",
+topicMessageRequired:"Fill in the subject and message.",
+withdraw:"Withdraw",
+availableBalance:"Available balance",
+withdrawAmount:"Amount (AZN)",
+minWithdrawPlaceholder:"Minimum 40 AZN",
+paymentMethod:"Payment method",
+paymentMethodPlaceholder:"Example: Bank card",
+accountInfo:"Account / card information",
+accountPlaceholder:"Card number or account",
+requestWithdraw:"Request withdrawal",
+sending:"Sending...",
+minWithdraw:"Minimum withdrawal amount is 40 AZN.",
+withdrawNote:"The request will be approved after being reviewed by an admin.",
+withdrawMinError:"Minimum withdrawal is 40 AZN.",
+insufficientBalance:"Insufficient balance.",
+fillAll:"Fill in all information.",
+withdrawCreated:"Withdrawal request created.",
+deposit:"Deposit",
+paymentCard:"Payment card",
+cardOwner:"Card owner",
+notSet:"Not set",
+depositAmount:"Amount (AZN)",
+depositAmountPlaceholder:"Example: 10",
+receipt:"Payment receipt / screenshot",
+sendPayment:"Send payment",
+depositMinError:"Minimum deposit is 1 AZN.",
+depositMaxError:"Maximum deposit is 10000 AZN.",
+selectReceipt:"Select a payment receipt image.",
+depositSent:"Deposit sent! It will be added to your balance after admin review.",
+depositNote:"First, make a payment to the card shown above.\nThen enter the amount and upload the receipt.\nThe amount will be added to your balance after admin review.",
+balanceLabel:"BALANCE",
+logout:"Logout",
+logoutError:"Server error",
+depositIdMissing:"Deposit ID was not returned by the server.",
+profileLoading:"Loading...",
+ticketLoading:"Loading...",
+serverError:"Server error"
+
+},
+
+ru:{
+
+dashboard:"Панель",
+welcome:"Добро пожаловать!",
+welcomeUser:"Добро пожаловать, {name}",
+balance:"Баланс",
+exactBalance:"Точный баланс: {value}",
+carCount:"Машины",
+dailyIncome:"Доход в день",
+earnedIncome:"Накопленный доход",
+collect:"ЗАБРАТЬ",
+collecting:"СОБИРАЕМ...",
+promoTitle:"🎁 Промокод",
+promoSubtitle:"Введите промокод и получите бонус на баланс.",
+promoPlaceholder:"Введите промокод",
+usePromo:"Использовать код",
+checking:"Проверка...",
+cars:"Машины",
+myCars:"Мои машины",
+depositHistory:"История депозитов",
+withdrawHistory:"История выводов",
+loading:"Загрузка...",
+notFound:"Машины не найдены.",
+carsLoadError:"Не удалось загрузить машины.",
+noCars:"У вас пока нет машин.",
+price:"Цена",
+daily:"В день",
+monthly:"Доход в месяц",
+buy:"Купить",
+buyConfirm:"Вы хотите купить эту машину?",
+carBought:"Машина куплена!",
+accumulated:"Накоплено",
+perDay:"AZN/день",
+monthlyShort:"📅 В месяц:",
+collectingIncome:"Произошла ошибка при получении дохода.",
+incomeAdded:"Доход добавлен на баланс.",
+allIncomeAdded:"Весь доход добавлен на баланс.",
+promoEnter:"Введите промокод.",
+promoSuccess:"Промокод успешно использован!",
+promoError:"Не удалось использовать промокод.",
+order:"Заказ",
+amount:"Сумма",
+status:"Статус",
+date:"Дата",
+id:"ID",
+noDeposit:"Депозитов пока нет.",
+depositLoadError:"Не удалось загрузить историю депозитов.",
+noWithdraw:"Выводов пока нет.",
+withdrawLoadError:"Не удалось загрузить историю выводов.",
+pending:"Ожидает",
+approved:"Подтверждено",
+rejected:"Отклонено",
+open:"Открыт",
+answered:"Отвечен",
+closed:"Закрыт",
+profile:"Профиль",
+profileInfo:"Данные профиля",
+name:"Имя / имя пользователя",
+email:"Email",
+namePlaceholder:"Введите имя",
+emailPlaceholder:"Введите email",
+saveProfile:"Сохранить данные профиля",
+saving:"Сохранение...",
+profileUpdated:"Данные профиля обновлены.",
+passwordChange:"🔒 Изменить пароль",
+currentPassword:"Текущий пароль",
+newPassword:"Новый пароль",
+confirmPassword:"Повторите новый пароль",
+currentPasswordPlaceholder:"Текущий пароль",
+minPassword:"Минимум 6 символов",
+newPasswordPlaceholder:"Новый пароль",
+changePassword:"Изменить пароль",
+changing:"Изменение...",
+passwordChanged:"Пароль успешно изменён.",
+close:"Закрыть",
+user:"Пользователь",
+invalidName:"Введите имя.",
+invalidEmail:"Введите корректный email.",
+currentPasswordRequired:"Введите текущий пароль.",
+passwordMin:"Новый пароль должен содержать минимум 6 символов.",
+passwordMismatch:"Новые пароли не совпадают.",
+support:"Поддержка",
+newTicket:"Новый тикет поддержки",
+subject:"Тема",
+message:"Сообщение",
+subjectPlaceholder:"Например: проблема с депозитом",
+messagePlaceholder:"Подробно опишите проблему...",
+createTicket:"🎫 Создать тикет",
+creating:"Создание...",
+myTickets:"Мои тикеты",
+noTickets:"Тикетов поддержки пока нет.",
+ticketsLoadError:"Не удалось загрузить тикеты.",
+ticket:"🎫 Тикет",
+you:"ВЫ",
+admin:"АДМИН",
+closeTicket:"🔒 Закрыть тикет",
+closeTicketConfirm:"Вы хотите закрыть этот тикет?",
+ticketClosed:"Тикет закрыт.",
+ticketCreated:"Тикет создан.",
+topicMessageRequired:"Заполните тему и сообщение.",
+withdraw:"Вывод средств",
+availableBalance:"Доступный баланс",
+withdrawAmount:"Сумма (AZN)",
+minWithdrawPlaceholder:"Минимум 40 AZN",
+paymentMethod:"Способ оплаты",
+paymentMethodPlaceholder:"Например: Банковская карта",
+accountInfo:"Данные счёта / карты",
+accountPlaceholder:"Номер карты или счёт",
+requestWithdraw:"Запросить вывод",
+sending:"Отправка...",
+minWithdraw:"Минимальная сумма вывода — 40 AZN.",
+withdrawNote:"Запрос будет подтверждён после проверки администратором.",
+withdrawMinError:"Минимальная сумма вывода — 40 AZN.",
+insufficientBalance:"Недостаточно средств.",
+fillAll:"Заполните все данные.",
+withdrawCreated:"Запрос на вывод создан.",
+deposit:"Депозит",
+paymentCard:"Платёжная карта",
+cardOwner:"Владелец карты",
+notSet:"Не указано",
+depositAmount:"Сумма (AZN)",
+depositAmountPlaceholder:"Например: 10",
+receipt:"Чек / скриншот оплаты",
+sendPayment:"Отправить оплату",
+depositMinError:"Минимальный депозит — 1 AZN.",
+depositMaxError:"Максимальный депозит — 10000 AZN.",
+selectReceipt:"Выберите изображение чека.",
+depositSent:"Депозит отправлен! После проверки администратором сумма будет добавлена на баланс.",
+depositNote:"Сначала совершите оплату на указанную выше карту.\nЗатем введите сумму и загрузите чек.\nПосле проверки администратором сумма будет добавлена на баланс.",
+balanceLabel:"БАЛАНС",
+logout:"Выйти",
+logoutError:"Ошибка сервера",
+depositIdMissing:"ID депозита не получен от сервера.",
+profileLoading:"Загрузка...",
+ticketLoading:"Загрузка...",
+serverError:"Ошибка сервера"
+
+}
+
+};
+
+
+function getLanguage(){
+
+const saved=
+localStorage.getItem(
+"carcash_language"
+);
+
+return(
+saved==="az"||
+saved==="en"||
+saved==="ru"
+)
+?
+saved
+:
+"az";
+
+}
+
+
+function t(key,params={}){
+
+const lang=
+getLanguage();
+
+let value=
+translations[lang]?.[key]||
+translations.az[key]||
+key;
+
+Object.keys(params).forEach(
+param=>{
+
+value=
+value.replaceAll(
+"{"+param+"}",
+String(params[param])
+);
+
+});
+
+return value;
+
+}
+
+
+function changeLanguage(lang){
+
+if(
+lang!=="az"&&
+lang!=="en"&&
+lang!=="ru"
+){
+
+lang="az";
+
+}
+
+localStorage.setItem(
+"carcash_language",
+lang
+);
+
+applyLanguage();
+
+renderMyCars();
+
+loadCars();
+
+loadDeposits();
+
+loadWithdrawals();
+
+if(
+document.getElementById(
+"supportModal"
+).classList.contains("active")
+){
+
+loadSupportTickets();
+
+}
+
+if(
+document.getElementById(
+"ticketModal"
+).classList.contains("active")
+){
+
+const detail=
+document.getElementById(
+"ticketDetail"
+);
+
+if(detail.dataset.ticketId){
+
+openTicket(
+Number(detail.dataset.ticketId)
+);
+
+}
+
+}
+
+if(
+document.getElementById(
+"profileModal"
+).classList.contains("active")
+){
+
+loadProfile();
+
+}
+
+if(
+document.getElementById(
+"depositModal"
+).classList.contains("active")
+){
+
+loadPaymentInfo();
+
+}
+
+}
+
+
+function applyLanguage(){
+
+const lang=
+getLanguage();
+
+document.documentElement.lang=
+lang;
+
+const select=
+document.getElementById(
+"languageSelect"
+);
+
+if(select){
+
+select.value=lang;
+
+}
+
+document.title=
+"CarCash";
+
+const setText=(id,key)=>{
+
+const el=
+document.getElementById(id);
+
+if(el){
+
+el.textContent=t(key);
+
+}
+
+};
+
+setText(
+"dashboardTitle",
+"dashboard"
+);
+
+setText(
+"balanceStatTitle",
+"balance"
+);
+
+setText(
+"carsCountTitle",
+"carCount"
+);
+
+setText(
+"dailyIncomeTitle",
+"dailyIncome"
+);
+
+setText(
+"earnedIncomeTitle",
+"earnedIncome"
+);
+
+setText(
+"collectAllButton",
+"collect"
+);
+
+setText(
+"headerBalanceLabel",
+"balanceLabel"
+);
+
+setText(
+"profileHeaderButton",
+"profile"
+);
+
+setText(
+"supportHeaderButton",
+"support"
+);
+
+setText(
+"depositHeaderButton",
+"deposit"
+);
+
+setText(
+"withdrawHeaderButton",
+"withdraw"
+);
+
+setText(
+"logoutHeaderButton",
+"logout"
+);
+
+setText(
+"promoTitle",
+"promoTitle"
+);
+
+setText(
+"promoSubtitle",
+"promoSubtitle"
+);
+
+setText(
+"promoButton",
+"usePromo"
+);
+
+setText(
+"carsSectionTitle",
+"cars"
+);
+
+setText(
+"myCarsSectionTitle",
+"myCars"
+);
+
+setText(
+"depositHistoryTitle",
+"depositHistory"
+);
+
+setText(
+"withdrawHistoryTitle",
+"withdrawHistory"
+);
+
+setText(
+"depositOrderHead",
+"order"
+);
+
+setText(
+"depositAmountHead",
+"amount"
+);
+
+setText(
+"depositStatusHead",
+"status"
+);
+
+setText(
+"depositDateHead",
+"date"
+);
+
+setText(
+"withdrawIdHead",
+"id"
+);
+
+setText(
+"withdrawAmountHead",
+"amount"
+);
+
+setText(
+"withdrawStatusHead",
+"status"
+);
+
+setText(
+"withdrawDateHead",
+"date"
+);
+
+setText(
+"profileModalTitle",
+"profile"
+);
+
+setText(
+"profileBalanceLabel",
+"balance"
+);
+
+setText(
+"profileCarsLabel",
+"carCount"
+);
+
+setText(
+"profileDailyLabel",
+"dailyIncome"
+);
+
+setText(
+"profileCreatedLabel",
+"date"
+);
+
+setText(
+"profileInfoTitle",
+"profileInfo"
+);
+
+setText(
+"profileNameLabel",
+"name"
+);
+
+setText(
+"profileEmailLabel",
+"email"
+);
+
+setText(
+"saveProfileBtn",
+"saveProfile"
+);
+
+setText(
+"changePasswordTitle",
+"passwordChange"
+);
+
+setText(
+"currentPasswordLabel",
+"currentPassword"
+);
+
+setText(
+"newPasswordLabel",
+"newPassword"
+);
+
+setText(
+"confirmPasswordLabel",
+"confirmPassword"
+);
+
+setText(
+"changePasswordBtn",
+"changePassword"
+);
+
+setText(
+"profileCloseButton",
+"close"
+);
+
+setText(
+"supportModalTitle",
+"support"
+);
+
+setText(
+"newTicketTitle",
+"newTicket"
+);
+
+setText(
+"ticketSubjectLabel",
+"subject"
+);
+
+setText(
+"ticketMessageLabel",
+"message"
+);
+
+setText(
+"createTicketBtn",
+"createTicket"
+);
+
+setText(
+"myTicketsTitle",
+"myTickets"
+);
+
+setText(
+"ticketModalTitle",
+"ticket"
+);
+
+setText(
+"withdrawModalTitle",
+"withdraw"
+);
+
+setText(
+"availableBalanceLabel",
+"availableBalance"
+);
+
+setText(
+"withdrawAmountLabel",
+"withdrawAmount"
+);
+
+setText(
+"withdrawMethodLabel",
+"paymentMethod"
+);
+
+setText(
+"withdrawAccountLabel",
+"accountInfo"
+);
+
+setText(
+"submitWithdrawBtn",
+"requestWithdraw"
+);
+
+setText(
+"depositModalTitle",
+"deposit"
+);
+
+setText(
+"paymentCardLabel",
+"paymentCard"
+);
+
+setText(
+"cardOwnerLabel",
+"cardOwner"
+);
+
+setText(
+"depositAmountLabel",
+"depositAmount"
+);
+
+setText(
+"receiptLabel",
+"receipt"
+);
+
+setText(
+"submitDepositBtn",
+"sendPayment"
+);
+
+const welcome=
+document.getElementById(
+"welcomeText"
+);
+
+if(
+welcome&&
+!currentUser
+){
+
+welcome.textContent=
+t("welcome");
+
+}
+
+const promoInput=
+document.getElementById(
+"promoCode"
+);
+
+if(promoInput){
+
+promoInput.placeholder=
+t("promoPlaceholder");
+
+}
+
+const profileName=
+document.getElementById(
+"profileNameInput"
+);
+
+if(profileName){
+
+profileName.placeholder=
+t("namePlaceholder");
+
+}
+
+const profileEmail=
+document.getElementById(
+"profileEmailInput"
+);
+
+if(profileEmail){
+
+profileEmail.placeholder=
+t("emailPlaceholder");
+
+}
+
+const currentPassword=
+document.getElementById(
+"currentPassword"
+);
+
+if(currentPassword){
+
+currentPassword.placeholder=
+t("currentPasswordPlaceholder");
+
+}
+
+const newPassword=
+document.getElementById(
+"newPassword"
+);
+
+if(newPassword){
+
+newPassword.placeholder=
+t("minPassword");
+
+}
+
+const confirmPassword=
+document.getElementById(
+"confirmPassword"
+);
+
+if(confirmPassword){
+
+confirmPassword.placeholder=
+t("newPasswordPlaceholder");
+
+}
+
+const ticketSubject=
+document.getElementById(
+"ticketSubject"
+);
+
+if(ticketSubject){
+
+ticketSubject.placeholder=
+t("subjectPlaceholder");
+
+}
+
+const ticketMessage=
+document.getElementById(
+"ticketMessage"
+);
+
+if(ticketMessage){
+
+ticketMessage.placeholder=
+t("messagePlaceholder");
+
+}
+
+const withdrawAmount=
+document.getElementById(
+"withdrawAmount"
+);
+
+if(withdrawAmount){
+
+withdrawAmount.placeholder=
+t("minWithdrawPlaceholder");
+
+}
+
+const withdrawMethod=
+document.getElementById(
+"withdrawMethod"
+);
+
+if(withdrawMethod){
+
+withdrawMethod.placeholder=
+t("paymentMethodPlaceholder");
+
+}
+
+const withdrawAccount=
+document.getElementById(
+"withdrawAccount"
+);
+
+if(withdrawAccount){
+
+withdrawAccount.placeholder=
+t("accountPlaceholder");
+
+}
+
+const depositAmount=
+document.getElementById(
+"depositAmount"
+);
+
+if(depositAmount){
+
+depositAmount.placeholder=
+t("depositAmountPlaceholder");
+
+}
+
+const withdrawNote=
+document.getElementById(
+"withdrawNote"
+);
+
+if(withdrawNote){
+
+withdrawNote.textContent=
+t("minWithdraw")+
+"\n"+
+t("withdrawNote");
+
+}
+
+const depositNote=
+document.getElementById(
+"depositNote"
+);
+
+if(depositNote){
+
+depositNote.textContent=
+t("depositNote");
+
+}
+
+if(
+document.getElementById(
+"withdrawBalance"
+)&&
+currentUser
+){
+
+document.getElementById(
+"withdrawBalance"
+).textContent=
+Number(
+currentUser.balance||0
+).toFixed(8)+
+" AZN";
+
+}
+
+}
+
+
 /* MOBILE */
 
 function toggleMobileMenu(){
 
 const menu=
-document.getElementById("headerRight");
+document.getElementById(
+"headerRight"
+);
 
 if(menu){
 
@@ -2107,7 +3253,9 @@ menu.classList.toggle(
 function closeMobileMenu(){
 
 const menu=
-document.getElementById("headerRight");
+document.getElementById(
+"headerRight"
+);
 
 if(menu){
 
@@ -2154,7 +3302,7 @@ if(!response.ok){
 throw new Error(
 data.error||
 data.message||
-"Server xətası"
+t("serverError")
 );
 
 }
@@ -2199,13 +3347,13 @@ document.getElementById(
 ).textContent=
 name
 ?
-"Xoş gəlmisən, "+name
+t("welcomeUser",{name})
 :
 email
 ?
-"Xoş gəlmisən, "+email
+t("welcomeUser",{name:email})
 :
-"Xoş gəlmisən!";
+t("welcome");
 
 updateBalance(
 Number(
@@ -2247,7 +3395,12 @@ document.getElementById(
 document.getElementById(
 "balanceProgress"
 ).textContent=
-"Dəqiq balans: "+value;
+t(
+"exactBalance",
+{
+value
+}
+);
 
 }
 
@@ -2351,7 +3504,9 @@ document.getElementById("cars");
 if(!cars.length){
 
 container.innerHTML=
-'<div class="empty">Maşın tapılmadı.</div>';
+'<div class="empty">'+
+t("notFound")+
+'</div>';
 
 return;
 
@@ -2365,7 +3520,7 @@ cars.forEach(car=>{
 const name=
 String(
 car.name||
-"Maşın"
+"Car"
 )
 .trim()
 .replace(
@@ -2433,7 +3588,7 @@ ${escapeHtml(car.name)}
 
 <div class="car-info">
 
-Qiymət:
+${t("price")}:
 <b>
 ${car.price.toFixed(2)}
 AZN
@@ -2441,7 +3596,7 @@ AZN
 
 <br>
 
-Gündəlik:
+${t("daily")}:
 <b>
 ${car.daily.toFixed(2)}
 AZN
@@ -2451,7 +3606,7 @@ AZN
 
 <div class="car-monthly">
 
-📅 Aylıq gəlir:
+${t("monthlyShort")}
 
 <span>
 ${monthly.toFixed(2)} AZN
@@ -2463,7 +3618,7 @@ ${monthly.toFixed(2)} AZN
 class="buy-btn"
 onclick="buyCar(${Number(car.id)})">
 
-Al
+${t("buy")}
 
 </button>
 
@@ -2484,7 +3639,9 @@ error
 document.getElementById(
 "cars"
 ).innerHTML=
-'<div class="empty">Maşınlar yüklənmədi.</div>';
+'<div class="empty">'+
+t("carsLoadError")+
+'</div>';
 
 }
 
@@ -2496,7 +3653,7 @@ document.getElementById(
 async function buyCar(id){
 
 if(!confirm(
-"Bu maşını almaq istəyirsən?"
+t("buyConfirm")
 ))return;
 
 try{
@@ -2518,7 +3675,7 @@ carId:id
 
 alert(
 data.message||
-"Maşın alındı!"
+t("carBought")
 );
 
 await loadUser();
@@ -2656,7 +3813,8 @@ document.getElementById(
 if(element){
 
 element.textContent=
-"Yığılmış: "+
+t("accumulated")+
+": "+
 earned.toFixed(8)+
 " AZN";
 
@@ -2728,7 +3886,9 @@ cars.length;
 if(!cars.length){
 
 container.innerHTML=
-'<div class="empty">Hələ maşının yoxdur.</div>';
+'<div class="empty">'+
+t("noCars")+
+'</div>';
 
 document.getElementById(
 "statDaily"
@@ -2798,7 +3958,7 @@ onerror="this.onerror=null;this.src='/cars/car-5.jpg';">
 
 ${escapeHtml(
 car.name||
-"Maşın"
+"Car"
 )}
 
 </div>
@@ -2817,13 +3977,13 @@ AZN
 +${Number(
 car.daily||0
 ).toFixed(2)}
-AZN/gün
+${t("perDay")}
 
 </div>
 
 <div class="my-car-monthly">
 
-📅 Aylıq:
+${t("monthlyShort")}
 ${monthly.toFixed(2)}
 AZN
 
@@ -2833,7 +3993,7 @@ AZN
 class="my-car-earned"
 id="earned-${Number(car.id)}">
 
-Yığılmış:
+${t("accumulated")}:
 ${earned.toFixed(8)}
 AZN
 
@@ -2849,7 +4009,7 @@ AZN
 class="collect-one-btn"
 onclick="collectOneCar(${Number(car.id)})">
 
-TOPLA
+${t("collect")}
 
 </button>
 
@@ -2885,7 +4045,7 @@ document.getElementById(
 button.disabled=true;
 
 button.textContent=
-"TOPLANIR...";
+t("collecting");
 
 try{
 
@@ -2899,7 +4059,7 @@ method:"POST"
 
 alert(
 data.message||
-"Bütün gəlirlər balansa əlavə edildi."
+t("allIncomeAdded")
 );
 
 await loadUser();
@@ -2910,7 +4070,7 @@ renderMyCars();
 
 alert(
 error.message||
-"Gəlir toplanarkən xəta baş verdi."
+t("collectingIncome")
 );
 
 }finally{
@@ -2918,7 +4078,7 @@ error.message||
 button.disabled=false;
 
 button.textContent=
-"TOPLA";
+t("collect");
 
 }
 
@@ -2943,7 +4103,7 @@ method:"POST"
 
 alert(
 data.message||
-"Gəlir balansa əlavə edildi."
+t("incomeAdded")
 );
 
 await loadUser();
@@ -2954,7 +4114,7 @@ renderMyCars();
 
 alert(
 error.message||
-"Gəlir toplanarkən xəta baş verdi."
+t("collectingIncome")
 );
 
 }
@@ -2982,7 +4142,7 @@ input.value.trim().toUpperCase();
 if(!code){
 
 showPromoMessage(
-"Promo kodunu daxil et.",
+t("promoEnter"),
 "error"
 );
 
@@ -2993,7 +4153,7 @@ return;
 button.disabled=true;
 
 button.textContent=
-"Yoxlanılır...";
+t("checking");
 
 try{
 
@@ -3034,7 +4194,7 @@ input.value="";
 
 showPromoMessage(
 data.message||
-"Promo kod uğurla istifadə edildi!",
+t("promoSuccess"),
 "success"
 );
 
@@ -3042,7 +4202,7 @@ data.message||
 
 showPromoMessage(
 error.message||
-"Promo kod istifadə edilə bilmədi.",
+t("promoError"),
 "error"
 );
 
@@ -3051,7 +4211,7 @@ error.message||
 button.disabled=false;
 
 button.textContent=
-"Kodu istifadə et";
+t("usePromo");
 
 }
 
@@ -3119,7 +4279,8 @@ profile.email||"";
 document.getElementById(
 "profileNameBig"
 ).textContent=
-name||"İstifadəçi";
+name||
+t("user");
 
 document.getElementById(
 "profileEmailBig"
@@ -3211,7 +4372,7 @@ document.getElementById(
 if(!name){
 
 showProfileMessage(
-"Adı daxil et.",
+t("invalidName"),
 "error"
 );
 
@@ -3225,7 +4386,7 @@ if(
 ){
 
 showProfileMessage(
-"Düzgün email daxil et.",
+t("invalidEmail"),
 "error"
 );
 
@@ -3236,7 +4397,7 @@ return;
 button.disabled=true;
 
 button.textContent=
-"Yadda saxlanılır...";
+t("saving");
 
 try{
 
@@ -3266,11 +4427,16 @@ currentUser.email=email;
 document.getElementById(
 "welcomeText"
 ).textContent=
-"Xoş gəlmisən, "+name;
+t(
+"welcomeUser",
+{
+name
+}
+);
 
 showProfileMessage(
 data.message||
-"Profil məlumatları yeniləndi.",
+t("profileUpdated"),
 "success"
 );
 
@@ -3288,7 +4454,7 @@ error.message,
 button.disabled=false;
 
 button.textContent=
-"Profil məlumatlarını yadda saxla";
+t("saveProfile");
 
 }
 
@@ -3320,7 +4486,7 @@ document.getElementById(
 if(!currentPassword){
 
 showProfileMessage(
-"Hazırkı şifrəni daxil et.",
+t("currentPasswordRequired"),
 "error"
 );
 
@@ -3331,7 +4497,7 @@ return;
 if(newPassword.length<6){
 
 showProfileMessage(
-"Yeni şifrə minimum 6 simvol olmalıdır.",
+t("passwordMin"),
 "error"
 );
 
@@ -3342,7 +4508,7 @@ return;
 if(newPassword!==confirmPassword){
 
 showProfileMessage(
-"Yeni şifrələr eyni deyil.",
+t("passwordMismatch"),
 "error"
 );
 
@@ -3353,7 +4519,7 @@ return;
 button.disabled=true;
 
 button.textContent=
-"Dəyişdirilir...";
+t("changing");
 
 try{
 
@@ -3387,7 +4553,7 @@ document.getElementById(
 
 showProfileMessage(
 data.message||
-"Şifrə uğurla dəyişdirildi.",
+t("passwordChanged"),
 "success"
 );
 
@@ -3403,7 +4569,7 @@ error.message,
 button.disabled=false;
 
 button.textContent=
-"Şifrəni dəyiş";
+t("changePassword");
 
 }
 
@@ -3444,12 +4610,8 @@ document.getElementById(
 "paymentCardNumber"
 ).textContent=
 data.cardNumber||
-"Təyin edilməyib";
+t("notSet");
 
-/*
-  Serverdən Denix Cars və ya başqa ad gəlsə belə,
-  istifadəçiyə həmişə Unknown göstərilir.
-*/
 document.getElementById(
 "paymentCardName"
 ).textContent=
@@ -3462,10 +4624,6 @@ console.error(
 error
 );
 
-/*
-  Server xətası olsa belə kart sahibi
-  Unknown olaraq qalır.
-*/
 document.getElementById(
 "paymentCardName"
 ).textContent=
@@ -3509,7 +4667,7 @@ container.innerHTML=
 `
 <div class="history-row">
 <div class="empty">
-Hələ deposit yoxdur.
+${t("noDeposit")}
 </div>
 </div>
 `;
@@ -3529,15 +4687,15 @@ deposit.status||
 ).toLowerCase();
 
 let statusText=
-"Gözləyir";
+t("pending");
 
 if(status==="approved")
 statusText=
-"Təsdiqləndi";
+t("approved");
 
 if(status==="rejected")
 statusText=
-"Rədd edildi";
+t("rejected");
 
 return`
 
@@ -3599,7 +4757,7 @@ document.getElementById(
 `
 <div class="history-row">
 <div class="empty">
-Deposit tarixçəsi yüklənmədi.
+${t("depositLoadError")}
 </div>
 </div>
 `;
@@ -3642,7 +4800,7 @@ container.innerHTML=
 `
 <div class="history-row">
 <div class="empty">
-Hələ çıxarış yoxdur.
+${t("noWithdraw")}
 </div>
 </div>
 `;
@@ -3662,15 +4820,15 @@ withdrawal.status||
 ).toLowerCase();
 
 let statusText=
-"Gözləyir";
+t("pending");
 
 if(status==="approved")
 statusText=
-"Təsdiqləndi";
+t("approved");
 
 if(status==="rejected")
 statusText=
-"Rədd edildi";
+t("rejected");
 
 return`
 
@@ -3731,7 +4889,7 @@ document.getElementById(
 `
 <div class="history-row">
 <div class="empty">
-Çıxarış tarixçəsi yüklənmədi.
+${t("withdrawLoadError")}
 </div>
 </div>
 `;
@@ -3800,7 +4958,7 @@ amount<40
 ){
 
 showWithdrawMessage(
-"Minimum çıxarış 40 AZN-dir.",
+t("withdrawMinError"),
 "error"
 );
 
@@ -3816,7 +4974,7 @@ currentUser?.balance||0
 ){
 
 showWithdrawMessage(
-"Balans kifayət etmir.",
+t("insufficientBalance"),
 "error"
 );
 
@@ -3827,7 +4985,7 @@ return;
 if(!method||!account){
 
 showWithdrawMessage(
-"Bütün məlumatları doldur.",
+t("fillAll"),
 "error"
 );
 
@@ -3838,7 +4996,7 @@ return;
 button.disabled=true;
 
 button.textContent=
-"Göndərilir...";
+t("sending");
 
 try{
 
@@ -3861,7 +5019,7 @@ account
 
 showWithdrawMessage(
 data.message||
-"Çıxarış sorğusu yaradıldı.",
+t("withdrawCreated"),
 "success"
 );
 
@@ -3886,7 +5044,7 @@ error.message,
 button.disabled=false;
 
 button.textContent=
-"Çıxarış tələb et";
+t("requestWithdraw");
 
 }
 
@@ -3968,7 +5126,7 @@ amount<1
 ){
 
 showDepositMessage(
-"Minimum deposit 1 AZN-dir.",
+t("depositMinError"),
 "error"
 );
 
@@ -3979,7 +5137,7 @@ return;
 if(amount>10000){
 
 showDepositMessage(
-"Maksimum deposit 10000 AZN-dir.",
+t("depositMaxError"),
 "error"
 );
 
@@ -3990,7 +5148,7 @@ return;
 if(!file){
 
 showDepositMessage(
-"Ödəniş çekinin şəklini seç.",
+t("selectReceipt"),
 "error"
 );
 
@@ -4001,7 +5159,7 @@ return;
 button.disabled=true;
 
 button.textContent=
-"Göndərilir...";
+t("sending");
 
 try{
 
@@ -4032,7 +5190,7 @@ createData.deposit.id
 if(!depositId){
 
 throw new Error(
-"Deposit ID serverdən gəlmədi."
+t("depositIdMissing")
 );
 
 }
@@ -4056,7 +5214,7 @@ body:formData
 );
 
 showDepositMessage(
-"Deposit göndərildi! Admin yoxladıqdan sonra balansına əlavə olunacaq.",
+t("depositSent"),
 "success"
 );
 
@@ -4079,7 +5237,7 @@ error.message,
 button.disabled=false;
 
 button.textContent=
-"Ödənişi göndər";
+t("sendPayment");
 
 }
 
@@ -4136,7 +5294,9 @@ document.getElementById(
 );
 
 container.innerHTML=
-'<div class="empty">Yüklənir...</div>';
+'<div class="empty">'+
+t("loading")+
+'</div>';
 
 try{
 
@@ -4159,7 +5319,9 @@ data.data||
 if(!tickets.length){
 
 container.innerHTML=
-'<div class="empty">Hələ support ticket yoxdur.</div>';
+'<div class="empty">'+
+t("noTickets")+
+'</div>';
 
 return;
 
@@ -4176,7 +5338,7 @@ ticket.status||
 ).toLowerCase();
 
 let statusText=
-"Açıq";
+t("open");
 
 if(
 status==="waiting"||
@@ -4184,14 +5346,14 @@ status==="answered"
 ){
 
 statusText=
-"Cavablandı";
+t("answered");
 
 }
 
 if(status==="closed"){
 
 statusText=
-"Bağlandı";
+t("closed");
 
 }
 
@@ -4266,7 +5428,7 @@ ticket.message||
 container.innerHTML=
 `
 <div class="empty">
-Ticketlər yüklənmədi.
+${t("ticketsLoadError")}
 </div>
 `;
 
@@ -4295,7 +5457,7 @@ document.getElementById(
 if(!subject||!message){
 
 alert(
-"Mövzu və mesajı doldur."
+t("topicMessageRequired")
 );
 
 return;
@@ -4305,7 +5467,7 @@ return;
 button.disabled=true;
 
 button.textContent=
-"Yaradılır...";
+t("creating");
 
 try{
 
@@ -4327,7 +5489,7 @@ message
 
 alert(
 data.message||
-"Ticket yaradıldı."
+t("ticketCreated")
 );
 
 document.getElementById(
@@ -4349,7 +5511,7 @@ alert(error.message);
 button.disabled=false;
 
 button.textContent=
-"🎫 Ticket yarat";
+t("createTicket");
 
 }
 
@@ -4372,8 +5534,13 @@ document.getElementById(
 
 modal.classList.add("active");
 
+detail.dataset.ticketId=
+String(id);
+
 detail.innerHTML=
-'<div class="empty">Yüklənir...</div>';
+'<div class="empty">'+
+t("loading")+
+'</div>';
 
 try{
 
@@ -4402,6 +5569,21 @@ ticket.messages
 :
 [];
 
+let statusText=
+t("open");
+
+if(status==="waiting")
+statusText=
+t("answered");
+
+if(status==="answered")
+statusText=
+t("answered");
+
+if(status==="closed")
+statusText=
+t("closed");
+
 detail.innerHTML=`
 
 <div class="ticket">
@@ -4421,10 +5603,14 @@ ticket.subject||
 
 <span
 class="status ${
-escapeHtml(status)
+escapeHtml(
+status==="waiting"
+?"answered"
+:status
+)
 }">
 
-${escapeHtml(status)}
+${statusText}
 
 </span>
 
@@ -4449,7 +5635,7 @@ ticket.created_at
 <div class="ticket-message">
 
 <div class="ticket-user-label">
-SƏN
+${t("you")}
 </div>
 
 ${escapeHtml(
@@ -4466,7 +5652,7 @@ message=>`
 <div class="ticket-reply-box">
 
 <div class="ticket-admin-label">
-ADMIN
+${t("admin")}
 </div>
 
 <div class="ticket-reply-text">
@@ -4496,7 +5682,7 @@ status!=="closed"
 class="ticket-close-btn"
 onclick="closeMyTicket(${Number(ticket.id)})">
 
-🔒 Ticketi bağla
+${t("closeTicket")}
 
 </button>
 
@@ -4539,7 +5725,7 @@ document.getElementById(
 async function closeMyTicket(id){
 
 if(!confirm(
-"Bu ticketi bağlamaq istəyirsən?"
+t("closeTicketConfirm")
 ))return;
 
 try{
@@ -4556,7 +5742,7 @@ method:"POST"
 
 alert(
 data.message||
-"Ticket bağlandı."
+t("ticketClosed")
 );
 
 closeTicket();
@@ -4594,7 +5780,14 @@ parseServerDate(value);
 if(!date)
 return value;
 
+const locales={
+az:"az-AZ",
+en:"en-US",
+ru:"ru-RU"
+};
+
 return date.toLocaleString(
+locales[getLanguage()]||
 "az-AZ"
 );
 
@@ -4692,6 +5885,8 @@ closeTicket();
 
 async function refreshDashboard(){
 
+applyLanguage();
+
 await loadUser();
 
 renderMyCars();
@@ -4708,9 +5903,12 @@ startLiveEarnings();
 
 }
 
+applyLanguage();
+
 refreshDashboard();
 
 </script>
 
 </body>
 </html>
+```
