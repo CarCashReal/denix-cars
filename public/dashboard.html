@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="az">
 <head>
@@ -7,17 +8,8 @@
 <title>CarCash</title>
 
 <style>
-
-*{
-box-sizing:border-box;
--webkit-tap-highlight-color:transparent;
-}
-
-html{
-min-height:100%;
-background:#080c18;
-}
-
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{min-height:100%;background:#080c18}
 body{
 margin:0;
 font-family:Arial,sans-serif;
@@ -27,28 +19,12 @@ radial-gradient(circle at 90% 100%,#17213f 0%,transparent 35%),
 #080c18;
 color:#fff;
 min-height:100vh;
-overflow-x:hidden;
+overflow-x:hidden
 }
-
-button,input,textarea{
-font:inherit;
-}
-
-button{
-border:0;
-cursor:pointer;
-font-weight:700;
-}
-
-button:active{
-transform:scale(.98);
-}
-
-img{
-max-width:100%;
-}
-
-/* HEADER */
+button,input,textarea{font:inherit}
+button{border:0;cursor:pointer;font-weight:700}
+button:active{transform:scale(.98)}
+img{max-width:100%}
 
 header{
 min-height:70px;
@@ -63,25 +39,70 @@ backdrop-filter:blur(14px);
 -webkit-backdrop-filter:blur(14px);
 position:sticky;
 top:0;
-z-index:100;
+z-index:100
 }
 
 .logo{
 font-size:24px;
 font-weight:800;
 letter-spacing:.3px;
-white-space:nowrap;
+white-space:nowrap
 }
 
-.logo span{
-color:#5b8cff;
-}
+.logo span{color:#5b8cff}
 
 .header-right{
 display:flex;
 align-items:center;
 justify-content:flex-end;
-gap:8px;
+gap:8px
+}
+
+/* LANGUAGE */
+
+.language-box{
+position:relative;
+margin-left:4px
+}
+
+.language-button{
+background:#182139;
+color:#fff;
+border:1px solid #29344d;
+padding:10px 12px;
+border-radius:10px;
+white-space:nowrap;
+min-height:42px
+}
+
+.language-menu{
+display:none;
+position:absolute;
+right:0;
+top:calc(100% + 7px);
+width:145px;
+background:#11182b;
+border:1px solid #29344d;
+border-radius:11px;
+padding:6px;
+box-shadow:0 18px 45px rgba(0,0,0,.45);
+z-index:500
+}
+
+.language-menu.open{display:block}
+
+.language-option{
+width:100%;
+background:transparent;
+color:#fff;
+text-align:left;
+padding:10px 11px;
+border-radius:8px;
+font-size:13px
+}
+
+.language-option:hover{
+background:#202a42
 }
 
 .balance-box{
@@ -89,21 +110,21 @@ background:#11182a;
 border:1px solid #202a42;
 padding:9px 15px;
 border-radius:11px;
-min-width:150px;
+min-width:150px
 }
 
 .balance-box small{
 color:#8994aa;
 display:block;
 font-size:10px;
-margin-bottom:2px;
+margin-bottom:2px
 }
 
 .balance{
 font-size:18px;
 font-weight:800;
 font-variant-numeric:tabular-nums;
-white-space:nowrap;
+white-space:nowrap
 }
 
 .deposit-btn,
@@ -114,33 +135,14 @@ white-space:nowrap;
 padding:11px 14px;
 border-radius:10px;
 white-space:nowrap;
-transition:.15s;
+transition:.15s
 }
 
-.deposit-btn{
-background:#4d7cff;
-color:#fff;
-}
-
-.withdraw-btn{
-background:#42df96;
-color:#07150f;
-}
-
-.profile-btn{
-background:#7c5cff;
-color:#fff;
-}
-
-.support-btn{
-background:#ff9f43;
-color:#17100a;
-}
-
-.logout-btn{
-background:#20283b;
-color:#fff;
-}
+.deposit-btn{background:#4d7cff;color:#fff}
+.withdraw-btn{background:#42df96;color:#07150f}
+.profile-btn{background:#7c5cff;color:#fff}
+.support-btn{background:#ff9f43;color:#17100a}
+.logout-btn{background:#20283b;color:#fff}
 
 .mobile-menu-btn{
 display:none;
@@ -152,36 +154,27 @@ color:#fff;
 font-size:22px;
 align-items:center;
 justify-content:center;
-flex:0 0 42px;
+flex:0 0 42px
 }
 
 .container{
 width:min(1200px,calc(100% - 30px));
-margin:30px auto 60px;
+margin:30px auto 60px
 }
 
-.welcome{
-margin-bottom:25px;
-}
-
-.welcome h1{
-margin:0 0 7px;
-font-size:32px;
-}
-
+.welcome{margin-bottom:25px}
+.welcome h1{margin:0 0 7px;font-size:32px}
 .welcome p{
 margin:0;
 color:#8f9ab0;
-word-break:break-word;
+word-break:break-word
 }
-
-/* STATS */
 
 .stats{
 display:grid;
 grid-template-columns:repeat(4,1fr);
 gap:16px;
-margin-bottom:30px;
+margin-bottom:30px
 }
 
 .stat{
@@ -190,20 +183,20 @@ border:1px solid #1d2740;
 border-radius:16px;
 padding:21px;
 min-width:0;
-overflow:hidden;
+overflow:hidden
 }
 
 .stat-title{
 color:#8e99af;
 font-size:13px;
-margin-bottom:9px;
+margin-bottom:9px
 }
 
 .stat-value{
 font-size:25px;
 font-weight:800;
 font-variant-numeric:tabular-nums;
-overflow-wrap:anywhere;
+overflow-wrap:anywhere
 }
 
 .live-total{
@@ -211,7 +204,7 @@ color:#42df96;
 font-size:13px;
 margin-top:7px;
 font-weight:700;
-line-height:1.5;
+line-height:1.5
 }
 
 .live-balance{
@@ -219,14 +212,11 @@ color:#5b8cff;
 font-size:12px;
 margin-top:6px;
 font-weight:700;
-line-height:1.5;
+line-height:1.5
 }
 
-/* PROMO */
-
 .promo-card{
-background:
-linear-gradient(
+background:linear-gradient(
 135deg,
 rgba(91,140,255,.13),
 rgba(124,92,255,.13)
@@ -236,31 +226,19 @@ border-radius:18px;
 padding:22px;
 margin-top:30px;
 position:relative;
-overflow:hidden;
+overflow:hidden
 }
 
-.promo-content{
-position:relative;
-z-index:2;
-}
-
-.promo-title{
-font-size:20px;
-font-weight:800;
-margin-bottom:6px;
-}
-
+.promo-content{position:relative;z-index:2}
+.promo-title{font-size:20px;font-weight:800;margin-bottom:6px}
 .promo-subtitle{
 color:#8f9ab0;
 font-size:13px;
 margin-bottom:16px;
-line-height:1.5;
+line-height:1.5
 }
 
-.promo-row{
-display:flex;
-gap:10px;
-}
+.promo-row{display:flex;gap:10px}
 
 .promo-input{
 flex:1;
@@ -272,12 +250,10 @@ background:#0b1120;
 color:#fff;
 outline:none;
 font-size:14px;
-text-transform:uppercase;
+text-transform:uppercase
 }
 
-.promo-input:focus{
-border-color:#5b8cff;
-}
+.promo-input:focus{border-color:#5b8cff}
 
 .promo-button{
 padding:13px 20px;
@@ -285,12 +261,12 @@ border-radius:10px;
 background:#7c5cff;
 color:#fff;
 white-space:nowrap;
-min-height:46px;
+min-height:46px
 }
 
 .promo-button:disabled{
 opacity:.5;
-cursor:not-allowed;
+cursor:not-allowed
 }
 
 .promo-message{
@@ -299,36 +275,28 @@ margin-top:12px;
 padding:11px 13px;
 border-radius:9px;
 font-size:13px;
-line-height:1.5;
+line-height:1.5
 }
 
-.promo-message.show{
-display:block;
-}
-
+.promo-message.show{display:block}
 .promo-message.success{
 color:#48df98;
 background:rgba(30,200,120,.12);
-border:1px solid rgba(30,200,120,.2);
+border:1px solid rgba(30,200,120,.2)
 }
 
 .promo-message.error{
 color:#ff7777;
 background:rgba(255,70,70,.12);
-border:1px solid rgba(255,70,70,.2);
+border:1px solid rgba(255,70,70,.2)
 }
 
-.section-title{
-margin:30px 0 14px;
-font-size:21px;
-}
-
-/* CARS */
+.section-title{margin:30px 0 14px;font-size:21px}
 
 .cars{
 display:grid;
 grid-template-columns:repeat(4,1fr);
-gap:16px;
+gap:16px
 }
 
 .car{
@@ -337,12 +305,12 @@ border:1px solid #1d2740;
 border-radius:16px;
 padding:18px;
 transition:.2s;
-min-width:0;
+min-width:0
 }
 
 .car:hover{
 transform:translateY(-3px);
-border-color:#38559a;
+border-color:#38559a
 }
 
 .car-icon{
@@ -350,25 +318,25 @@ height:150px;
 border-radius:12px;
 overflow:hidden;
 background:linear-gradient(135deg,#1b2949,#0d1424);
-margin-bottom:14px;
+margin-bottom:14px
 }
 
 .car-icon img{
 width:100%;
 height:100%;
 object-fit:cover;
-display:block;
+display:block
 }
 
 .car h3{
 margin:0 0 9px;
-overflow-wrap:anywhere;
+overflow-wrap:anywhere
 }
 
 .car-info{
 color:#a3aec2;
 font-size:14px;
-line-height:1.8;
+line-height:1.8
 }
 
 .car-monthly{
@@ -380,12 +348,10 @@ border:1px solid rgba(91,140,255,.22);
 color:#6e9aff;
 font-size:13px;
 font-weight:800;
-line-height:1.4;
+line-height:1.4
 }
 
-.car-monthly span{
-color:#fff;
-}
+.car-monthly span{color:#fff}
 
 .buy-btn{
 width:100%;
@@ -394,15 +360,13 @@ padding:11px;
 border-radius:9px;
 background:#4d7cff;
 color:#fff;
-min-height:44px;
+min-height:44px
 }
 
 .buy-btn:disabled{
 opacity:.45;
-cursor:not-allowed;
+cursor:not-allowed
 }
-
-/* MY CARS */
 
 .my-cars{
 background:#101728;
@@ -410,7 +374,7 @@ border:1px solid #1d2740;
 border-radius:16px;
 padding:8px 18px;
 min-height:80px;
-overflow:hidden;
+overflow:hidden
 }
 
 .my-car-item{
@@ -420,18 +384,16 @@ align-items:center;
 min-height:100px;
 padding:14px 4px;
 border-bottom:1px solid #1c263c;
-gap:15px;
+gap:15px
 }
 
-.my-car-item:last-child{
-border-bottom:0;
-}
+.my-car-item:last-child{border-bottom:0}
 
 .my-car-left{
 display:flex;
 align-items:center;
 gap:14px;
-min-width:0;
+min-width:0
 }
 
 .my-car-icon{
@@ -441,40 +403,36 @@ flex:0 0 90px;
 border-radius:12px;
 overflow:hidden;
 background:linear-gradient(135deg,#1b2949,#0d1424);
-border:1px solid #263657;
+border:1px solid #263657
 }
 
 .my-car-icon img{
 width:100%;
 height:100%;
 object-fit:cover;
-display:block;
+display:block
 }
 
 .my-car-name{
 font-size:16px;
 font-weight:800;
 margin-bottom:5px;
-overflow-wrap:anywhere;
+overflow-wrap:anywhere
 }
 
-.my-car-price{
-color:#8e99ae;
-font-size:12px;
-}
-
+.my-car-price{color:#8e99ae;font-size:12px}
 .my-car-daily{
 color:#42df96;
 font-size:13px;
 font-weight:800;
-margin-top:3px;
+margin-top:3px
 }
 
 .my-car-monthly{
 color:#6e9aff;
 font-size:12px;
 font-weight:800;
-margin-top:4px;
+margin-top:4px
 }
 
 .my-car-earned{
@@ -482,14 +440,14 @@ color:#5b8cff;
 font-size:14px;
 font-weight:800;
 margin-top:6px;
-font-variant-numeric:tabular-nums;
+font-variant-numeric:tabular-nums
 }
 
 .my-car-right{
 display:flex;
 align-items:center;
 gap:10px;
-flex:0 0 auto;
+flex:0 0 auto
 }
 
 .collect-one-btn{
@@ -499,12 +457,12 @@ padding:10px 15px;
 border-radius:9px;
 font-weight:800;
 white-space:nowrap;
-min-height:42px;
+min-height:42px
 }
 
 .collect-one-btn:disabled{
 opacity:.5;
-cursor:not-allowed;
+cursor:not-allowed
 }
 
 .collect-all-btn{
@@ -515,21 +473,19 @@ border-radius:9px;
 background:#42df96;
 color:#07150f;
 font-weight:800;
-min-height:42px;
+min-height:42px
 }
 
 .collect-all-btn:disabled{
 opacity:.5;
-cursor:not-allowed;
+cursor:not-allowed
 }
-
-/* HISTORY */
 
 .history{
 background:#101728;
 border:1px solid #1d2740;
 border-radius:16px;
-overflow:hidden;
+overflow:hidden
 }
 
 .history-row{
@@ -539,22 +495,16 @@ gap:10px;
 padding:15px 20px;
 border-bottom:1px solid #1c263c;
 align-items:center;
-min-width:0;
+min-width:0
 }
 
-.history-row:last-child{
-border-bottom:0;
-}
-
+.history-row:last-child{border-bottom:0}
 .history-row>div{
 min-width:0;
-overflow-wrap:anywhere;
+overflow-wrap:anywhere
 }
 
-.history-head{
-color:#8e97aa;
-font-size:13px;
-}
+.history-head{color:#8e97aa;font-size:13px}
 
 .status{
 display:inline-block;
@@ -562,29 +512,23 @@ padding:5px 9px;
 border-radius:7px;
 font-size:12px;
 font-weight:700;
-white-space:nowrap;
+white-space:nowrap
 }
 
-.status.pending,
-.status.open{
+.status.pending,.status.open{
 background:rgba(255,180,0,.15);
-color:#ffc44d;
+color:#ffc44d
 }
 
-.status.approved,
-.status.answered,
-.status.waiting{
+.status.approved,.status.answered,.status.waiting{
 background:rgba(30,200,120,.15);
-color:#42df96;
+color:#42df96
 }
 
-.status.rejected,
-.status.closed{
+.status.rejected,.status.closed{
 background:rgba(255,70,70,.15);
-color:#ff7777;
+color:#ff7777
 }
-
-/* MODAL */
 
 .modal{
 position:fixed;
@@ -595,12 +539,10 @@ align-items:center;
 justify-content:center;
 padding:20px;
 z-index:999;
-overflow-y:auto;
+overflow-y:auto
 }
 
-.modal.active{
-display:flex;
-}
+.modal.active{display:flex}
 
 .modal-box{
 width:min(520px,100%);
@@ -611,7 +553,7 @@ border:1px solid #27334e;
 border-radius:18px;
 padding:25px;
 box-shadow:0 25px 80px rgba(0,0,0,.55);
-position:relative;
+position:relative
 }
 
 .modal-header{
@@ -619,13 +561,10 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 gap:12px;
-margin-bottom:20px;
+margin-bottom:20px
 }
 
-.modal-header h2{
-margin:0;
-font-size:21px;
-}
+.modal-header h2{margin:0;font-size:21px}
 
 .close{
 width:36px;
@@ -633,7 +572,7 @@ height:36px;
 border-radius:9px;
 background:#252d43;
 color:white;
-font-size:20px;
+font-size:20px
 }
 
 .profile-card{
@@ -645,14 +584,14 @@ rgba(124,92,255,.10)
 border:1px solid rgba(91,140,255,.22);
 border-radius:15px;
 padding:18px;
-margin-bottom:20px;
+margin-bottom:20px
 }
 
 .profile-top{
 display:flex;
 align-items:center;
 gap:15px;
-margin-bottom:18px;
+margin-bottom:18px
 }
 
 .profile-avatar{
@@ -664,74 +603,61 @@ display:flex;
 align-items:center;
 justify-content:center;
 font-size:28px;
-font-weight:800;
+font-weight:800
 }
 
-.profile-name-big{
-font-size:21px;
-font-weight:800;
-margin-bottom:4px;
-}
-
-.profile-email-big{
-color:#8e99ae;
-font-size:13px;
-word-break:break-all;
-}
+.profile-name-big{font-size:21px;font-weight:800;margin-bottom:4px}
+.profile-email-big{color:#8e99ae;font-size:13px;word-break:break-all}
 
 .profile-info-grid{
 display:grid;
 grid-template-columns:1fr 1fr;
-gap:10px;
+gap:10px
 }
 
 .profile-info{
 background:rgba(0,0,0,.18);
 border:1px solid rgba(255,255,255,.05);
 border-radius:10px;
-padding:11px;
+padding:11px
 }
 
 .profile-info small{
 color:#8994aa;
 display:block;
-margin-bottom:4px;
+margin-bottom:4px
 }
 
-.profile-info strong{
-font-size:14px;
-}
+.profile-info strong{font-size:14px}
 
 .payment-box{
 background:rgba(77,124,255,.08);
 border:1px solid rgba(77,124,255,.22);
 padding:16px;
 border-radius:13px;
-margin-bottom:18px;
+margin-bottom:18px
 }
 
 .payment-label{
 color:#8f9ab1;
 font-size:12px;
-margin-bottom:5px;
+margin-bottom:5px
 }
 
 .payment-value{
 font-size:18px;
 font-weight:800;
 word-break:break-word;
-margin-bottom:12px;
+margin-bottom:12px
 }
 
-.input-group{
-margin-bottom:16px;
-}
+.input-group{margin-bottom:16px}
 
 .input-group label{
 display:block;
 margin-bottom:7px;
 font-size:13px;
-color:#aab3c7;
+color:#aab3c7
 }
 
 .input-group input,
@@ -743,22 +669,20 @@ border:1px solid #29344d;
 background:#0b1120;
 color:white;
 outline:none;
-font-family:Arial,sans-serif;
+font-family:Arial,sans-serif
 }
 
 .input-group textarea{
 min-height:130px;
-resize:vertical;
+resize:vertical
 }
 
 .input-group input:focus,
 .input-group textarea:focus{
-border-color:#4d7cff;
+border-color:#4d7cff
 }
 
-.input-group input[type=file]{
-padding:10px;
-}
+.input-group input[type=file]{padding:10px}
 
 .submit-btn{
 width:100%;
@@ -767,13 +691,13 @@ border-radius:9px;
 background:#4d7cff;
 color:white;
 font-size:15px;
-min-height:46px;
+min-height:46px
 }
 
 .submit-btn:disabled,
 .password-btn:disabled{
 opacity:.5;
-cursor:not-allowed;
+cursor:not-allowed
 }
 
 .password-btn{
@@ -783,7 +707,7 @@ border-radius:9px;
 background:#7c5cff;
 color:white;
 font-size:15px;
-min-height:46px;
+min-height:46px
 }
 
 .danger-btn{
@@ -794,7 +718,7 @@ background:#252d43;
 color:#fff;
 font-size:15px;
 margin-top:8px;
-min-height:46px;
+min-height:46px
 }
 
 .message{
@@ -804,45 +728,41 @@ border-radius:9px;
 margin-bottom:15px;
 font-size:14px;
 line-height:1.5;
-word-break:break-word;
+word-break:break-word
 }
 
-.message.show{
-display:block;
-}
+.message.show{display:block}
 
 .message.success{
 background:rgba(30,200,120,.12);
 color:#48df98;
-border:1px solid rgba(30,200,120,.2);
+border:1px solid rgba(30,200,120,.2)
 }
 
 .message.error{
 background:rgba(255,70,70,.12);
 color:#ff7777;
-border:1px solid rgba(255,70,70,.2);
+border:1px solid rgba(255,70,70,.2)
 }
 
 .note{
 color:#8d97aa;
 font-size:12px;
 line-height:1.6;
-margin-top:12px;
+margin-top:12px
 }
 
 .profile-divider{
 height:1px;
 background:#242e46;
-margin:22px 0;
+margin:22px 0
 }
 
 .profile-section-title{
 font-size:16px;
 font-weight:800;
-margin-bottom:14px;
+margin-bottom:14px
 }
-
-/* SUPPORT */
 
 .support-create{
 background:linear-gradient(
@@ -853,13 +773,13 @@ rgba(124,92,255,.10)
 border:1px solid rgba(255,159,67,.25);
 border-radius:14px;
 padding:16px;
-margin-bottom:20px;
+margin-bottom:20px
 }
 
 .support-list{
 display:flex;
 flex-direction:column;
-gap:10px;
+gap:10px
 }
 
 .ticket{
@@ -868,31 +788,31 @@ border:1px solid #26324c;
 border-radius:13px;
 padding:15px;
 cursor:pointer;
-transition:.2s;
+transition:.2s
 }
 
 .ticket:hover{
 border-color:#4d7cff;
-transform:translateY(-1px);
+transform:translateY(-1px)
 }
 
 .ticket-top{
 display:flex;
 justify-content:space-between;
 align-items:center;
-gap:10px;
+gap:10px
 }
 
 .ticket-subject{
 font-size:15px;
 font-weight:800;
-word-break:break-word;
+word-break:break-word
 }
 
 .ticket-date{
 color:#78849a;
 font-size:11px;
-margin-top:8px;
+margin-top:8px
 }
 
 .ticket-message{
@@ -901,7 +821,7 @@ font-size:13px;
 line-height:1.6;
 margin-top:10px;
 white-space:pre-wrap;
-word-break:break-word;
+word-break:break-word
 }
 
 .ticket-reply{
@@ -909,14 +829,14 @@ margin-top:14px;
 background:rgba(77,124,255,.08);
 border:1px solid rgba(77,124,255,.2);
 border-radius:10px;
-padding:13px;
+padding:13px
 }
 
 .ticket-reply-title{
 font-size:12px;
 font-weight:800;
 color:#5b8cff;
-margin-bottom:7px;
+margin-bottom:7px
 }
 
 .ticket-reply-text{
@@ -924,13 +844,13 @@ font-size:13px;
 line-height:1.6;
 color:#d4dbea;
 white-space:pre-wrap;
-word-break:break-word;
+word-break:break-word
 }
 
 .ticket-actions{
 display:flex;
 gap:8px;
-margin-top:12px;
+margin-top:12px
 }
 
 .ticket-close-btn{
@@ -938,7 +858,7 @@ background:#252d43;
 color:#fff;
 padding:10px 13px;
 border-radius:8px;
-min-height:42px;
+min-height:42px
 }
 
 .ticket-reply-box{
@@ -946,68 +866,48 @@ margin-top:12px;
 padding:13px;
 border-radius:10px;
 background:rgba(30,200,120,.07);
-border:1px solid rgba(30,200,120,.18);
+border:1px solid rgba(30,200,120,.18)
 }
 
 .ticket-user-label{
 color:#5b8cff;
 font-size:11px;
 font-weight:800;
-margin-bottom:6px;
+margin-bottom:6px
 }
 
 .ticket-admin-label{
 color:#42df96;
 font-size:11px;
 font-weight:800;
-margin-bottom:6px;
+margin-bottom:6px
 }
 
 .empty{
 color:#7f8aa0;
 padding:20px;
 text-align:center;
-line-height:1.6;
+line-height:1.6
 }
-
-/* MOBILE */
 
 @media(max-width:1050px){
-
-.stats{
-grid-template-columns:repeat(2,1fr);
-}
-
-.cars{
-grid-template-columns:repeat(2,1fr);
-}
-
-header{
-padding-left:20px;
-padding-right:20px;
-}
-
+.stats{grid-template-columns:repeat(2,1fr)}
+.cars{grid-template-columns:repeat(2,1fr)}
+header{padding-left:20px;padding-right:20px}
 }
 
 @media(max-width:700px){
 
 header{
 min-height:64px;
-padding:
-max(9px,env(safe-area-inset-top))
-12px
-9px
-12px;
-gap:8px;
+padding:max(9px,env(safe-area-inset-top)) 12px 9px 12px;
+gap:8px
 }
 
-.logo{
-font-size:20px;
-flex:1;
-}
+.logo{font-size:20px;flex:1}
 
 .mobile-menu-btn{
-display:flex;
+display:flex
 }
 
 .header-right{
@@ -1024,259 +924,204 @@ box-shadow:0 20px 50px rgba(0,0,0,.45);
 flex-direction:column;
 align-items:stretch;
 gap:8px;
-z-index:101;
+z-index:101
 }
 
-.header-right.mobile-open{
-display:flex;
-}
+.header-right.mobile-open{display:flex}
 
 .balance-box{
 width:100%;
-min-width:0;
+min-width:0
 }
 
 .profile-btn,
 .deposit-btn,
 .withdraw-btn,
 .support-btn,
-.logout-btn{
+.logout-btn,
+.language-button{
 width:100%;
 min-height:44px;
-text-align:center;
+text-align:center
+}
+
+.language-box{width:100%}
+
+.language-menu{
+position:static;
+width:100%;
+margin-top:5px
 }
 
 .container{
 width:calc(100% - 20px);
-margin:20px auto 45px;
+margin:20px auto 45px
 }
 
-.welcome h1{
-font-size:25px;
-}
+.welcome h1{font-size:25px}
 
 .welcome p{
 font-size:13px;
-line-height:1.5;
+line-height:1.5
 }
 
 .stats{
 grid-template-columns:1fr 1fr;
 gap:10px;
-margin-bottom:20px;
+margin-bottom:20px
 }
 
 .stat{
 padding:15px;
-border-radius:13px;
+border-radius:13px
 }
 
-.stat-title{
-font-size:11px;
-}
-
-.stat-value{
-font-size:18px;
-}
+.stat-title{font-size:11px}
+.stat-value{font-size:18px}
 
 .cars{
 grid-template-columns:1fr 1fr;
-gap:10px;
+gap:10px
 }
 
 .car{
 padding:11px;
-border-radius:13px;
+border-radius:13px
 }
 
 .car-icon{
 height:110px;
-border-radius:9px;
+border-radius:9px
 }
 
-.car h3{
-font-size:14px;
-}
+.car h3{font-size:14px}
 
 .car-info{
 font-size:11px;
-line-height:1.65;
+line-height:1.65
 }
 
 .car-monthly{
 font-size:10px;
 padding:7px 8px;
-margin-top:7px;
+margin-top:7px
 }
 
 .buy-btn{
 margin-top:10px;
 min-height:42px;
 padding:9px;
-font-size:13px;
+font-size:13px
 }
 
 .my-cars{
 padding:5px 12px;
-border-radius:13px;
+border-radius:13px
 }
 
 .my-car-item{
 min-height:auto;
 padding:12px 0;
-gap:8px;
+gap:8px
 }
 
-.my-car-left{
-gap:9px;
-}
+.my-car-left{gap:9px}
 
 .my-car-icon{
 width:72px;
 height:53px;
 flex-basis:72px;
-border-radius:9px;
+border-radius:9px
 }
 
-.my-car-name{
-font-size:13px;
-}
-
-.my-car-price{
-font-size:10px;
-}
-
-.my-car-daily{
-font-size:11px;
-}
-
-.my-car-monthly{
-font-size:10px;
-}
-
-.my-car-earned{
-font-size:11px;
-}
+.my-car-name{font-size:13px}
+.my-car-price{font-size:10px}
+.my-car-daily{font-size:11px}
+.my-car-monthly{font-size:10px}
+.my-car-earned{font-size:11px}
 
 .collect-one-btn{
 padding:8px 9px;
 min-height:38px;
-font-size:11px;
+font-size:11px
 }
 
 .history-row{
 grid-template-columns:1fr 1fr;
 gap:8px 12px;
 padding:13px;
-font-size:12px;
+font-size:12px
 }
 
-.history-head{
-display:none;
-}
+.history-head{display:none}
 
 .modal{
 align-items:flex-end;
-padding:
-8px
-8px
-max(8px,env(safe-area-inset-bottom));
+padding:8px 8px max(8px,env(safe-area-inset-bottom))
 }
 
 .modal-box{
 width:100%;
 max-height:92dvh;
 padding:17px;
-border-radius:18px 18px 12px 12px;
+border-radius:18px 18px 12px 12px
 }
 
 .profile-info-grid{
 grid-template-columns:1fr 1fr;
-gap:7px;
+gap:7px
 }
 
-.promo-row{
-flex-direction:column;
-}
+.promo-row{flex-direction:column}
 
 .promo-input,
 .promo-button{
-width:100%;
+width:100%
 }
 
 .ticket-top{
 align-items:flex-start;
-flex-direction:column;
+flex-direction:column
 }
 
-.ticket-actions{
-flex-direction:column;
-}
-
-.ticket-close-btn{
-width:100%;
-}
+.ticket-actions{flex-direction:column}
+.ticket-close-btn{width:100%}
 
 input,
 textarea,
 select{
-font-size:16px!important;
+font-size:16px!important
 }
-
 }
 
 @media(max-width:380px){
 
-.container{
-width:calc(100% - 14px);
-}
-
-.cars{
-gap:7px;
-}
-
-.car{
-padding:9px;
-}
-
-.car-icon{
-height:95px;
-}
-
-.car h3{
-font-size:12px;
-}
-
-.car-info{
-font-size:10px;
-}
-
-.car-monthly{
-font-size:9px;
-}
+.container{width:calc(100% - 14px)}
+.cars{gap:7px}
+.car{padding:9px}
+.car-icon{height:95px}
+.car h3{font-size:12px}
+.car-info{font-size:10px}
+.car-monthly{font-size:9px}
 
 .my-car-icon{
 width:60px;
 height:46px;
-flex-basis:60px;
+flex-basis:60px
 }
 
-.my-car-name{
-font-size:12px;
-}
+.my-car-name{font-size:12px}
 
 .my-car-monthly,
 .my-car-earned{
-font-size:10px;
+font-size:10px
 }
 
 .collect-one-btn{
 padding:7px 8px;
-font-size:10px;
+font-size:10px
 }
-
 }
-
 </style>
 </head>
 
@@ -1301,7 +1146,7 @@ id="headerRight">
 
 <div class="balance-box">
 
-<small>BALANS</small>
+<small data-i18n="BALANS">BALANS</small>
 
 <div
 class="balance"
@@ -1311,33 +1156,69 @@ id="headerBalance">
 
 </div>
 
+<div class="language-box">
+
+<button
+class="language-button"
+id="languageButton"
+onclick="toggleLanguageMenu()">
+🇦🇿 AZE ▾
+</button>
+
+<div
+class="language-menu"
+id="languageMenu">
+
+<button
+class="language-option"
+onclick="changeLanguage('az')">
+🇦🇿 AZE
+</button>
+
+<button
+class="language-option"
+onclick="changeLanguage('en')">
+🇬🇧 ENG
+</button>
+
+<button
+class="language-option"
+onclick="changeLanguage('ru')">
+🇷🇺 RUS
+</button>
+
+</div>
+
+</div>
+
 <button
 class="profile-btn"
 onclick="openProfile();closeMobileMenu()">
-👤 Profil
+👤 <span data-i18n="Profil">Profil</span>
 </button>
 
 <button
 class="support-btn"
 onclick="openSupport();closeMobileMenu()">
-🎫 Support
+🎫 <span data-i18n="Support">Support</span>
 </button>
 
 <button
 class="deposit-btn"
 onclick="openDeposit();closeMobileMenu()">
-+ Deposit
++ <span data-i18n="Deposit">Deposit</span>
 </button>
 
 <button
 class="withdraw-btn"
 onclick="openWithdraw();closeMobileMenu()">
-- Çıxarış
+- <span data-i18n="Çıxarış">Çıxarış</span>
 </button>
 
 <button
 class="logout-btn"
-onclick="logout()">
+onclick="logout()"
+data-i18n="Çıxış">
 Çıxış
 </button>
 
@@ -1349,7 +1230,9 @@ onclick="logout()">
 
 <div class="welcome">
 
-<h1>Dashboard</h1>
+<h1 data-i18n="Dashboard">
+Dashboard
+</h1>
 
 <p id="welcomeText">
 Xoş gəlmisən!
@@ -1361,7 +1244,7 @@ Xoş gəlmisən!
 
 <div class="stat">
 
-<div class="stat-title">
+<div class="stat-title" data-i18n="Balans">
 Balans
 </div>
 
@@ -1381,7 +1264,7 @@ Balans
 
 <div class="stat">
 
-<div class="stat-title">
+<div class="stat-title" data-i18n="Maşın sayı">
 Maşın sayı
 </div>
 
@@ -1395,7 +1278,7 @@ id="statCars">
 
 <div class="stat">
 
-<div class="stat-title">
+<div class="stat-title" data-i18n="Gündəlik gəlir">
 Gündəlik gəlir
 </div>
 
@@ -1409,7 +1292,7 @@ id="statDaily">
 
 <div class="stat">
 
-<div class="stat-title">
+<div class="stat-title" data-i18n="Yığılan gəlir">
 Yığılan gəlir
 </div>
 
@@ -1422,7 +1305,8 @@ id="liveTotal">
 <button
 class="collect-all-btn"
 id="collectAllButton"
-onclick="collectAllCars()">
+onclick="collectAllCars()"
+data-i18n="TOPLA">
 TOPLA
 </button>
 
@@ -1430,17 +1314,17 @@ TOPLA
 
 </div>
 
-<!-- PROMO -->
-
 <div class="promo-card">
 
 <div class="promo-content">
 
-<div class="promo-title">
+<div class="promo-title" data-i18n="🎁 Promo kod">
 🎁 Promo kod
 </div>
 
-<div class="promo-subtitle">
+<div
+class="promo-subtitle"
+data-i18n="Promo kodunu daxil et və balansına bonus əlavə et.">
 Promo kodunu daxil et və balansına bonus əlavə et.
 </div>
 
@@ -1452,12 +1336,14 @@ id="promoCode"
 type="text"
 maxlength="50"
 autocomplete="off"
-placeholder="Promo kodunu daxil et">
+placeholder="Promo kodunu daxil et"
+data-i18n-placeholder="Promo kodunu daxil et">
 
 <button
 class="promo-button"
 id="promoButton"
-onclick="redeemPromo()">
+onclick="redeemPromo()"
+data-i18n="Kodu istifadə et">
 Kodu istifadə et
 </button>
 
@@ -1472,7 +1358,9 @@ id="promoMessage">
 
 </div>
 
-<h2 class="section-title">
+<h2
+class="section-title"
+data-i18n="Maşınlar">
 Maşınlar
 </h2>
 
@@ -1482,7 +1370,9 @@ id="cars">
 Yüklənir...
 </div>
 
-<h2 class="section-title">
+<h2
+class="section-title"
+data-i18n="Mənim maşınlarım">
 Mənim maşınlarım
 </h2>
 
@@ -1496,7 +1386,9 @@ Yüklənir...
 
 </div>
 
-<h2 class="section-title">
+<h2
+class="section-title"
+data-i18n="Deposit tarixçəsi">
 Deposit tarixçəsi
 </h2>
 
@@ -1504,10 +1396,10 @@ Deposit tarixçəsi
 
 <div class="history-row history-head">
 
-<div>Sifariş</div>
-<div>Məbləğ</div>
-<div>Status</div>
-<div>Tarix</div>
+<div data-i18n="Sifariş">Sifariş</div>
+<div data-i18n="Məbləğ">Məbləğ</div>
+<div data-i18n="Status">Status</div>
+<div data-i18n="Tarix">Tarix</div>
 
 </div>
 
@@ -1525,7 +1417,9 @@ Yüklənir...
 
 </div>
 
-<h2 class="section-title">
+<h2
+class="section-title"
+data-i18n="Çıxarış tarixçəsi">
 Çıxarış tarixçəsi
 </h2>
 
@@ -1534,9 +1428,9 @@ Yüklənir...
 <div class="history-row history-head">
 
 <div>ID</div>
-<div>Məbləğ</div>
-<div>Status</div>
-<div>Tarix</div>
+<div data-i18n="Məbləğ">Məbləğ</div>
+<div data-i18n="Status">Status</div>
+<div data-i18n="Tarix">Tarix</div>
 
 </div>
 
@@ -1566,7 +1460,7 @@ id="profileModal">
 
 <div class="modal-header">
 
-<h2>👤 Profil</h2>
+<h2>👤 <span data-i18n="Profil">Profil</span></h2>
 
 <button
 class="close"
@@ -1613,7 +1507,7 @@ Yüklənir...
 
 <div class="profile-info">
 
-<small>
+<small data-i18n="Balans">
 Balans
 </small>
 
@@ -1625,19 +1519,17 @@ Balans
 
 <div class="profile-info">
 
-<small>
+<small data-i18n="Maşın sayı">
 Maşın sayı
 </small>
 
-<strong id="profileCars">
-0
-</strong>
+<strong id="profileCars">0</strong>
 
 </div>
 
 <div class="profile-info">
 
-<small>
+<small data-i18n="Gündəlik gəlir">
 Gündəlik gəlir
 </small>
 
@@ -1649,13 +1541,11 @@ Gündəlik gəlir
 
 <div class="profile-info">
 
-<small>
+<small data-i18n="Hesab tarixi">
 Hesab tarixi
 </small>
 
-<strong id="profileCreated">
--
-</strong>
+<strong id="profileCreated">-</strong>
 
 </div>
 
@@ -1665,13 +1555,15 @@ Hesab tarixi
 
 <div class="profile-divider"></div>
 
-<div class="profile-section-title">
+<div
+class="profile-section-title"
+data-i18n="Profil məlumatları">
 Profil məlumatları
 </div>
 
 <div class="input-group">
 
-<label>
+<label data-i18n="Ad / istifadəçi adı">
 Ad / istifadəçi adı
 </label>
 
@@ -1679,13 +1571,14 @@ Ad / istifadəçi adı
 type="text"
 id="profileNameInput"
 maxlength="60"
-placeholder="Adını daxil et">
+placeholder="Adını daxil et"
+data-i18n-placeholder="Adını daxil et">
 
 </div>
 
 <div class="input-group">
 
-<label>
+<label data-i18n="Email">
 Email
 </label>
 
@@ -1693,39 +1586,44 @@ Email
 type="email"
 id="profileEmailInput"
 maxlength="120"
-placeholder="Email daxil et">
+placeholder="Email daxil et"
+data-i18n-placeholder="Email daxil et">
 
 </div>
 
 <button
 class="submit-btn"
 id="saveProfileBtn"
-onclick="saveProfile()">
+onclick="saveProfile()"
+data-i18n="Profil məlumatlarını yadda saxla">
 Profil məlumatlarını yadda saxla
 </button>
 
 <div class="profile-divider"></div>
 
-<div class="profile-section-title">
+<div
+class="profile-section-title"
+data-i18n="🔒 Şifrəni dəyiş">
 🔒 Şifrəni dəyiş
 </div>
 
 <div class="input-group">
 
-<label>
+<label data-i18n="Hazırkı şifrə">
 Hazırkı şifrə
 </label>
 
 <input
 type="password"
 id="currentPassword"
-placeholder="Hazırkı şifrə">
+placeholder="Hazırkı şifrə"
+data-i18n-placeholder="Hazırkı şifrə">
 
 </div>
 
 <div class="input-group">
 
-<label>
+<label data-i18n="Yeni şifrə">
 Yeni şifrə
 </label>
 
@@ -1733,13 +1631,14 @@ Yeni şifrə
 type="password"
 id="newPassword"
 minlength="6"
-placeholder="Minimum 6 simvol">
+placeholder="Minimum 6 simvol"
+data-i18n-placeholder="Minimum 6 simvol">
 
 </div>
 
 <div class="input-group">
 
-<label>
+<label data-i18n="Yeni şifrəni təkrar yaz">
 Yeni şifrəni təkrar yaz
 </label>
 
@@ -1747,20 +1646,23 @@ Yeni şifrəni təkrar yaz
 type="password"
 id="confirmPassword"
 minlength="6"
-placeholder="Yeni şifrə">
+placeholder="Yeni şifrə"
+data-i18n-placeholder="Yeni şifrə">
 
 </div>
 
 <button
 class="password-btn"
 id="changePasswordBtn"
-onclick="changePassword()">
+onclick="changePassword()"
+data-i18n="Şifrəni dəyiş">
 Şifrəni dəyiş
 </button>
 
 <button
 class="danger-btn"
-onclick="closeProfile()">
+onclick="closeProfile()"
+data-i18n="Bağla">
 Bağla
 </button>
 
@@ -1779,7 +1681,7 @@ id="supportModal">
 <div class="modal-header">
 
 <h2>
-🎫 Support
+🎫 <span data-i18n="Support">Support</span>
 </h2>
 
 <button
@@ -1797,13 +1699,15 @@ id="supportMessage">
 
 <div class="support-create">
 
-<div class="profile-section-title">
+<div
+class="profile-section-title"
+data-i18n="Yeni support ticket">
 Yeni support ticket
 </div>
 
 <div class="input-group">
 
-<label>
+<label data-i18n="Mövzu">
 Mövzu
 </label>
 
@@ -1811,33 +1715,38 @@ Mövzu
 type="text"
 id="ticketSubject"
 maxlength="100"
-placeholder="Məsələn: Deposit problemim var">
+placeholder="Məsələn: Deposit problemim var"
+data-i18n-placeholder="Məsələn: Deposit problemim var">
 
 </div>
 
 <div class="input-group">
 
-<label>
+<label data-i18n="Mesaj">
 Mesaj
 </label>
 
 <textarea
 id="ticketMessage"
 maxlength="5000"
-placeholder="Problemini ətraflı yaz..."></textarea>
+placeholder="Problemini ətraflı yaz..."
+data-i18n-placeholder="Problemini ətraflı yaz..."></textarea>
 
 </div>
 
 <button
 class="submit-btn"
 id="createTicketBtn"
-onclick="createTicket()">
+onclick="createTicket()"
+data-i18n="🎫 Ticket yarat">
 🎫 Ticket yarat
 </button>
 
 </div>
 
-<div class="profile-section-title">
+<div
+class="profile-section-title"
+data-i18n="Mənim ticketlərim">
 Mənim ticketlərim
 </div>
 
@@ -1865,9 +1774,7 @@ id="ticketModal">
 
 <div class="modal-header">
 
-<h2>
-🎫 Ticket
-</h2>
+<h2>🎫 <span data-i18n="Ticket">Ticket</span></h2>
 
 <button
 class="close"
@@ -1893,7 +1800,7 @@ id="withdrawModal">
 
 <div class="modal-header">
 
-<h2>
+<h2 data-i18n="Çıxarış et">
 Çıxarış et
 </h2>
 
@@ -1912,7 +1819,9 @@ id="withdrawMessage">
 
 <div class="payment-box">
 
-<div class="payment-label">
+<div
+class="payment-label"
+data-i18n="Mövcud balans">
 Mövcud balans
 </div>
 
@@ -1926,7 +1835,7 @@ id="withdrawBalance">
 
 <div class="input-group">
 
-<label>
+<label data-i18n="Məbləğ (AZN)">
 Məbləğ (AZN)
 </label>
 
@@ -1935,44 +1844,50 @@ type="number"
 id="withdrawAmount"
 min="40"
 step="0.01"
-placeholder="Minimum 40 AZN">
+placeholder="Minimum 40 AZN"
+data-i18n-placeholder="Minimum 40 AZN">
 
 </div>
 
 <div class="input-group">
 
-<label>
+<label data-i18n="Ödəniş üsulu">
 Ödəniş üsulu
 </label>
 
 <input
 type="text"
 id="withdrawMethod"
-placeholder="Məsələn: Bank kartı">
+placeholder="Məsələn: Bank kartı"
+data-i18n-placeholder="Məsələn: Bank kartı">
 
 </div>
 
 <div class="input-group">
 
-<label>
+<label data-i18n="Hesab / kart məlumatı">
 Hesab / kart məlumatı
 </label>
 
 <input
 type="text"
 id="withdrawAccount"
-placeholder="Kart nömrəsi və ya hesab">
+placeholder="Kart nömrəsi və ya hesab"
+data-i18n-placeholder="Kart nömrəsi və ya hesab">
 
 </div>
 
 <button
 class="submit-btn"
 id="submitWithdrawBtn"
-onclick="submitWithdraw()">
+onclick="submitWithdraw()"
+data-i18n="Çıxarış tələb et">
 Çıxarış tələb et
 </button>
 
-<div class="note">
+<div
+class="note"
+data-i18n="Minimum çıxarış məbləği 40 AZN-dir. Sorğu admin tərəfindən yoxlanıldıqdan sonra təsdiqlənəcək.">
 Minimum çıxarış məbləği 40 AZN-dir.
 Sorğu admin tərəfindən yoxlanıldıqdan sonra təsdiqlənəcək.
 </div>
@@ -1991,7 +1906,7 @@ id="depositModal">
 
 <div class="modal-header">
 
-<h2>
+<h2 data-i18n="Deposit et">
 Deposit et
 </h2>
 
@@ -2010,7 +1925,9 @@ id="depositMessage">
 
 <div class="payment-box">
 
-<div class="payment-label">
+<div
+class="payment-label"
+data-i18n="Ödəniş kartı">
 Ödəniş kartı
 </div>
 
@@ -2020,7 +1937,9 @@ id="paymentCardNumber">
 Yüklənir...
 </div>
 
-<div class="payment-label">
+<div
+class="payment-label"
+data-i18n="Kart sahibi">
 Kart sahibi
 </div>
 
@@ -2034,7 +1953,7 @@ Unknown
 
 <div class="input-group">
 
-<label>
+<label data-i18n="Məbləğ (AZN)">
 Məbləğ (AZN)
 </label>
 
@@ -2044,13 +1963,14 @@ id="depositAmount"
 min="1"
 max="10000"
 step="0.01"
-placeholder="Məsələn: 10">
+placeholder="Məsələn: 10"
+data-i18n-placeholder="Məsələn: 10">
 
 </div>
 
 <div class="input-group">
 
-<label>
+<label data-i18n="Ödəniş çeki / screenshot">
 Ödəniş çeki / screenshot
 </label>
 
@@ -2064,11 +1984,14 @@ accept="image/png,image/jpeg,image/webp">
 <button
 class="submit-btn"
 id="submitDepositBtn"
-onclick="submitDeposit()">
+onclick="submitDeposit()"
+data-i18n="Ödənişi göndər">
 Ödənişi göndər
 </button>
 
-<div class="note">
+<div
+class="note"
+data-i18n="Əvvəlcə yuxarıda göstərilən karta ödəniş et. Daha sonra məbləği daxil edib çekin şəklini yüklə. Admin ödənişi yoxladıqdan sonra məbləğ balansına əlavə olunacaq.">
 Əvvəlcə yuxarıda göstərilən karta ödəniş et.
 Daha sonra məbləği daxil edib çekin şəklini yüklə.
 Admin ödənişi yoxladıqdan sonra məbləğ balansına əlavə olunacaq.
@@ -2080,14 +2003,628 @@ Admin ödənişi yoxladıqdan sonra məbləğ balansına əlavə olunacaq.
 
 <script>
 
+/* =========================================================
+   LANGUAGE SYSTEM
+========================================================= */
+
+const translations = {
+
+az: {
+
+"BALANS":"BALANS",
+"Profil":"Profil",
+"Support":"Support",
+"Deposit":"Deposit",
+"Çıxarış":"Çıxarış",
+"Çıxış":"Çıxış",
+"Dashboard":"Dashboard",
+"Balans":"Balans",
+"Maşın sayı":"Maşın sayı",
+"Gündəlik gəlir":"Gündəlik gəlir",
+"Yığılan gəlir":"Yığılan gəlir",
+"TOPLA":"TOPLA",
+"🎁 Promo kod":"🎁 Promo kod",
+"Promo kodunu daxil et və balansına bonus əlavə et.":"Promo kodunu daxil et və balansına bonus əlavə et.",
+"Promo kodunu daxil et":"Promo kodunu daxil et",
+"Kodu istifadə et":"Kodu istifadə et",
+"Maşınlar":"Maşınlar",
+"Mənim maşınlarım":"Mənim maşınlarım",
+"Deposit tarixçəsi":"Deposit tarixçəsi",
+"Sifariş":"Sifariş",
+"Məbləğ":"Məbləğ",
+"Status":"Status",
+"Tarix":"Tarix",
+"Çıxarış tarixçəsi":"Çıxarış tarixçəsi",
+"Profil məlumatları":"Profil məlumatları",
+"Ad / istifadəçi adı":"Ad / istifadəçi adı",
+"Adını daxil et":"Adını daxil et",
+"Email":"Email",
+"Email daxil et":"Email daxil et",
+"Profil məlumatlarını yadda saxla":"Profil məlumatlarını yadda saxla",
+"🔒 Şifrəni dəyiş":"🔒 Şifrəni dəyiş",
+"Hazırkı şifrə":"Hazırkı şifrə",
+"Yeni şifrə":"Yeni şifrə",
+"Minimum 6 simvol":"Minimum 6 simvol",
+"Yeni şifrəni təkrar yaz":"Yeni şifrəni təkrar yaz",
+"Yeni şifrə":"Yeni şifrə",
+"Şifrəni dəyiş":"Şifrəni dəyiş",
+"Bağla":"Bağla",
+"Yeni support ticket":"Yeni support ticket",
+"Mövzu":"Mövzu",
+"Mesaj":"Mesaj",
+"🎫 Ticket yarat":"🎫 Ticket yarat",
+"Mənim ticketlərim":"Mənim ticketlərim",
+"Ticket":"Ticket",
+"Çıxarış et":"Çıxarış et",
+"Mövcud balans":"Mövcud balans",
+"Məbləğ (AZN)":"Məbləğ (AZN)",
+"Ödəniş üsulu":"Ödəniş üsulu",
+"Hesab / kart məlumatı":"Hesab / kart məlumatı",
+"Çıxarış tələb et":"Çıxarış tələb et",
+"Ödəniş kartı":"Ödəniş kartı",
+"Kart sahibi":"Kart sahibi",
+"Ödəniş çeki / screenshot":"Ödəniş çeki / screenshot",
+"Ödənişi göndər":"Ödənişi göndər",
+"Yüklənir...":"Yüklənir...",
+"Maşın tapılmadı.":"Maşın tapılmadı.",
+"Maşınlar yüklənmədi.":"Maşınlar yüklənmədi.",
+"Hələ maşının yoxdur.":"Hələ maşının yoxdur.",
+"Hələ deposit yoxdur.":"Hələ deposit yoxdur.",
+"Hələ çıxarış yoxdur.":"Hələ çıxarış yoxdur.",
+"Deposit tarixçəsi yüklənmədi.":"Deposit tarixçəsi yüklənmədi.",
+"Çıxarış tarixçəsi yüklənmədi.":"Çıxarış tarixçəsi yüklənmədi.",
+"Hələ support ticket yoxdur.":"Hələ support ticket yoxdur.",
+"Ticketlər yüklənmədi.":"Ticketlər yüklənmədi.",
+"Xoş gəlmisən!":"Xoş gəlmisən!",
+"Xoş gəlmisən, ":"Xoş gəlmisən, ",
+"Dəqiq balans: ":"Dəqiq balans: ",
+"Qiymət:":"Qiymət:",
+"Gündəlik:":"Gündəlik:",
+"📅 Aylıq gəlir:":"📅 Aylıq gəlir:",
+"📅 Aylıq:":"📅 Aylıq:",
+"Yığılmış:":"Yığılmış:",
+"Al":"Al",
+"TOPLANIR...":"TOPLANIR...",
+"Yoxlanılır...":"Yoxlanılır...",
+"Göndərilir...":"Göndərilir...",
+"Yadda saxlanılır...":"Yadda saxlanılır...",
+"Dəyişdirilir...":"Dəyişdirilir...",
+"Yaradılır...":"Yaradılır...",
+"Açıq":"Açıq",
+"Cavablandı":"Cavablandı",
+"Bağlandı":"Bağlandı",
+"Gözləyir":"Gözləyir",
+"Təsdiqləndi":"Təsdiqləndi",
+"Rədd edildi":"Rədd edildi",
+"🎫 Ticket":"🎫 Ticket",
+"SƏN":"SƏN",
+"ADMIN":"ADMIN",
+"🔒 Ticketi bağla":"🔒 Ticketi bağla",
+"Unknown":"Unknown",
+"Ödəniş kartı":"Ödəniş kartı",
+"Minimum çıxarış məbləği 40 AZN-dir. Sorğu admin tərəfindən yoxlanıldıqdan sonra təsdiqlənəcək.":"Minimum çıxarış məbləği 40 AZN-dir. Sorğu admin tərəfindən yoxlanıldıqdan sonra təsdiqlənəcək.",
+"Əvvəlcə yuxarıda göstərilən karta ödəniş et. Daha sonra məbləği daxil edib çekin şəklini yüklə. Admin ödənişi yoxladıqdan sonra məbləğ balansına əlavə olunacaq.":"Əvvəlcə yuxarıda göstərilən karta ödəniş et. Daha sonra məbləği daxil edib çekin şəklini yüklə. Admin ödənişi yoxladıqdan sonra məbləğ balansına əlavə olunacaq."
+
+},
+
+en: {
+
+"BALANS":"BALANCE",
+"Profil":"Profile",
+"Support":"Support",
+"Deposit":"Deposit",
+"Çıxarış":"Withdraw",
+"Çıxış":"Logout",
+"Dashboard":"Dashboard",
+"Balans":"Balance",
+"Maşın sayı":"Cars",
+"Gündəlik gəlir":"Daily income",
+"Yığılan gəlir":"Accumulated income",
+"TOPLA":"COLLECT",
+"🎁 Promo kod":"🎁 Promo Code",
+"Promo kodunu daxil et və balansına bonus əlavə et.":"Enter a promo code and add a bonus to your balance.",
+"Promo kodunu daxil et":"Enter promo code",
+"Kodu istifadə et":"Redeem Code",
+"Maşınlar":"Cars",
+"Mənim maşınlarım":"My Cars",
+"Deposit tarixçəsi":"Deposit History",
+"Sifariş":"Order",
+"Məbləğ":"Amount",
+"Status":"Status",
+"Tarix":"Date",
+"Çıxarış tarixçəsi":"Withdrawal History",
+"Profil məlumatları":"Profile Information",
+"Ad / istifadəçi adı":"Name / Username",
+"Adını daxil et":"Enter your name",
+"Email":"Email",
+"Email daxil et":"Enter email",
+"Profil məlumatlarını yadda saxla":"Save Profile Information",
+"🔒 Şifrəni dəyiş":"🔒 Change Password",
+"Hazırkı şifrə":"Current password",
+"Yeni şifrə":"New password",
+"Minimum 6 simvol":"Minimum 6 characters",
+"Yeni şifrəni təkrar yaz":"Repeat new password",
+"Şifrəni dəyiş":"Change Password",
+"Bağla":"Close",
+"Yeni support ticket":"New support ticket",
+"Mövzu":"Subject",
+"Mesaj":"Message",
+"🎫 Ticket yarat":"🎫 Create Ticket",
+"Mənim ticketlərim":"My Tickets",
+"Ticket":"Ticket",
+"Çıxarış et":"Withdraw",
+"Mövcud balans":"Available balance",
+"Məbləğ (AZN)":"Amount (AZN)",
+"Ödəniş üsulu":"Payment method",
+"Hesab / kart məlumatı":"Account / card information",
+"Çıxarış tələb et":"Request Withdrawal",
+"Ödəniş kartı":"Payment card",
+"Kart sahibi":"Card holder",
+"Ödəniş çeki / screenshot":"Payment receipt / screenshot",
+"Ödənişi göndər":"Submit Payment",
+"Yüklənir...":"Loading...",
+"Maşın tapılmadı.":"No cars found.",
+"Maşınlar yüklənmədi.":"Cars could not be loaded.",
+"Hələ maşının yoxdur.":"You don't have any cars yet.",
+"Hələ deposit yoxdur.":"No deposits yet.",
+"Hələ çıxarış yoxdur.":"No withdrawals yet.",
+"Deposit tarixçəsi yüklənmədi.":"Deposit history could not be loaded.",
+"Çıxarış tarixçəsi yüklənmədi.":"Withdrawal history could not be loaded.",
+"Hələ support ticket yoxdur.":"No support tickets yet.",
+"Ticketlər yüklənmədi.":"Tickets could not be loaded.",
+"Xoş gəlmisən!":"Welcome!",
+"Xoş gəlmisən, ":"Welcome, ",
+"Dəqiq balans: ":"Exact balance: ",
+"Qiymət:":"Price:",
+"Gündəlik:":"Daily:",
+"📅 Aylıq gəlir:":"📅 Monthly income:",
+"📅 Aylıq:":"📅 Monthly:",
+"Yığılmış:":"Accumulated:",
+"Al":"Buy",
+"TOPLANIR...":"COLLECTING...",
+"Yoxlanılır...":"Checking...",
+"Göndərilir...":"Sending...",
+"Yadda saxlanılır...":"Saving...",
+"Dəyişdirilir...":"Changing...",
+"Yaradılır...":"Creating...",
+"Açıq":"Open",
+"Cavablandı":"Answered",
+"Bağlandı":"Closed",
+"Gözləyir":"Pending",
+"Təsdiqləndi":"Approved",
+"Rədd edildi":"Rejected",
+"🎫 Ticket":"🎫 Ticket",
+"SƏN":"YOU",
+"ADMIN":"ADMIN",
+"🔒 Ticketi bağla":"🔒 Close Ticket",
+"Unknown":"Unknown",
+"Minimum çıxarış məbləği 40 AZN-dir. Sorğu admin tərəfindən yoxlanıldıqdan sonra təsdiqlənəcək.":"The minimum withdrawal amount is 40 AZN. Your request will be approved after admin review.",
+"Əvvəlcə yuxarıda göstərilən karta ödəniş et. Daha sonra məbləği daxil edib çekin şəklini yüklə. Admin ödənişi yoxladıqdan sonra məbləğ balansına əlavə olunacaq.":"First make a payment to the card shown above. Then enter the amount and upload the receipt. The amount will be added to your balance after admin review."
+
+},
+
+ru: {
+
+"BALANS":"БАЛАНС",
+"Profil":"Профиль",
+"Support":"Поддержка",
+"Deposit":"Пополнение",
+"Çıxarış":"Вывод",
+"Çıxış":"Выйти",
+"Dashboard":"Панель управления",
+"Balans":"Баланс",
+"Maşın sayı":"Количество машин",
+"Gündəlik gəlir":"Ежедневный доход",
+"Yığılan gəlir":"Накопленный доход",
+"TOPLA":"СОБРАТЬ",
+"🎁 Promo kod":"🎁 Промокод",
+"Promo kodunu daxil et və balansına bonus əlavə et.":"Введите промокод и получите бонус на баланс.",
+"Promo kodunu daxil et":"Введите промокод",
+"Kodu istifadə et":"Использовать код",
+"Maşınlar":"Машины",
+"Mənim maşınlarım":"Мои машины",
+"Deposit tarixçəsi":"История пополнений",
+"Sifariş":"Заказ",
+"Məbləğ":"Сумма",
+"Status":"Статус",
+"Tarix":"Дата",
+"Çıxarış tarixçəsi":"История выводов",
+"Profil məlumatları":"Данные профиля",
+"Ad / istifadəçi adı":"Имя / имя пользователя",
+"Adını daxil et":"Введите имя",
+"Email":"Email",
+"Email daxil et":"Введите email",
+"Profil məlumatlarını yadda saxla":"Сохранить данные профиля",
+"🔒 Şifrəni dəyiş":"🔒 Изменить пароль",
+"Hazırkı şifrə":"Текущий пароль",
+"Yeni şifrə":"Новый пароль",
+"Minimum 6 simvol":"Минимум 6 символов",
+"Yeni şifrəni təkrar yaz":"Повторите новый пароль",
+"Şifrəni dəyiş":"Изменить пароль",
+"Bağla":"Закрыть",
+"Yeni support ticket":"Новый тикет поддержки",
+"Mövzu":"Тема",
+"Mesaj":"Сообщение",
+"🎫 Ticket yarat":"🎫 Создать тикет",
+"Mənim ticketlərim":"Мои тикеты",
+"Ticket":"Тикет",
+"Çıxarış et":"Вывести средства",
+"Mövcud balans":"Доступный баланс",
+"Məbləğ (AZN)":"Сумма (AZN)",
+"Ödəniş üsulu":"Способ оплаты",
+"Hesab / kart məlumatı":"Данные счёта / карты",
+"Çıxarış tələb et":"Запросить вывод",
+"Ödəniş kartı":"Платёжная карта",
+"Kart sahibi":"Владелец карты",
+"Ödəniş çeki / screenshot":"Чек / скриншот оплаты",
+"Ödənişi göndər":"Отправить оплату",
+"Yüklənir...":"Загрузка...",
+"Maşın tapılmadı.":"Машины не найдены.",
+"Maşınlar yüklənmədi.":"Не удалось загрузить машины.",
+"Hələ maşının yoxdur.":"У вас пока нет машин.",
+"Hələ deposit yoxdur.":"Пополнений пока нет.",
+"Hələ çıxarış yoxdur.":"Выводов пока нет.",
+"Deposit tarixçəsi yüklənmədi.":"Не удалось загрузить историю пополнений.",
+"Çıxarış tarixçəsi yüklənmədi.":"Не удалось загрузить историю выводов.",
+"Hələ support ticket yoxdur.":"Тикетов поддержки пока нет.",
+"Ticketlər yüklənmədi.":"Не удалось загрузить тикеты.",
+"Xoş gəlmisən!":"Добро пожаловать!",
+"Xoş gəlmisən, ":"Добро пожаловать, ",
+"Dəqiq balans: ":"Точный баланс: ",
+"Qiymət:":"Цена:",
+"Gündəlik:":"Ежедневно:",
+"📅 Aylıq gəlir:":"📅 Месячный доход:",
+"📅 Aylıq:":"📅 В месяц:",
+"Yığılmış:":"Накоплено:",
+"Al":"Купить",
+"TOPLANIR...":"СОБИРАЕТСЯ...",
+"Yoxlanılır...":"Проверка...",
+"Göndərilir...":"Отправка...",
+"Yadda saxlanılır...":"Сохранение...",
+"Dəyişdirilir...":"Изменение...",
+"Yaradılır...":"Создание...",
+"Açıq":"Открыт",
+"Cavablandı":"Отвечен",
+"Bağlandı":"Закрыт",
+"Gözləyir":"Ожидает",
+"Təsdiqləndi":"Одобрено",
+"Rədd edildi":"Отклонено",
+"🎫 Ticket":"🎫 Тикет",
+"SƏN":"ВЫ",
+"ADMIN":"АДМИН",
+"🔒 Ticketi bağla":"🔒 Закрыть тикет",
+"Unknown":"Неизвестно",
+"Minimum çıxarış məbləği 40 AZN-dir. Sorğu admin tərəfindən yoxlanıldıqdan sonra təsdiqlənəcək.":"Минимальная сумма вывода — 40 AZN. Запрос будет одобрен после проверки администратором.",
+"Əvvəlcə yuxarıda göstərilən karta ödəniş et. Daha sonra məbləği daxil edib çekin şəklini yüklə. Admin ödənişi yoxladıqdan sonra məbləğ balansına əlavə olunacaq.":"Сначала переведите оплату на указанную выше карту. Затем введите сумму и загрузите чек. После проверки администратором сумма будет добавлена на баланс."
+
+}
+
+};
+
+let currentLanguage =
+localStorage.getItem("carcash_language") || "az";
+
+function t(text){
+
+const language =
+translations[currentLanguage] ||
+translations.az;
+
+if(
+Object.prototype.hasOwnProperty.call(
+language,
+text
+)
+){
+
+return language[text];
+
+}
+
+return text;
+
+}
+
+function translateText(text){
+
+if(!text)
+return text;
+
+let value =
+String(text).trim();
+
+if(
+Object.prototype.hasOwnProperty.call(
+translations[currentLanguage],
+value
+)
+){
+
+return translations[currentLanguage][value];
+
+}
+
+if(value.startsWith("Xoş gəlmisən, ")){
+
+const name =
+value.substring("Xoş gəlmisən, ".length);
+
+return t("Xoş gəlmisən, ")+name;
+
+}
+
+if(value.startsWith("Dəqiq balans: ")){
+
+const amount =
+value.substring("Dəqiq balans: ".length);
+
+return t("Dəqiq balans: ")+amount;
+
+}
+
+return text;
+
+}
+
+let translating = false;
+
+function translatePage(){
+
+if(translating)
+return;
+
+translating=true;
+
+document.documentElement.lang =
+currentLanguage;
+
+const elements =
+document.querySelectorAll(
+"[data-i18n]"
+);
+
+elements.forEach(element=>{
+
+const key =
+element.getAttribute(
+"data-i18n"
+);
+
+if(
+translations[currentLanguage] &&
+translations[currentLanguage][key] !== undefined
+){
+
+element.textContent =
+translations[currentLanguage][key];
+
+}
+
+});
+
+const placeholders =
+document.querySelectorAll(
+"[data-i18n-placeholder]"
+);
+
+placeholders.forEach(element=>{
+
+const key =
+element.getAttribute(
+"data-i18n-placeholder"
+);
+
+if(
+translations[currentLanguage] &&
+translations[currentLanguage][key] !== undefined
+){
+
+element.placeholder =
+translations[currentLanguage][key];
+
+}
+
+});
+
+/* Dynamic content */
+
+const walker =
+document.createTreeWalker(
+document.body,
+NodeFilter.SHOW_TEXT
+);
+
+const nodes=[];
+
+while(walker.nextNode()){
+
+const node =
+walker.currentNode;
+
+if(
+node.parentElement &&
+(
+node.parentElement.closest("script") ||
+node.parentElement.closest("style")
+)
+){
+
+continue;
+
+}
+
+nodes.push(node);
+
+}
+
+nodes.forEach(node=>{
+
+const original =
+node.nodeValue;
+
+const translated =
+translateText(original);
+
+if(translated !== original){
+
+node.nodeValue =
+translated;
+
+}
+
+});
+
+const button =
+document.getElementById(
+"languageButton"
+);
+
+if(button){
+
+if(currentLanguage==="en"){
+
+button.textContent =
+"🇬🇧 ENG ▾";
+
+}else if(currentLanguage==="ru"){
+
+button.textContent =
+"🇷🇺 RUS ▾";
+
+}else{
+
+button.textContent =
+"🇦🇿 AZE ▾";
+
+}
+
+}
+
+document.title =
+currentLanguage==="en"
+?
+"Dashboard - CarCash"
+:
+currentLanguage==="ru"
+?
+"Панель - CarCash"
+:
+"CarCash";
+
+translating=false;
+
+}
+
+function changeLanguage(language){
+
+if(
+!translations[language]
+)
+return;
+
+currentLanguage =
+language;
+
+localStorage.setItem(
+"carcash_language",
+language
+);
+
+translatePage();
+
+const menu =
+document.getElementById(
+"languageMenu"
+);
+
+if(menu){
+
+menu.classList.remove(
+"open"
+);
+
+}
+
+}
+
+function toggleLanguageMenu(){
+
+const menu =
+document.getElementById(
+"languageMenu"
+);
+
+if(menu){
+
+menu.classList.toggle(
+"open"
+);
+
+}
+
+}
+
+document.addEventListener(
+"click",
+function(event){
+
+const box =
+document.querySelector(
+".language-box"
+);
+
+const menu =
+document.getElementById(
+"languageMenu"
+);
+
+if(
+box &&
+menu &&
+!box.contains(event.target)
+){
+
+menu.classList.remove(
+"open"
+);
+
+}
+
+});
+
+/* Automatically translate dynamically created dashboard text */
+
+const languageObserver =
+new MutationObserver(
+function(){
+
+if(!translating){
+
+translatePage();
+
+}
+
+});
+
+languageObserver.observe(
+document.body,
+{
+childList:true,
+subtree:true,
+characterData:true
+}
+);
+
+
+/* =========================================================
+   ORIGINAL DASHBOARD LOGIC
+========================================================= */
+
 let currentUser=null;
 
 const DAY_MS=24*60*60*1000;
 
 let liveEarningsTimer=null;
-
-
-/* MOBILE */
 
 function toggleMobileMenu(){
 
@@ -2118,9 +2655,6 @@ menu.classList.remove(
 }
 
 }
-
-
-/* API */
 
 async function api(
 url,
@@ -2162,9 +2696,6 @@ data.message||
 return data;
 
 }
-
-
-/* USER */
 
 async function loadUser(){
 
@@ -2224,9 +2755,6 @@ window.location.href=
 
 }
 
-
-/* BALANCE */
-
 function updateBalance(balance){
 
 const number=
@@ -2250,9 +2778,6 @@ document.getElementById(
 "Dəqiq balans: "+value;
 
 }
-
-
-/* MONTHLY */
 
 function getMonthlyIncome(name){
 
@@ -2280,9 +2805,6 @@ monthlyMap[level]||0
 
 }
 
-
-/* IMAGE */
-
 function getCarImage(name){
 
 const level=
@@ -2292,29 +2814,14 @@ String(name||"")
 
 const imageMap={
 
-"LEVEL 1":
-"/cars/car-5.jpg",
-
-"LEVEL 2":
-"/cars/car-10.jpg",
-
-"LEVEL 3":
-"/cars/car-20.jpg",
-
-"LEVEL 4":
-"/cars/car-40.jpg",
-
-"LEVEL 5":
-"/cars/car-80.jpg",
-
-"LEVEL 6":
-"/cars/car-160.jpg",
-
-"LEVEL 7":
-"/cars/car-320.jpg",
-
-"LEVEL 8":
-"/cars/car-640.jpg"
+"LEVEL 1":"/cars/car-5.jpg",
+"LEVEL 2":"/cars/car-10.jpg",
+"LEVEL 3":"/cars/car-20.jpg",
+"LEVEL 4":"/cars/car-40.jpg",
+"LEVEL 5":"/cars/car-80.jpg",
+"LEVEL 6":"/cars/car-160.jpg",
+"LEVEL 7":"/cars/car-320.jpg",
+"LEVEL 8":"/cars/car-640.jpg"
 
 };
 
@@ -2322,9 +2829,6 @@ return imageMap[level]||
 "/cars/car-5.jpg";
 
 }
-
-
-/* LOAD CARS */
 
 async function loadCars(){
 
@@ -2433,7 +2937,7 @@ ${escapeHtml(car.name)}
 
 <div class="car-info">
 
-Qiymət:
+<span>${t("Qiymət:")}</span>
 <b>
 ${car.price.toFixed(2)}
 AZN
@@ -2441,7 +2945,7 @@ AZN
 
 <br>
 
-Gündəlik:
+<span>${t("Gündəlik:")}</span>
 <b>
 ${car.daily.toFixed(2)}
 AZN
@@ -2451,7 +2955,7 @@ AZN
 
 <div class="car-monthly">
 
-📅 Aylıq gəlir:
+${t("📅 Aylıq gəlir:")}
 
 <span>
 ${monthly.toFixed(2)} AZN
@@ -2463,7 +2967,7 @@ ${monthly.toFixed(2)} AZN
 class="buy-btn"
 onclick="buyCar(${Number(car.id)})">
 
-Al
+${t("Al")}
 
 </button>
 
@@ -2490,12 +2994,17 @@ document.getElementById(
 
 }
 
-
-/* BUY */
-
 async function buyCar(id){
 
 if(!confirm(
+currentLanguage==="en"
+?
+"Do you want to buy this car?"
+:
+currentLanguage==="ru"
+?
+"Вы хотите купить эту машину?"
+:
 "Bu maşını almaq istəyirsən?"
 ))return;
 
@@ -2518,7 +3027,7 @@ carId:id
 
 alert(
 data.message||
-"Maşın alındı!"
+t("Maşın alındı!")
 );
 
 await loadUser();
@@ -2534,9 +3043,6 @@ alert(error.message);
 }
 
 }
-
-
-/* LIVE */
 
 function parseServerDate(value){
 
@@ -2585,7 +3091,6 @@ return date;
 
 }
 
-
 function calculateLiveCarEarned(car){
 
 const daily=
@@ -2622,7 +3127,6 @@ elapsed/DAY_MS
 
 }
 
-
 function updateLiveEarnings(){
 
 if(
@@ -2656,7 +3160,8 @@ document.getElementById(
 if(element){
 
 element.textContent=
-"Yığılmış: "+
+t("Yığılmış:")+
+" "+
 earned.toFixed(8)+
 " AZN";
 
@@ -2679,7 +3184,6 @@ totalPending.toFixed(8)+
 
 }
 
-
 function startLiveEarnings(){
 
 if(liveEarningsTimer){
@@ -2699,9 +3203,6 @@ updateLiveEarnings,
 );
 
 }
-
-
-/* MY CARS */
 
 function renderMyCars(){
 
@@ -2728,7 +3229,9 @@ cars.length;
 if(!cars.length){
 
 container.innerHTML=
-'<div class="empty">Hələ maşının yoxdur.</div>';
+'<div class="empty">'+
+t("Hələ maşının yoxdur.")+
+'</div>';
 
 document.getElementById(
 "statDaily"
@@ -2823,7 +3326,7 @@ AZN/gün
 
 <div class="my-car-monthly">
 
-📅 Aylıq:
+${t("📅 Aylıq:")}
 ${monthly.toFixed(2)}
 AZN
 
@@ -2833,7 +3336,7 @@ AZN
 class="my-car-earned"
 id="earned-${Number(car.id)}">
 
-Yığılmış:
+${t("Yığılmış:")}
 ${earned.toFixed(8)}
 AZN
 
@@ -2849,7 +3352,7 @@ AZN
 class="collect-one-btn"
 onclick="collectOneCar(${Number(car.id)})">
 
-TOPLA
+${t("TOPLA")}
 
 </button>
 
@@ -2872,9 +3375,6 @@ startLiveEarnings();
 
 }
 
-
-/* COLLECT ALL */
-
 async function collectAllCars(){
 
 const button=
@@ -2885,7 +3385,7 @@ document.getElementById(
 button.disabled=true;
 
 button.textContent=
-"TOPLANIR...";
+t("TOPLANIR...");
 
 try{
 
@@ -2899,7 +3399,17 @@ method:"POST"
 
 alert(
 data.message||
+(
+currentLanguage==="en"
+?
+"All earnings were added to your balance."
+:
+currentLanguage==="ru"
+?
+"Весь доход добавлен на баланс."
+:
 "Bütün gəlirlər balansa əlavə edildi."
+)
 );
 
 await loadUser();
@@ -2910,7 +3420,17 @@ renderMyCars();
 
 alert(
 error.message||
+(
+currentLanguage==="en"
+?
+"An error occurred while collecting earnings."
+:
+currentLanguage==="ru"
+?
+"Произошла ошибка при сборе дохода."
+:
 "Gəlir toplanarkən xəta baş verdi."
+)
 );
 
 }finally{
@@ -2918,14 +3438,11 @@ error.message||
 button.disabled=false;
 
 button.textContent=
-"TOPLA";
+t("TOPLA");
 
 }
 
 }
-
-
-/* COLLECT ONE */
 
 async function collectOneCar(id){
 
@@ -2943,7 +3460,17 @@ method:"POST"
 
 alert(
 data.message||
+(
+currentLanguage==="en"
+?
+"Earnings added to balance."
+:
+currentLanguage==="ru"
+?
+"Доход добавлен на баланс."
+:
 "Gəlir balansa əlavə edildi."
+)
 );
 
 await loadUser();
@@ -2954,15 +3481,22 @@ renderMyCars();
 
 alert(
 error.message||
+(
+currentLanguage==="en"
+?
+"An error occurred while collecting earnings."
+:
+currentLanguage==="ru"
+?
+"Произошла ошибка при сборе дохода."
+:
 "Gəlir toplanarkən xəta baş verdi."
+)
 );
 
 }
 
 }
-
-
-/* PROMO */
 
 async function redeemPromo(){
 
@@ -2982,6 +3516,14 @@ input.value.trim().toUpperCase();
 if(!code){
 
 showPromoMessage(
+currentLanguage==="en"
+?
+"Enter a promo code."
+:
+currentLanguage==="ru"
+?
+"Введите промокод."
+:
 "Promo kodunu daxil et.",
 "error"
 );
@@ -2993,7 +3535,7 @@ return;
 button.disabled=true;
 
 button.textContent=
-"Yoxlanılır...";
+t("Yoxlanılır...");
 
 try{
 
@@ -3034,7 +3576,17 @@ input.value="";
 
 showPromoMessage(
 data.message||
-"Promo kod uğurla istifadə edildi!",
+(
+currentLanguage==="en"
+?
+"Promo code successfully redeemed!"
+:
+currentLanguage==="ru"
+?
+"Промокод успешно использован!"
+:
+"Promo kod uğurla istifadə edildi!"
+),
 "success"
 );
 
@@ -3042,7 +3594,17 @@ data.message||
 
 showPromoMessage(
 error.message||
-"Promo kod istifadə edilə bilmədi.",
+(
+currentLanguage==="en"
+?
+"Promo code could not be redeemed."
+:
+currentLanguage==="ru"
+?
+"Не удалось использовать промокод."
+:
+"Promo kod istifadə edilə bilmədi."
+),
 "error"
 );
 
@@ -3051,12 +3613,11 @@ error.message||
 button.disabled=false;
 
 button.textContent=
-"Kodu istifadə et";
+t("Kodu istifadə et");
 
 }
 
 }
-
 
 function showPromoMessage(
 text,
@@ -3075,9 +3636,6 @@ box.className=
 type;
 
 }
-
-
-/* PROFILE */
 
 async function openProfile(){
 
@@ -3119,7 +3677,18 @@ profile.email||"";
 document.getElementById(
 "profileNameBig"
 ).textContent=
-name||"İstifadəçi";
+name||
+(
+currentLanguage==="en"
+?
+"User"
+:
+currentLanguage==="ru"
+?
+"Пользователь"
+:
+"İstifadəçi"
+);
 
 document.getElementById(
 "profileEmailBig"
@@ -3190,7 +3759,6 @@ error.message,
 
 }
 
-
 async function saveProfile(){
 
 const name=
@@ -3211,6 +3779,14 @@ document.getElementById(
 if(!name){
 
 showProfileMessage(
+currentLanguage==="en"
+?
+"Enter your name."
+:
+currentLanguage==="ru"
+?
+"Введите имя."
+:
 "Adı daxil et.",
 "error"
 );
@@ -3225,6 +3801,14 @@ if(
 ){
 
 showProfileMessage(
+currentLanguage==="en"
+?
+"Enter a valid email."
+:
+currentLanguage==="ru"
+?
+"Введите корректный email."
+:
 "Düzgün email daxil et.",
 "error"
 );
@@ -3236,7 +3820,7 @@ return;
 button.disabled=true;
 
 button.textContent=
-"Yadda saxlanılır...";
+t("Yadda saxlanılır...");
 
 try{
 
@@ -3266,11 +3850,21 @@ currentUser.email=email;
 document.getElementById(
 "welcomeText"
 ).textContent=
-"Xoş gəlmisən, "+name;
+t("Xoş gəlmisən, ")+name;
 
 showProfileMessage(
 data.message||
-"Profil məlumatları yeniləndi.",
+(
+currentLanguage==="en"
+?
+"Profile information updated."
+:
+currentLanguage==="ru"
+?
+"Данные профиля обновлены."
+:
+"Profil məlumatları yeniləndi."
+),
 "success"
 );
 
@@ -3288,12 +3882,11 @@ error.message,
 button.disabled=false;
 
 button.textContent=
-"Profil məlumatlarını yadda saxla";
+t("Profil məlumatlarını yadda saxla");
 
 }
 
 }
-
 
 async function changePassword(){
 
@@ -3320,6 +3913,14 @@ document.getElementById(
 if(!currentPassword){
 
 showProfileMessage(
+currentLanguage==="en"
+?
+"Enter your current password."
+:
+currentLanguage==="ru"
+?
+"Введите текущий пароль."
+:
 "Hazırkı şifrəni daxil et.",
 "error"
 );
@@ -3331,6 +3932,14 @@ return;
 if(newPassword.length<6){
 
 showProfileMessage(
+currentLanguage==="en"
+?
+"New password must be at least 6 characters."
+:
+currentLanguage==="ru"
+?
+"Новый пароль должен содержать минимум 6 символов."
+:
 "Yeni şifrə minimum 6 simvol olmalıdır.",
 "error"
 );
@@ -3342,6 +3951,14 @@ return;
 if(newPassword!==confirmPassword){
 
 showProfileMessage(
+currentLanguage==="en"
+?
+"New passwords do not match."
+:
+currentLanguage==="ru"
+?
+"Новые пароли не совпадают."
+:
 "Yeni şifrələr eyni deyil.",
 "error"
 );
@@ -3353,7 +3970,7 @@ return;
 button.disabled=true;
 
 button.textContent=
-"Dəyişdirilir...";
+t("Dəyişdirilir...");
 
 try{
 
@@ -3387,7 +4004,17 @@ document.getElementById(
 
 showProfileMessage(
 data.message||
-"Şifrə uğurla dəyişdirildi.",
+(
+currentLanguage==="en"
+?
+"Password changed successfully."
+:
+currentLanguage==="ru"
+?
+"Пароль успешно изменён."
+:
+"Şifrə uğurla dəyişdirildi."
+),
 "success"
 );
 
@@ -3403,12 +4030,11 @@ error.message,
 button.disabled=false;
 
 button.textContent=
-"Şifrəni dəyiş";
+t("Şifrəni dəyiş");
 
 }
 
 }
-
 
 function showProfileMessage(
 text,
@@ -3428,9 +4054,6 @@ type;
 
 }
 
-
-/* PAYMENT */
-
 async function loadPaymentInfo(){
 
 try{
@@ -3444,12 +4067,18 @@ document.getElementById(
 "paymentCardNumber"
 ).textContent=
 data.cardNumber||
-"Təyin edilməyib";
+(
+currentLanguage==="en"
+?
+"Not set"
+:
+currentLanguage==="ru"
+?
+"Не указано"
+:
+"Təyin edilməyib"
+);
 
-/*
-  Serverdən Denix Cars və ya başqa ad gəlsə belə,
-  istifadəçiyə həmişə Unknown göstərilir.
-*/
 document.getElementById(
 "paymentCardName"
 ).textContent=
@@ -3462,10 +4091,6 @@ console.error(
 error
 );
 
-/*
-  Server xətası olsa belə kart sahibi
-  Unknown olaraq qalır.
-*/
 document.getElementById(
 "paymentCardName"
 ).textContent=
@@ -3474,9 +4099,6 @@ document.getElementById(
 }
 
 }
-
-
-/* DEPOSITS */
 
 async function loadDeposits(){
 
@@ -3509,7 +4131,7 @@ container.innerHTML=
 `
 <div class="history-row">
 <div class="empty">
-Hələ deposit yoxdur.
+${t("Hələ deposit yoxdur.")}
 </div>
 </div>
 `;
@@ -3529,15 +4151,15 @@ deposit.status||
 ).toLowerCase();
 
 let statusText=
-"Gözləyir";
+t("Gözləyir");
 
 if(status==="approved")
 statusText=
-"Təsdiqləndi";
+t("Təsdiqləndi");
 
 if(status==="rejected")
 statusText=
-"Rədd edildi";
+t("Rədd edildi");
 
 return`
 
@@ -3599,7 +4221,7 @@ document.getElementById(
 `
 <div class="history-row">
 <div class="empty">
-Deposit tarixçəsi yüklənmədi.
+${t("Deposit tarixçəsi yüklənmədi.")}
 </div>
 </div>
 `;
@@ -3607,9 +4229,6 @@ Deposit tarixçəsi yüklənmədi.
 }
 
 }
-
-
-/* WITHDRAWALS */
 
 async function loadWithdrawals(){
 
@@ -3642,7 +4261,7 @@ container.innerHTML=
 `
 <div class="history-row">
 <div class="empty">
-Hələ çıxarış yoxdur.
+${t("Hələ çıxarış yoxdur.")}
 </div>
 </div>
 `;
@@ -3662,15 +4281,15 @@ withdrawal.status||
 ).toLowerCase();
 
 let statusText=
-"Gözləyir";
+t("Gözləyir");
 
 if(status==="approved")
 statusText=
-"Təsdiqləndi";
+t("Təsdiqləndi");
 
 if(status==="rejected")
 statusText=
-"Rədd edildi";
+t("Rədd edildi");
 
 return`
 
@@ -3731,7 +4350,7 @@ document.getElementById(
 `
 <div class="history-row">
 <div class="empty">
-Çıxarış tarixçəsi yüklənmədi.
+${t("Çıxarış tarixçəsi yüklənmədi.")}
 </div>
 </div>
 `;
@@ -3739,9 +4358,6 @@ document.getElementById(
 }
 
 }
-
-
-/* WITHDRAW MODAL */
 
 function openWithdraw(){
 
@@ -3768,7 +4384,6 @@ document.getElementById(
 ).classList.remove("active");
 
 }
-
 
 async function submitWithdraw(){
 
@@ -3800,6 +4415,14 @@ amount<40
 ){
 
 showWithdrawMessage(
+currentLanguage==="en"
+?
+"Minimum withdrawal is 40 AZN."
+:
+currentLanguage==="ru"
+?
+"Минимальная сумма вывода — 40 AZN."
+:
 "Minimum çıxarış 40 AZN-dir.",
 "error"
 );
@@ -3816,6 +4439,14 @@ currentUser?.balance||0
 ){
 
 showWithdrawMessage(
+currentLanguage==="en"
+?
+"Insufficient balance."
+:
+currentLanguage==="ru"
+?
+"Недостаточно средств."
+:
 "Balans kifayət etmir.",
 "error"
 );
@@ -3827,6 +4458,14 @@ return;
 if(!method||!account){
 
 showWithdrawMessage(
+currentLanguage==="en"
+?
+"Fill in all fields."
+:
+currentLanguage==="ru"
+?
+"Заполните все поля."
+:
 "Bütün məlumatları doldur.",
 "error"
 );
@@ -3838,7 +4477,7 @@ return;
 button.disabled=true;
 
 button.textContent=
-"Göndərilir...";
+t("Göndərilir...");
 
 try{
 
@@ -3861,7 +4500,17 @@ account
 
 showWithdrawMessage(
 data.message||
-"Çıxarış sorğusu yaradıldı.",
+(
+currentLanguage==="en"
+?
+"Withdrawal request created."
+:
+currentLanguage==="ru"
+?
+"Запрос на вывод создан."
+:
+"Çıxarış sorğusu yaradıldı."
+),
 "success"
 );
 
@@ -3886,12 +4535,11 @@ error.message,
 button.disabled=false;
 
 button.textContent=
-"Çıxarış tələb et";
+t("Çıxarış tələb et");
 
 }
 
 }
-
 
 function showWithdrawMessage(
 text,
@@ -3910,9 +4558,6 @@ box.className=
 type;
 
 }
-
-
-/* DEPOSIT */
 
 async function openDeposit(){
 
@@ -3942,7 +4587,6 @@ document.getElementById(
 
 }
 
-
 async function submitDeposit(){
 
 const amount=
@@ -3968,6 +4612,14 @@ amount<1
 ){
 
 showDepositMessage(
+currentLanguage==="en"
+?
+"Minimum deposit is 1 AZN."
+:
+currentLanguage==="ru"
+?
+"Минимальная сумма пополнения — 1 AZN."
+:
 "Minimum deposit 1 AZN-dir.",
 "error"
 );
@@ -3979,6 +4631,14 @@ return;
 if(amount>10000){
 
 showDepositMessage(
+currentLanguage==="en"
+?
+"Maximum deposit is 10000 AZN."
+:
+currentLanguage==="ru"
+?
+"Максимальная сумма пополнения — 10000 AZN."
+:
 "Maksimum deposit 10000 AZN-dir.",
 "error"
 );
@@ -3990,6 +4650,14 @@ return;
 if(!file){
 
 showDepositMessage(
+currentLanguage==="en"
+?
+"Select a payment receipt image."
+:
+currentLanguage==="ru"
+?
+"Выберите изображение чека."
+:
 "Ödəniş çekinin şəklini seç.",
 "error"
 );
@@ -4001,7 +4669,7 @@ return;
 button.disabled=true;
 
 button.textContent=
-"Göndərilir...";
+t("Göndərilir...");
 
 try{
 
@@ -4056,6 +4724,14 @@ body:formData
 );
 
 showDepositMessage(
+currentLanguage==="en"
+?
+"Deposit submitted! Your balance will be updated after admin review."
+:
+currentLanguage==="ru"
+?
+"Пополнение отправлено! Баланс будет обновлён после проверки администратором."
+:
 "Deposit göndərildi! Admin yoxladıqdan sonra balansına əlavə olunacaq.",
 "success"
 );
@@ -4079,12 +4755,11 @@ error.message,
 button.disabled=false;
 
 button.textContent=
-"Ödənişi göndər";
+t("Ödənişi göndər");
 
 }
 
 }
-
 
 function showDepositMessage(
 text,
@@ -4103,9 +4778,6 @@ box.className=
 type;
 
 }
-
-
-/* SUPPORT */
 
 function openSupport(){
 
@@ -4127,7 +4799,6 @@ document.getElementById(
 
 }
 
-
 async function loadSupportTickets(){
 
 const container=
@@ -4136,7 +4807,9 @@ document.getElementById(
 );
 
 container.innerHTML=
-'<div class="empty">Yüklənir...</div>';
+'<div class="empty">'+
+t("Yüklənir...")+
+'</div>';
 
 try{
 
@@ -4159,7 +4832,9 @@ data.data||
 if(!tickets.length){
 
 container.innerHTML=
-'<div class="empty">Hələ support ticket yoxdur.</div>';
+'<div class="empty">'+
+t("Hələ support ticket yoxdur.")+
+'</div>';
 
 return;
 
@@ -4176,7 +4851,7 @@ ticket.status||
 ).toLowerCase();
 
 let statusText=
-"Açıq";
+t("Açıq");
 
 if(
 status==="waiting"||
@@ -4184,14 +4859,14 @@ status==="answered"
 ){
 
 statusText=
-"Cavablandı";
+t("Cavablandı");
 
 }
 
 if(status==="closed"){
 
 statusText=
-"Bağlandı";
+t("Bağlandı");
 
 }
 
@@ -4266,14 +4941,13 @@ ticket.message||
 container.innerHTML=
 `
 <div class="empty">
-Ticketlər yüklənmədi.
+${t("Ticketlər yüklənmədi.")}
 </div>
 `;
 
 }
 
 }
-
 
 async function createTicket(){
 
@@ -4295,6 +4969,14 @@ document.getElementById(
 if(!subject||!message){
 
 alert(
+currentLanguage==="en"
+?
+"Fill in the subject and message."
+:
+currentLanguage==="ru"
+?
+"Заполните тему и сообщение."
+:
 "Mövzu və mesajı doldur."
 );
 
@@ -4305,7 +4987,7 @@ return;
 button.disabled=true;
 
 button.textContent=
-"Yaradılır...";
+t("Yaradılır...");
 
 try{
 
@@ -4327,7 +5009,17 @@ message
 
 alert(
 data.message||
+(
+currentLanguage==="en"
+?
+"Ticket created."
+:
+currentLanguage==="ru"
+?
+"Тикет создан."
+:
 "Ticket yaradıldı."
+)
 );
 
 document.getElementById(
@@ -4349,14 +5041,11 @@ alert(error.message);
 button.disabled=false;
 
 button.textContent=
-"🎫 Ticket yarat";
+t("🎫 Ticket yarat");
 
 }
 
 }
-
-
-/* TICKET */
 
 async function openTicket(id){
 
@@ -4373,7 +5062,9 @@ document.getElementById(
 modal.classList.add("active");
 
 detail.innerHTML=
-'<div class="empty">Yüklənir...</div>';
+'<div class="empty">'+
+t("Yüklənir...")+
+'</div>';
 
 try{
 
@@ -4402,6 +5093,17 @@ ticket.messages
 :
 [];
 
+const statusText =
+status==="closed"
+?
+t("Bağlandı")
+:
+status==="waiting"||status==="answered"
+?
+t("Cavablandı")
+:
+t("Açıq");
+
 detail.innerHTML=`
 
 <div class="ticket">
@@ -4424,7 +5126,7 @@ class="status ${
 escapeHtml(status)
 }">
 
-${escapeHtml(status)}
+${statusText}
 
 </span>
 
@@ -4449,7 +5151,7 @@ ticket.created_at
 <div class="ticket-message">
 
 <div class="ticket-user-label">
-SƏN
+${t("SƏN")}
 </div>
 
 ${escapeHtml(
@@ -4466,7 +5168,7 @@ message=>`
 <div class="ticket-reply-box">
 
 <div class="ticket-admin-label">
-ADMIN
+${t("ADMIN")}
 </div>
 
 <div class="ticket-reply-text">
@@ -4496,7 +5198,7 @@ status!=="closed"
 class="ticket-close-btn"
 onclick="closeMyTicket(${Number(ticket.id)})">
 
-🔒 Ticketi bağla
+${t("🔒 Ticketi bağla")}
 
 </button>
 
@@ -4526,7 +5228,6 @@ error.message
 
 }
 
-
 function closeTicket(){
 
 document.getElementById(
@@ -4535,10 +5236,17 @@ document.getElementById(
 
 }
 
-
 async function closeMyTicket(id){
 
 if(!confirm(
+currentLanguage==="en"
+?
+"Do you want to close this ticket?"
+:
+currentLanguage==="ru"
+?
+"Вы хотите закрыть этот тикет?"
+:
 "Bu ticketi bağlamaq istəyirsən?"
 ))return;
 
@@ -4556,7 +5264,17 @@ method:"POST"
 
 alert(
 data.message||
+(
+currentLanguage==="en"
+?
+"Ticket closed."
+:
+currentLanguage==="ru"
+?
+"Тикет закрыт."
+:
 "Ticket bağlandı."
+)
 );
 
 closeTicket();
@@ -4571,9 +5289,6 @@ alert(error.message);
 
 }
 
-
-/* HELPERS */
-
 function escapeHtml(value){
 
 return String(value)
@@ -4585,7 +5300,6 @@ return String(value)
 
 }
 
-
 function formatDate(value){
 
 const date=
@@ -4595,13 +5309,18 @@ if(!date)
 return value;
 
 return date.toLocaleString(
+currentLanguage==="en"
+?
+"en-GB"
+:
+currentLanguage==="ru"
+?
+"ru-RU"
+:
 "az-AZ"
 );
 
 }
-
-
-/* LOGOUT */
 
 async function logout(){
 
@@ -4623,9 +5342,6 @@ window.location.href=
 "/login.html";
 
 }
-
-
-/* MODALS */
 
 document.getElementById(
 "profileModal"
@@ -4687,9 +5403,6 @@ closeTicket();
 }
 );
 
-
-/* START */
-
 async function refreshDashboard(){
 
 await loadUser();
@@ -4706,6 +5419,8 @@ await loadPaymentInfo();
 
 startLiveEarnings();
 
+translatePage();
+
 }
 
 refreshDashboard();
@@ -4714,3 +5429,4 @@ refreshDashboard();
 
 </body>
 </html>
+
