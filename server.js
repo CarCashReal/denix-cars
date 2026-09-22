@@ -4586,12 +4586,23 @@ app.post(
    START
 ========================= */
 
-app.listen(
-  PORT,
-  () => {
+const HOST = "0.0.0.0";
 
-    console.log(
-      `CarCash running on http://localhost:${PORT}`
-    );
-  }
-);
+app.get("/api/health", (req, res) => {
+  res.json({
+    ok: true,
+    service: "CarCash",
+    status: "online"
+  });
+});
+
+app.listen(PORT, HOST, () => {
+  console.log("");
+  console.log("================================");
+  console.log("          CARCASH ONLINE");
+  console.log("================================");
+  console.log(`HOST: ${HOST}`);
+  console.log(`PORT: ${PORT}`);
+  console.log("================================");
+  console.log("");
+});
