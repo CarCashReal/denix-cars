@@ -2996,11 +2996,11 @@ app.post(
 
       if (
         !Number.isFinite(amount) ||
-        amount < 40
+        amount < 10
       ) {
         return res.status(400).json({
           error:
-            "Minimum çıxarış 40 AZN-dir."
+            "Minimum çıxarış 10 AZN-dir."
         });
       }
 
