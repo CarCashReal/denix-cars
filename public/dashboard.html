@@ -1375,7 +1375,87 @@ font-size:10px;
 }
 
 }
+.sale-price-label{
+    font-size:11px;
+    color:#8d98aa;
+    text-transform:uppercase;
+    font-weight:800;
+    margin-bottom:4px;
+}
 
+.sale-price-box{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    flex-wrap:wrap;
+    margin:4px 0 8px;
+}
+
+.sale-old-price{
+    color:#7f8aa0;
+    text-decoration:line-through;
+    font-size:12px;
+    font-weight:800;
+}
+
+.sale-badge{
+    background:#ff3b30;
+    color:#fff;
+    font-size:10px;
+    font-weight:900;
+    padding:4px 7px;
+    border-radius:6px;
+    line-height:1;
+}
+
+.sale-new-price{
+    width:100%;
+    text-align:center;
+    color:#42df96;
+    font-size:21px;
+    font-weight:900;
+    margin-top:1px;
+}
+
+@media(max-width:700px){
+
+    .sale-price-box{
+        gap:5px;
+        margin-top:5px;
+    }
+
+    .sale-old-price{
+        font-size:10px;
+    }
+
+    .sale-badge{
+        font-size:8px;
+        padding:3px 5px;
+    }
+
+    .sale-new-price{
+        font-size:17px;
+    }
+
+}
+
+@media(max-width:380px){
+
+    .sale-old-price{
+        font-size:9px;
+    }
+
+    .sale-badge{
+        font-size:7px;
+        padding:3px 4px;
+    }
+
+    .sale-new-price{
+        font-size:15px;
+    }
+
+}
 </style>
 </head>
 
