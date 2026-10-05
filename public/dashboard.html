@@ -3505,19 +3505,33 @@ ${escapeHtml(car.name)}
 
 <div class="car-info">
 
-${t("price")}:
-<b>
-${car.price.toFixed(2)}
-AZN
-</b>
+<div class="sale-price-label">
+${t("price")}
+</div>
 
-<br>
+<div class="sale-price-box">
 
+<span class="sale-old-price">
+${(car.price / 0.75).toFixed(2)} AZN
+</span>
+
+<span class="sale-badge">
+-25%
+</span>
+
+<span class="sale-new-price">
+${car.price.toFixed(2)} AZN
+</span>
+
+</div>
+
+<div>
 ${t("daily")}:
 <b>
 ${car.daily.toFixed(2)}
 AZN
 </b>
+</div>
 
 </div>
 
