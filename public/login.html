@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="az">
 <head>
   <meta charset="UTF-8">
@@ -12,9 +11,15 @@
       box-sizing: border-box;
     }
 
+    html,
+    body {
+      min-height: 100%;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
+
       display: flex;
       align-items: center;
       justify-content: center;
@@ -23,14 +28,38 @@
       color: white;
 
       background:
-        radial-gradient(circle at top, #26336e 0%, #0b1025 42%, #03040a 100%);
+        radial-gradient(
+          circle at 15% 15%,
+          rgba(0,140,255,.20),
+          transparent 30%
+        ),
+        radial-gradient(
+          circle at 85% 85%,
+          rgba(130,0,255,.18),
+          transparent 30%
+        ),
+        radial-gradient(
+          circle at 50% 100%,
+          rgba(0,255,120,.08),
+          transparent 35%
+        ),
+        #03040a;
+
+      position: relative;
+      overflow-x: hidden;
     }
+
+    /* =================================
+       LANGUAGE
+    ================================= */
 
     .language-box {
       position: fixed;
+
       top: 22px;
       right: 22px;
-      z-index: 1000;
+
+      z-index: 10010;
     }
 
     .language-button {
@@ -43,26 +72,40 @@
 
       padding: 10px 14px;
 
-      background: rgba(17, 22, 44, .95);
-      border: 1px solid rgba(255,255,255,.12);
+      background:
+        rgba(17, 22, 44, .95);
+
+      border:
+        1px solid rgba(255,255,255,.12);
+
       border-radius: 12px;
 
       color: white;
+
       font-size: 14px;
       font-weight: bold;
 
       cursor: pointer;
+
+      box-shadow:
+        0 8px 25px rgba(0,0,0,.25);
+
+      transition: .2s;
     }
 
     .language-button:hover {
-      opacity: 1;
-      transform: none;
+      border-color:
+        rgba(0,198,255,.6);
+
+      transform:
+        translateY(-1px);
     }
 
     .language-menu {
       display: none;
 
       position: absolute;
+
       top: 50px;
       right: 0;
 
@@ -70,11 +113,16 @@
 
       padding: 7px;
 
-      background: rgba(10, 15, 30, .98);
-      border: 1px solid rgba(255,255,255,.1);
+      background:
+        rgba(10, 15, 30, .98);
+
+      border:
+        1px solid rgba(255,255,255,.1);
+
       border-radius: 13px;
 
-      box-shadow: 0 15px 40px rgba(0,0,0,.5);
+      box-shadow:
+        0 15px 40px rgba(0,0,0,.5);
     }
 
     .language-menu.active {
@@ -92,19 +140,27 @@
       padding: 10px;
 
       background: transparent;
+
       border: 0;
+
       border-radius: 8px;
 
       color: white;
+
       font-size: 14px;
       font-weight: bold;
 
       cursor: pointer;
+
       text-align: left;
+
+      transition: .2s;
     }
 
     .language-option:hover {
-      background: rgba(104,119,255,.15);
+      background:
+        rgba(104,119,255,.15);
+
       opacity: 1;
     }
 
@@ -112,23 +168,97 @@
       font-size: 19px;
     }
 
+    /* =================================
+       LOGIN BOX
+    ================================= */
+
     .box {
       width: min(420px, 92%);
+
       padding: 35px;
 
-      background: rgba(17, 22, 44, 0.92);
-      border: 1px solid rgba(255,255,255,.08);
+      background:
+        linear-gradient(
+          145deg,
+          rgba(20,27,48,.96),
+          rgba(9,14,27,.96)
+        );
+
+      border:
+        1px solid rgba(255,255,255,.09);
+
       border-radius: 24px;
 
       box-shadow:
-        0 30px 80px rgba(0,0,0,.45);
+        0 30px 80px rgba(0,0,0,.55),
+        0 0 35px rgba(0,198,255,.05);
+
+      position: relative;
+
+      z-index: 10;
+
+      overflow: hidden;
     }
+
+    /* Christmas line on top */
+
+    .box::before {
+      content: "";
+
+      position: absolute;
+
+      top: 0;
+      left: 0;
+      right: 0;
+
+      height: 3px;
+
+      background:
+        linear-gradient(
+          90deg,
+          #ff3b30,
+          #ffd54a,
+          #42df96,
+          #00c6ff,
+          #ff3b30
+        );
+
+      background-size:
+        300% 100%;
+
+      animation:
+        topLight 4s linear infinite;
+    }
+
+    @keyframes topLight {
+
+      from {
+        background-position: 0% 50%;
+      }
+
+      to {
+        background-position: 300% 50%;
+      }
+
+    }
+
+    /* =================================
+       LOGO
+    ================================= */
 
     .logo {
       text-align: center;
+
       font-size: 30px;
+
       font-weight: 900;
+
       margin-bottom: 8px;
+
+      letter-spacing: 1px;
+
+      text-shadow:
+        0 0 15px rgba(0,198,255,.15);
     }
 
     .logo span {
@@ -137,228 +267,751 @@
 
     h1 {
       text-align: center;
-      margin: 0 0 25px;
+
+      margin:
+        0 0 25px;
+
       font-size: 25px;
     }
 
+    /* =================================
+       LABELS
+    ================================= */
+
     label {
       display: block;
+
       margin-top: 15px;
       margin-bottom: 7px;
+
       color: #aab1cf;
+
       font-size: 14px;
     }
 
+    /* =================================
+       INPUTS
+    ================================= */
+
     input {
       width: 100%;
+
       padding: 14px;
 
       border-radius: 12px;
-      border: 1px solid #30385f;
 
-      background: #080c1a;
+      border:
+        1px solid #30385f;
+
+      background:
+        #080c1a;
+
       color: white;
 
       outline: none;
+
       font-size: 15px;
+
+      transition:
+        .2s;
     }
 
     input:focus {
-      border-color: #6877ff;
+      border-color:
+        #6877ff;
+
+      box-shadow:
+        0 0 0 3px
+        rgba(104,119,255,.08);
     }
+
+    /* =================================
+       LOGIN BUTTON
+    ================================= */
 
     .login-button {
       width: 100%;
+
       margin-top: 22px;
+
       padding: 14px;
 
       border: 0;
+
       border-radius: 12px;
 
-      background: #6877ff;
+      background:
+        linear-gradient(
+          90deg,
+          #009dff,
+          #6840ff
+        );
+
       color: white;
 
       font-weight: 800;
+
       font-size: 15px;
 
       cursor: pointer;
+
+      position: relative;
+
+      overflow: hidden;
+
+      transition:
+        .2s;
     }
 
     .login-button:hover {
-      opacity: .9;
+      opacity: .95;
+
+      transform:
+        translateY(-2px);
+
+      box-shadow:
+        0 8px 25px
+        rgba(0,157,255,.20);
     }
+
+    /* Button shine */
+
+    .login-button::before {
+      content: "";
+
+      position: absolute;
+
+      top: 0;
+      left: -110%;
+
+      width: 60%;
+      height: 100%;
+
+      background:
+        linear-gradient(
+          90deg,
+          transparent,
+          rgba(255,255,255,.35),
+          transparent
+        );
+
+      transform:
+        skewX(-20deg);
+
+      animation:
+        buttonShine 3.5s infinite;
+
+      pointer-events: none;
+    }
+
+    @keyframes buttonShine {
+
+      0%,
+      55% {
+        left: -110%;
+      }
+
+      75%,
+      100% {
+        left: 140%;
+      }
+
+    }
+
+    /* =================================
+       ERROR
+    ================================= */
 
     .error {
       display: none;
 
       margin-top: 15px;
+
       padding: 12px;
 
       border-radius: 10px;
 
-      background: rgba(255,70,70,.12);
-      border: 1px solid rgba(255,70,70,.3);
+      background:
+        rgba(255,70,70,.12);
+
+      border:
+        1px solid rgba(255,70,70,.3);
 
       color: #ff8c8c;
+
       text-align: center;
     }
 
+    /* =================================
+       BOTTOM
+    ================================= */
+
     .bottom {
       margin-top: 20px;
+
       text-align: center;
+
       color: #8e98bb;
+
       font-size: 14px;
     }
 
     .bottom a {
       color: #7482ff;
+
       text-decoration: none;
+
       font-weight: bold;
+
+      transition:
+        .2s;
+    }
+
+    .bottom a:hover {
+      color:
+        #42df96;
     }
 
     .home {
       display: block;
+
       text-align: center;
+
       margin-top: 15px;
 
       color: #8e98bb;
-      text-decoration: none;
-      font-size: 13px;
-    }
-  </style>
 
+      text-decoration: none;
+
+      font-size: 13px;
+
+      transition:
+        .2s;
+    }
+
+    .home:hover {
+      color: white;
+    }
+
+    /* =================================
+       SNOW
+    ================================= */
+
+    .christmas-snow {
+      position: fixed;
+
+      inset: 0;
+
+      pointer-events: none;
+
+      z-index: 9990;
+
+      overflow: hidden;
+
+      background-image:
+
+        radial-gradient(
+          circle,
+          rgba(255,255,255,.95)
+          0 2px,
+          transparent 2.5px
+        ),
+
+        radial-gradient(
+          circle,
+          rgba(255,255,255,.8)
+          0 1.5px,
+          transparent 2px
+        ),
+
+        radial-gradient(
+          circle,
+          rgba(255,255,255,.7)
+          0 1px,
+          transparent 1.5px
+        );
+
+      background-size:
+        140px 140px,
+        90px 90px,
+        55px 55px;
+
+      background-position:
+        0 0,
+        25px 35px,
+        45px 15px;
+
+      animation:
+        christmasSnow 14s linear infinite;
+
+      opacity: .72;
+    }
+
+    @keyframes christmasSnow {
+
+      from {
+        background-position:
+          0 -140px,
+          25px -90px,
+          45px -55px;
+      }
+
+      to {
+        background-position:
+          80px 100vh,
+          -25px 100vh,
+          70px 100vh;
+      }
+
+    }
+
+    /* =================================
+       CHRISTMAS LIGHTS
+    ================================= */
+
+    .christmas-lights {
+      position: fixed;
+
+      top: 0;
+
+      left: 0;
+      right: 0;
+
+      height: 34px;
+
+      z-index: 10001;
+
+      pointer-events: none;
+
+      display: flex;
+
+      justify-content:
+        space-around;
+
+      align-items:
+        flex-start;
+
+      padding: 0 8px;
+    }
+
+    .christmas-lights::before {
+      content: "";
+
+      position: absolute;
+
+      left: 0;
+      right: 0;
+
+      top: 3px;
+
+      height: 2px;
+
+      background:
+        rgba(255,255,255,.22);
+
+      box-shadow:
+        0 0 8px
+        rgba(255,255,255,.15);
+    }
+
+    .christmas-lights span {
+      width: 11px;
+
+      height: 15px;
+
+      margin-top: 5px;
+
+      border-radius:
+        50% 50% 45% 45%;
+
+      background:
+        #ff3b30;
+
+      box-shadow:
+        0 0 10px #ff3b30,
+        0 0 20px
+        rgba(255,59,48,.7);
+
+      animation:
+        christmasBlink
+        1.8s
+        infinite
+        alternate;
+    }
+
+    .christmas-lights span:nth-child(2n) {
+      background:
+        #42df96;
+
+      box-shadow:
+        0 0 10px #42df96,
+        0 0 20px
+        rgba(66,223,150,.7);
+
+      animation-delay:
+        .4s;
+    }
+
+    .christmas-lights span:nth-child(3n) {
+      background:
+        #ffd54a;
+
+      box-shadow:
+        0 0 10px #ffd54a,
+        0 0 20px
+        rgba(255,213,74,.7);
+
+      animation-delay:
+        .8s;
+    }
+
+    @keyframes christmasBlink {
+
+      from {
+        opacity: .45;
+
+        transform:
+          scale(.8);
+      }
+
+      to {
+        opacity: 1;
+
+        transform:
+          scale(1.1);
+      }
+
+    }
+
+    /* =================================
+       CHRISTMAS TREES
+    ================================= */
+
+    .christmas-tree {
+      position: fixed;
+
+      bottom: 18px;
+
+      z-index: 9995;
+
+      pointer-events: none;
+
+      font-size: 58px;
+
+      filter:
+        drop-shadow(
+          0 0 12px
+          rgba(66,223,150,.45)
+        );
+
+      animation:
+        christmasTreeFloat
+        3s
+        ease-in-out
+        infinite;
+    }
+
+    .christmas-tree.left {
+      left: 12px;
+    }
+
+    .christmas-tree.right {
+      right: 12px;
+
+      animation-delay:
+        1.2s;
+    }
+
+    @keyframes christmasTreeFloat {
+
+      0%,
+      100% {
+        transform:
+          translateY(0)
+          rotate(-2deg);
+      }
+
+      50% {
+        transform:
+          translateY(-8px)
+          rotate(2deg);
+      }
+
+    }
+
+    /* =================================
+       MOBILE
+    ================================= */
+
+    @media (max-width: 600px) {
+
+      .box {
+        width: 92%;
+
+        padding:
+          28px 22px;
+
+        border-radius:
+          20px;
+      }
+
+      .language-box {
+        top: 15px;
+        right: 15px;
+      }
+
+      .logo {
+        font-size: 27px;
+      }
+
+      h1 {
+        font-size: 23px;
+      }
+
+      .christmas-tree {
+        font-size: 38px;
+
+        bottom: 10px;
+      }
+
+      .christmas-tree.left {
+        left: 5px;
+      }
+
+      .christmas-tree.right {
+        right: 5px;
+      }
+
+      .christmas-lights {
+        height: 25px;
+      }
+
+      .christmas-lights span {
+        width: 7px;
+        height: 10px;
+      }
+
+    }
+
+  </style>
 </head>
 
 <body>
 
-  <div class="language-box">
+  <!-- CHRISTMAS SNOW -->
+
+  <div
+    class="christmas-snow"
+    aria-hidden="true">
+  </div>
 
 
-<button
-  class="language-button"
-  onclick="toggleLanguageMenu()"
-  type="button">
+  <!-- CHRISTMAS LIGHTS -->
 
-  <span id="currentFlag">🇦🇿</span>
-  <span id="currentLanguage">AZE</span>
-  <span>▼</span>
+  <div
+    class="christmas-lights"
+    aria-hidden="true">
 
-</button>
-
-<div
-  class="language-menu"
-  id="languageMenu">
-
-  <button
-    class="language-option"
-    type="button"
-    onclick="changeLanguage('az')">
-
-    <span class="flag">🇦🇿</span>
-    <span>AZE</span>
-
-  </button>
-
-  <button
-    class="language-option"
-    type="button"
-    onclick="changeLanguage('en')">
-
-    <span class="flag">🇬🇧</span>
-    <span>ENG</span>
-
-  </button>
-
-  <button
-    class="language-option"
-    type="button"
-    onclick="changeLanguage('ru')">
-
-    <span class="flag">🇷🇺</span>
-    <span>RUS</span>
-
-  </button>
-
-</div>
-
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
 
   </div>
+
+
+  <!-- CHRISTMAS TREES -->
+
+  <div
+    class="christmas-tree left"
+    aria-hidden="true">
+
+    🎄
+
+  </div>
+
+  <div
+    class="christmas-tree right"
+    aria-hidden="true">
+
+    🎄
+
+  </div>
+
+
+  <!-- LANGUAGE -->
+
+  <div class="language-box">
+
+    <button
+      class="language-button"
+      onclick="toggleLanguageMenu()"
+      type="button">
+
+      <span id="currentFlag">🇦🇿</span>
+
+      <span id="currentLanguage">
+        AZE
+      </span>
+
+      <span>▼</span>
+
+    </button>
+
+
+    <div
+      class="language-menu"
+      id="languageMenu">
+
+      <button
+        class="language-option"
+        type="button"
+        onclick="changeLanguage('az')">
+
+        <span class="flag">
+          🇦🇿
+        </span>
+
+        <span>
+          AZE
+        </span>
+
+      </button>
+
+
+      <button
+        class="language-option"
+        type="button"
+        onclick="changeLanguage('en')">
+
+        <span class="flag">
+          🇬🇧
+        </span>
+
+        <span>
+          ENG
+        </span>
+
+      </button>
+
+
+      <button
+        class="language-option"
+        type="button"
+        onclick="changeLanguage('ru')">
+
+        <span class="flag">
+          🇷🇺
+        </span>
+
+        <span>
+          RUS
+        </span>
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- LOGIN BOX -->
 
   <div class="box">
 
-
-<div class="logo">
-  Car<span>Cash</span>
-</div>
-
-<h1 id="loginTitle">Giriş</h1>
-
-<form id="loginForm">
-
-  <label id="emailLabel">Email</label>
-
-  <input
-    id="email"
-    type="email"
-    placeholder="your@email.com"
-    required
-  >
-
-  <label id="passwordLabel">Şifrə</label>
-
-  <input
-    id="password"
-    type="password"
-    placeholder="Şifrəniz"
-    required
-  >
-
-  <button
-    class="login-button"
-    id="loginButton"
-    type="submit">
-
-    Giriş
-
-  </button>
-
-</form>
+    <div class="logo">
+      Car<span>Cash</span>
+    </div>
 
 
-<div
-  id="error"
-  class="error">
-</div>
+    <h1 id="loginTitle">
+      Giriş
+    </h1>
 
 
-<div class="bottom">
+    <form id="loginForm">
 
-  <span id="noAccount">
-    Hesabın yoxdur?
-  </span>
-
-  <a
-    href="/register.html"
-    id="registerLink">
-
-    Qeydiyyat
-
-  </a>
-
-</div>
+      <label id="emailLabel">
+        Email
+      </label>
 
 
-<a
-  class="home"
-  href="/"
-  id="homeLink">
+      <input
+        id="email"
+        type="email"
+        placeholder="your@email.com"
+        required
+      >
 
-  ← CarCash-a qayıt
 
-</a>
+      <label id="passwordLabel">
+        Şifrə
+      </label>
 
+
+      <input
+        id="password"
+        type="password"
+        placeholder="Şifrəniz"
+        required
+      >
+
+
+      <button
+        class="login-button"
+        id="loginButton"
+        type="submit">
+
+        Giriş
+
+      </button>
+
+    </form>
+
+
+    <div
+      id="error"
+      class="error">
+    </div>
+
+
+    <div class="bottom">
+
+      <span id="noAccount">
+        Hesabın yoxdur?
+      </span>
+
+
+      <a
+        href="/register.html"
+        id="registerLink">
+
+        Qeydiyyat
+
+      </a>
+
+    </div>
+
+
+    <a
+      class="home"
+      href="/"
+      id="homeLink">
+
+      ← CarCash-a qayıt
+
+    </a>
 
   </div>
+
 
 <script>
 
@@ -455,43 +1108,73 @@ function toggleLanguageMenu() {
 
 function changeLanguage(language) {
 
-  const data = translations[language];
+  const data =
+    translations[language];
 
   if (!data) return;
 
 
-  document.documentElement.lang = language;
+  document.documentElement.lang =
+    language;
 
 
-  document.getElementById("currentFlag").textContent =
+  document.getElementById(
+    "currentFlag"
+  ).textContent =
     data.flag;
 
-  document.getElementById("currentLanguage").textContent =
+
+  document.getElementById(
+    "currentLanguage"
+  ).textContent =
     data.name;
 
 
-  document.getElementById("loginTitle").textContent =
+  document.getElementById(
+    "loginTitle"
+  ).textContent =
     data.title;
 
-  document.getElementById("emailLabel").textContent =
+
+  document.getElementById(
+    "emailLabel"
+  ).textContent =
     data.emailLabel;
 
-  document.getElementById("passwordLabel").textContent =
+
+  document.getElementById(
+    "passwordLabel"
+  ).textContent =
     data.passwordLabel;
 
-  document.getElementById("password").placeholder =
+
+  document.getElementById(
+    "password"
+  ).placeholder =
     data.passwordPlaceholder;
 
-  document.getElementById("loginButton").textContent =
+
+  document.getElementById(
+    "loginButton"
+  ).textContent =
     data.loginButton;
 
-  document.getElementById("noAccount").textContent =
+
+  document.getElementById(
+    "noAccount"
+  ).textContent =
     data.noAccount;
 
-  document.getElementById("registerLink").textContent =
+
+  document.getElementById(
+    "registerLink"
+  ).textContent =
     data.register;
 
-  document.getElementById("homeLink").textContent =
+
+  document.getElementById(
+    "homeLink"
+  ).textContent =
     data.home;
 
 
@@ -508,110 +1191,146 @@ function changeLanguage(language) {
 }
 
 
-document.addEventListener("click", function(event) {
+document.addEventListener(
+  "click",
+  function(event) {
 
-  const box =
-    document.querySelector(".language-box");
+    const box =
+      document.querySelector(
+        ".language-box"
+      );
 
-  if (!box.contains(event.target)) {
 
-    document
-      .getElementById("languageMenu")
-      .classList.remove("active");
+    if (!box.contains(event.target)) {
+
+      document
+        .getElementById("languageMenu")
+        .classList.remove("active");
+
+    }
 
   }
-
-});
+);
 
 
 document
   .getElementById("loginForm")
-  .addEventListener("submit", async function(e) {
+  .addEventListener(
+    "submit",
+    async function(e) {
 
-    e.preventDefault();
-
-
-    const email =
-      document
-        .getElementById("email")
-        .value
-        .trim();
+      e.preventDefault();
 
 
-    const password =
-      document
-        .getElementById("password")
-        .value;
+      const email =
+        document
+          .getElementById("email")
+          .value
+          .trim();
 
 
-    const errorBox =
-      document.getElementById("error");
+      const password =
+        document
+          .getElementById("password")
+          .value;
 
 
-    errorBox.style.display = "none";
+      const errorBox =
+        document.getElementById(
+          "error"
+        );
 
 
-    try {
-
-      const response =
-        await fetch("/api/login", {
-
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json"
-          },
-
-          body: JSON.stringify({
-            email,
-            password
-          })
-
-        });
+      errorBox.style.display =
+        "none";
 
 
-      const data =
-        await response.json();
+      try {
+
+        const response =
+          await fetch(
+            "/api/login",
+            {
+
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
+
+              body: JSON.stringify({
+                email,
+                password
+              })
+
+            }
+          );
 
 
-      if (!response.ok) {
+        const data =
+          await response.json();
+
+
+        if (!response.ok) {
+
+          const currentLanguage =
+            localStorage.getItem(
+              "carcash_language"
+            ) || "az";
+
+
+          errorBox.textContent =
+            data.error ||
+            translations[
+              currentLanguage
+            ].loginFailed;
+
+
+          errorBox.style.display =
+            "block";
+
+
+          return;
+        }
+
+
+        window.location.href =
+          "/dashboard.html";
+
+
+      } catch (error) {
 
         const currentLanguage =
-          localStorage.getItem("carcash_language") || "az";
+          localStorage.getItem(
+            "carcash_language"
+          ) || "az";
+
 
         errorBox.textContent =
-          data.error ||
-          translations[currentLanguage].loginFailed;
+          translations[
+            currentLanguage
+          ].serverError;
 
-        errorBox.style.display = "block";
 
-        return;
+        errorBox.style.display =
+          "block";
+
       }
 
-
-      window.location.href =
-        "/dashboard.html";
-
-
-    } catch (error) {
-
-      const currentLanguage =
-        localStorage.getItem("carcash_language") || "az";
-
-      errorBox.textContent =
-        translations[currentLanguage].serverError;
-
-      errorBox.style.display = "block";
-
     }
-
-  });
+  );
 
 
 const savedLanguage =
-  localStorage.getItem("carcash_language") || "az";
+  localStorage.getItem(
+    "carcash_language"
+  ) || "az";
 
-changeLanguage(savedLanguage);
+
+changeLanguage(
+  savedLanguage
+);
 
 </script>
 
