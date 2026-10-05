@@ -209,62 +209,63 @@ async function initDatabase() {
 
 /* =========================
    LEVEL CAR SYSTEM
+   25% DISCOUNT
 ========================= */
 
 const cars = [
   {
     oldName: "City Mini",
     name: "LEVEL 1",
-    price: 5,
+    price: 3.75,
     monthly: 7.5,
     image: "/cars/car-5.jpg"
   },
   {
     oldName: "Street X",
     name: "LEVEL 2",
-    price: 10,
+    price: 7.5,
     monthly: 17,
     image: "/cars/car-10.jpg"
   },
   {
     oldName: "Turbo S",
     name: "LEVEL 3",
-    price: 20,
+    price: 15,
     monthly: 35,
     image: "/cars/car-20.jpg"
   },
   {
     oldName: "Sport GT",
     name: "LEVEL 4",
-    price: 50,
+    price: 37.5,
     monthly: 95,
     image: "/cars/car-40.jpg"
   },
   {
     oldName: "Super R",
     name: "LEVEL 5",
-    price: 100,
+    price: 75,
     monthly: 195,
     image: "/cars/car-80.jpg"
   },
   {
     oldName: "Hyper X",
     name: "LEVEL 6",
-    price: 250,
+    price: 187.5,
     monthly: 495,
     image: "/cars/car-160.jpg"
   },
   {
     oldName: "Ultra G",
     name: "LEVEL 7",
-    price: 500,
+    price: 375,
     monthly: 1005,
     image: "/cars/car-320.jpg"
   },
   {
     oldName: "Luxury King",
     name: "LEVEL 8",
-    price: 1000,
+    price: 750,
     monthly: 2050,
     image: "/cars/car-640.jpg"
   }
@@ -2064,9 +2065,6 @@ app.post(
           amount
         ]
       );
-
-      const newCount =
-        Number(promo.used_count) + 1;
 
       await client.query(
         `
