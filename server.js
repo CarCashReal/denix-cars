@@ -204,6 +204,20 @@ async function initDatabase() {
     );
   `);
 
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS admin_balance_history (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES users(id),
+      admin_id INTEGER NOT NULL REFERENCES users(id),
+      action TEXT NOT NULL CHECK (action IN ('add', 'subtract', 'set')),
+      old_balance DOUBLE PRECISION NOT NULL,
+      new_balance DOUBLE PRECISION NOT NULL,
+      change_amount DOUBLE PRECISION NOT NULL,
+      reason TEXT DEFAULT '',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
   await setupCars();
 }
 
@@ -2961,6 +2975,125 @@ app.get(
           "İstifadəçilər yüklənmədi: " +
           error.message
       });
+    }
+  }
+);
+
+/* =========================
+   ADMIN BALANCE MANAGEMENT
+========================= */
+
+app.post(
+  "/api/admin/users/:id/balance",
+  requireAdmin,
+  async (req, res) => {
+    const client = await pool.connect();
+
+    try {
+      const userId = Number(req.params.id);
+      const action = String(req.body.action || "").trim();
+      const amount = Number(req.body.amount);
+      const reason = String(req.body.reason || "").trim().slice(0, 300);
+
+      if (!Number.isInteger(userId) || userId < 1) {
+        return res.status(400).json({ error: "İstifadəçi ID-si düzgün deyil." });
+      }
+
+      if (!["add", "subtract", "set"].includes(action)) {
+        return res.status(400).json({ error: "Balans əməliyyatı düzgün deyil." });
+      }
+
+      if (!Number.isFinite(amount) || amount < 0 || amount > 1000000000 || (action !== "set" && amount <= 0)) {
+        return res.status(400).json({ error: "Düzgün məbləğ daxil et." });
+      }
+
+      const normalizedAmount = Math.round((amount + Number.EPSILON) * 100) / 100;
+      await client.query("BEGIN");
+
+      const userResult = await client.query(
+        "SELECT id, name, email, balance FROM users WHERE id = $1 FOR UPDATE",
+        [userId]
+      );
+      const user = userResult.rows[0];
+
+      if (!user) {
+        await client.query("ROLLBACK");
+        return res.status(404).json({ error: "İstifadəçi tapılmadı." });
+      }
+
+      const oldBalance = Math.round((Number(user.balance || 0) + Number.EPSILON) * 100) / 100;
+      let newBalance;
+
+      if (action === "add") newBalance = oldBalance + normalizedAmount;
+      else if (action === "subtract") newBalance = oldBalance - normalizedAmount;
+      else newBalance = normalizedAmount;
+
+      newBalance = Math.round((newBalance + Number.EPSILON) * 100) / 100;
+
+      if (newBalance < 0) {
+        await client.query("ROLLBACK");
+        return res.status(400).json({ error: "Balans mənfi ola bilməz." });
+      }
+
+      await client.query(
+        "UPDATE users SET balance = $1 WHERE id = $2",
+        [newBalance, userId]
+      );
+
+      await client.query(
+        `INSERT INTO admin_balance_history
+          (user_id, admin_id, action, old_balance, new_balance, change_amount, reason)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        [userId, req.session.userId, action, oldBalance, newBalance, Number((newBalance - oldBalance).toFixed(2)), reason]
+      );
+
+      await client.query("COMMIT");
+
+      res.json({
+        ok: true,
+        message: "Balans yeniləndi.",
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          balance: newBalance
+        }
+      });
+    } catch (error) {
+      try { await client.query("ROLLBACK"); } catch (_) {}
+      console.error("ADMIN BALANCE UPDATE ERROR:", error);
+      res.status(500).json({ error: "Balans dəyişdirilmədi." });
+    } finally {
+      client.release();
+    }
+  }
+);
+
+app.get(
+  "/api/admin/users/:id/balance-history",
+  requireAdmin,
+  async (req, res) => {
+    try {
+      const userId = Number(req.params.id);
+      if (!Number.isInteger(userId) || userId < 1) {
+        return res.status(400).json({ error: "İstifadəçi ID-si düzgün deyil." });
+      }
+
+      const result = await pool.query(
+        `SELECT h.id, h.action, h.old_balance, h.new_balance,
+                h.change_amount, h.reason, h.created_at,
+                a.email AS admin_email
+         FROM admin_balance_history h
+         JOIN users a ON a.id = h.admin_id
+         WHERE h.user_id = $1
+         ORDER BY h.id DESC
+         LIMIT 50`,
+        [userId]
+      );
+      res.json({ history: result.rows });
+    } catch (error) {
+      console.error("ADMIN BALANCE HISTORY ERROR:", error);
+      res.status(500).json({ error: "Balans tarixçəsi yüklənmədi." });
     }
   }
 );
