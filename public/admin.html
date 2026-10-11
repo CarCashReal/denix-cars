@@ -384,11 +384,16 @@ header{
 
 .user-row{
     display:grid;
-    grid-template-columns:1.5fr 1fr 1fr;
+    grid-template-columns:1.5fr 1fr 1fr 2fr;
     gap:15px;
     padding:15px 18px;
     border-bottom:1px solid rgba(255,255,255,.06);
+    align-items:center;
 }
+.balance-controls{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.balance-controls button{padding:7px 9px;border:0;border-radius:7px;color:#fff;cursor:pointer;font-size:12px}
+.balance-add{background:#147d50}.balance-subtract{background:#a53b49}.balance-set{background:#315fbb}.balance-history{background:#4b556b}
+.user-id{color:#929bb0;font-size:12px;margin-top:4px}
 
 .small-text{
     color:#929bb0;
@@ -622,7 +627,7 @@ header{
     .promo-row,
     .promo-form,
     .ticket-top{
-        grid-template-columns:1fr;
+        grid-template-columns:1fr !important;
     }
 
     .promo-create{
@@ -908,11 +913,17 @@ header{
 
     <div class="panel">
 
-        <div class="user-row user-head">
+        <div style="padding:16px 18px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+            <input id="userSearch" type="search" placeholder="Email, ad və ya ID ilə axtar..." oninput="filterUsers()" style="flex:1;min-width:220px;padding:12px 14px;border-radius:10px;border:1px solid #34415f;background:#111a2d;color:#fff;outline:none;">
+            <button type="button" onclick="loadUsers()" style="padding:11px 15px;border:0;border-radius:9px;background:#263a65;color:#fff;cursor:pointer;">Yenilə</button>
+        </div>
 
-            <div>Email</div>
+        <div class="user-row user-head" style="grid-template-columns:1.5fr 1fr 1fr 2fr;">
+
+            <div>İstifadəçi</div>
             <div>Balans</div>
             <div>Qeydiyyat</div>
+            <div>Balans idarəsi</div>
 
         </div>
 
@@ -2682,6 +2693,8 @@ async function rejectWithdrawal(id){
    USERS
 ========================= */
 
+let cachedAdminUsers = [];
+
 async function loadUsers(){
 
     try{
@@ -2697,76 +2710,8 @@ async function loadUsers(){
             data ||
             [];
 
-
-        const container =
-            document.getElementById(
-                "users"
-            );
-
-
-        if(
-            !Array.isArray(users) ||
-            !users.length
-        ){
-
-            container.innerHTML = `
-                <div class="empty">
-                    İstifadəçi yoxdur.
-                </div>
-            `;
-
-            return;
-        }
-
-
-        container.innerHTML =
-            users.map(user => {
-
-                const email =
-                    user.email ||
-                    "Naməlum";
-
-
-                const balance =
-                    Number(
-                        user.balance || 0
-                    ).toFixed(2);
-
-
-                const created =
-                    user.created_at ||
-                    "";
-
-
-                return `
-
-                    <div class="user-row">
-
-                        <div>
-                            ${escapeHtml(email)}
-                        </div>
-
-                        <div>
-                            <b>
-                                ${balance} AZN
-                            </b>
-                        </div>
-
-                        <div>
-                            ${
-                                created
-                                ? escapeHtml(
-                                    formatDate(created)
-                                  )
-                                : "-"
-                            }
-                        </div>
-
-                    </div>
-
-                `;
-
-            }).join("");
+        cachedAdminUsers = Array.isArray(users) ? users : [];
+        renderUsers(cachedAdminUsers);
 
 
     }catch(error){
@@ -2789,6 +2734,97 @@ async function loadUsers(){
 
         `;
 
+    }
+}
+
+
+function filterUsers(){
+    const query = String(document.getElementById("userSearch")?.value || "").trim().toLowerCase();
+    const filtered = cachedAdminUsers.filter(user =>
+        String(user.id || "").includes(query) ||
+        String(user.name || "").toLowerCase().includes(query) ||
+        String(user.email || "").toLowerCase().includes(query)
+    );
+    renderUsers(filtered);
+}
+
+function renderUsers(users){
+    const container = document.getElementById("users");
+    if (!Array.isArray(users) || !users.length){
+        container.innerHTML = '<div class="empty">İstifadəçi tapılmadı.</div>';
+        return;
+    }
+
+    container.innerHTML = users.map(user => {
+        const email = user.email || "Naməlum";
+        const balance = Number(user.balance || 0).toFixed(2);
+        const created = user.created_at || "";
+        const id = Number(user.id);
+        return `
+            <div class="user-row">
+                <div>
+                    <b>${escapeHtml(user.name || "Adsız")}</b>
+                    <div>${escapeHtml(email)}</div>
+                    <div class="user-id">ID: ${id}</div>
+                </div>
+                <div><b>${balance} AZN</b></div>
+                <div>${created ? escapeHtml(formatDate(created)) : "-"}</div>
+                <div class="balance-controls">
+                    <button type="button" class="balance-add" onclick="manageUserBalance(${id}, 'add')">+ Əlavə et</button>
+                    <button type="button" class="balance-subtract" onclick="manageUserBalance(${id}, 'subtract')">− Çıx</button>
+                    <button type="button" class="balance-set" onclick="manageUserBalance(${id}, 'set')">Balansı təyin et</button>
+                    <button type="button" class="balance-history" onclick="showBalanceHistory(${id})">Tarixçə</button>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+async function manageUserBalance(userId, action){
+    const user = cachedAdminUsers.find(item => Number(item.id) === Number(userId));
+    if (!user) return;
+
+    const actionNames = { add: "balansa əlavə ediləcək məbləği", subtract: "balansdan çıxılacaq məbləği", set: "yeni balans məbləğini" };
+    const rawAmount = prompt(`ID ${userId} — ${actionNames[action]} daxil et (AZN):`, action === "set" ? Number(user.balance || 0).toFixed(2) : "");
+    if (rawAmount === null) return;
+    const amount = Number(String(rawAmount).replace(",", "."));
+    if (!Number.isFinite(amount) || amount < 0 || (action !== "set" && amount <= 0)){
+        showMessage("Düzgün məbləğ daxil et.", "error");
+        return;
+    }
+    const reason = prompt("Səbəb/qeyd (istəyə bağlı):", "") || "";
+    const verb = action === "add" ? "əlavə etmək" : action === "subtract" ? "çıxmaq" : "balansı dəyişmək";
+    if (!confirm(`${user.email} hesabında ${verb}? Məbləğ: ${amount.toFixed(2)} AZN`)) return;
+
+    try{
+        const result = await api(`/api/admin/users/${userId}/balance`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action, amount, reason })
+        });
+        showMessage(result.message || "Balans yeniləndi.", "success");
+        await loadUsers();
+    }catch(error){
+        showMessage(error.message || "Balans dəyişdirilmədi.", "error");
+    }
+}
+
+async function showBalanceHistory(userId){
+    try{
+        const data = await api(`/api/admin/users/${userId}/balance-history`);
+        const history = data.history || [];
+        if (!history.length){
+            alert("Bu istifadəçinin balans dəyişiklik tarixçəsi yoxdur.");
+            return;
+        }
+        const text = history.map(item => {
+            const action = item.action === "add" ? "Əlavə" : item.action === "subtract" ? "Çıxarış" : "Balans təyini";
+            const date = item.created_at ? formatDate(item.created_at) : "";
+            return `${date} | ${action} | ${Number(item.old_balance).toFixed(2)} → ${Number(item.new_balance).toFixed(2)} AZN | ${item.reason || "Qeyd yoxdur"} | Admin: ${item.admin_email || "-"}`;
+        }).join("\\n");
+        alert(`BALANS TARİXÇƏSİ — İstifadəçi ID: ${userId}\\n\\n${text}`);
+    }catch(error){
+        showMessage(error.message || "Tarixçə yüklənmədi.", "error");
     }
 }
 
