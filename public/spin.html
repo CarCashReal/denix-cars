@@ -1,1 +1,389 @@
 
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spin & Win — CarCash</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      color: #fff;
+      background:
+        radial-gradient(ellipse at top, #123c31 0%, #09130f 48%, #070b09 100%);
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 6%;
+      border-bottom: 1px solid #ffffff15;
+    }
+
+    .logo {
+      color: #39e58c;
+      font-size: 25px;
+      font-weight: 900;
+      text-decoration: none;
+    }
+
+    .back {
+      color: #ddd;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    main {
+      width: min(100% - 28px, 900px);
+      margin: 35px auto;
+      text-align: center;
+    }
+
+    .tag {
+      display: inline-block;
+      color: #53f3a0;
+      border: 1px solid #35dc883d;
+      background: #1b9a4c18;
+      border-radius: 30px;
+      padding: 8px 15px;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    h1 {
+      font-size: clamp(32px, 7vw, 49px);
+      margin: 18px 0 10px;
+    }
+
+    h1 span { color: #40ed95; }
+
+    .subtitle {
+      color: #a8b7ae;
+      line-height: 1.6;
+      max-width: 530px;
+      margin: 0 auto 28px;
+    }
+
+    .panel {
+      max-width: 570px;
+      margin: auto;
+      padding: 25px 18px;
+      background: #101d17;
+      border: 1px solid #ffffff14;
+      border-radius: 24px;
+      box-shadow: 0 20px 70px #0005;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 26px;
+    }
+
+    .stat {
+      background: #18271f;
+      border: 1px solid #ffffff0d;
+      border-radius: 15px;
+      padding: 17px 8px;
+    }
+
+    .stat small {
+      display: block;
+      color: #9aafa2;
+      margin-bottom: 9px;
+      font-size: 12px;
+    }
+
+    .stat strong {
+      color: #43ee97;
+      font-size: 25px;
+    }
+
+    .wheel-area {
+      position: relative;
+      width: min(76vw, 320px);
+      aspect-ratio: 1;
+      margin: 10px auto 25px;
+    }
+
+    .pointer {
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      width: 0;
+      height: 0;
+      border-left: 17px solid transparent;
+      border-right: 17px solid transparent;
+      border-top: 34px solid #fff;
+      filter: drop-shadow(0 3px 4px #0008);
+    }
+
+    .wheel {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 7px solid #d4ffdf;
+      background: conic-gradient(
+        #d83d4e 0deg 144deg,
+        #e9a72e 144deg 216deg,
+        #2788ef 216deg 252deg,
+        #854de8 252deg 270deg,
+        #16b878 270deg 288deg,
+        #db6b27 288deg 306deg,
+        #188e68 306deg 360deg
+      );
+      box-shadow: 0 0 0 5px #1a4d35, 0 0 35px #20e88728;
+      overflow: hidden;
+      transition: transform 4s cubic-bezier(.12,.75,.12,1);
+    }
+
+    .wheel::after {
+      content: "CAR\A CASH";
+      white-space: pre;
+      display: grid;
+      place-items: center;
+      position: absolute;
+      width: 76px;
+      height: 76px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: #10271b;
+      border: 4px solid #d4ffdf;
+      color: #45ef99;
+      font-weight: 900;
+      line-height: 1.15;
+      font-size: 14px;
+      box-shadow: 0 3px 15px #0007;
+    }
+
+    .spin-btn {
+      border: 0;
+      width: 100%;
+      max-width: 330px;
+      padding: 17px 22px;
+      border-radius: 13px;
+      background: linear-gradient(100deg, #21c978, #55f5a0);
+      color: #062315;
+      font-size: 17px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 7px 25px #20e88725;
+    }
+
+    .spin-btn:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .message {
+      display: none;
+      margin: 20px auto 0;
+      padding: 15px;
+      max-width: 420px;
+      border-radius: 13px;
+      line-height: 1.5;
+      background: #1b3024;
+      border: 1px solid #36db8750;
+    }
+
+    .message.show { display: block; }
+    .message.error {
+      background: #381d20;
+      border-color: #e6535355;
+      color: #ffb7b7;
+    }
+
+    .rules {
+      max-width: 570px;
+      margin: 22px auto;
+      text-align: left;
+      padding: 20px;
+      background: #ffffff06;
+      border: 1px solid #ffffff12;
+      border-radius: 17px;
+      color: #b8c6bd;
+      line-height: 1.8;
+      font-size: 13px;
+    }
+
+    .rules h3 {
+      color: #fff;
+      margin-top: 0;
+    }
+
+    .rules strong { color: #4bea9a; }
+
+    footer {
+      padding: 25px;
+      color: #63776b;
+      text-align: center;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <a class="logo" href="/dashboard.html">CarCash</a>
+    <a class="back" href="/dashboard.html">← Panelə qayıt</a>
+  </header>
+
+  <main>
+    <div class="tag">★ BONUS OYUNU</div>
+    <h1>Spin <span>&amp; Win</span></h1>
+    <p class="subtitle">
+      Çarxı fırlat, şansını yoxla və pul mükafatı qazan.
+      Qazandığın məbləğ əsas CarCash balansına əlavə olunur.
+    </p>
+
+    <section class="panel">
+      <div class="stats">
+        <div class="stat">
+          <small>Fırlatma hüququn</small>
+          <strong id="spins">—</strong>
+        </div>
+        <div class="stat">
+          <small>Əsas balansın</small>
+          <strong id="balance">—</strong>
+          <small>AZN</small>
+        </div>
+      </div>
+
+      <div class="wheel-area">
+        <div class="pointer"></div>
+        <div class="wheel" id="wheel"></div>
+      </div>
+
+      <button class="spin-btn" id="spinButton" disabled>
+        YÜKLƏNİR...
+      </button>
+
+      <div class="message" id="message" role="status"></div>
+    </section>
+
+    <section class="rules">
+      <h3>🎁 Oyunun qaydaları</h3>
+      <div>• Hər <strong>50 AZN təsdiqlənmiş depozitə</strong> 1 fırlatma hüququ.</div>
+      <div>• 1 AZN, 2 AZN, 3 AZN, 4 AZN və 10 AZN uduş imkanları.</div>
+      <div>• Uduşlar ayrıca pul kisəsinə deyil, əsas balansına əlavə edilir.</div>
+      <div>• Yalnız server tərəfindən təsdiqlənən nəticə etibarlıdır.</div>
+    </section>
+  </main>
+
+  <footer>© CarCash — Spin &amp; Win</footer>
+
+  <script>
+    const wheel = document.getElementById("wheel");
+    const spinButton = document.getElementById("spinButton");
+    const spinsElement = document.getElementById("spins");
+    const balanceElement = document.getElementById("balance");
+    const messageElement = document.getElementById("message");
+
+    let spinning = false;
+    let rotation = 0;
+
+    function showMessage(text, error = false) {
+      messageElement.textContent = text;
+      messageElement.className = "message show" + (error ? " error" : "");
+    }
+
+    async function loadStatus() {
+      try {
+        const response = await fetch("/api/spin/status", {
+          credentials: "same-origin"
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Məlumat yüklənmədi.");
+        }
+
+        spinsElement.textContent = data.spins;
+        balanceElement.textContent =
+          Number(data.balance).toFixed(2);
+
+        spinButton.disabled = Number(data.spins) < 1;
+        spinButton.textContent = Number(data.spins) > 0
+          ? "🎡 İNDİ FIRLAT"
+          : "FIRLATMA HÜQUQUN YOXDUR";
+      } catch (error) {
+        spinsElement.textContent = "—";
+        balanceElement.textContent = "—";
+        spinButton.disabled = true;
+        spinButton.textContent = "MƏLUMAT YÜKLƏNMƏDİ";
+        showMessage(
+          error.message + " Server bağlantısı və giriş yoxlanmalıdır.",
+          true
+        );
+      }
+    }
+
+    spinButton.addEventListener("click", async () => {
+      if (spinning || Number(spinsElement.textContent) < 1) return;
+
+      spinning = true;
+      spinButton.disabled = true;
+      spinButton.textContent = "ÇARX FIRLANIR...";
+      messageElement.className = "message";
+
+      rotation += 1800 + Math.floor(Math.random() * 360);
+      wheel.style.transform = `rotate(${rotation}deg)`;
+
+      try {
+        // Nəticəni server müəyyən edir; brauzer uduş seçmir.
+        const responsePromise = fetch("/api/spin/play", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({})
+        });
+
+        const response = await responsePromise;
+        const data = await response.json();
+
+        await new Promise(resolve => setTimeout(resolve, 4100));
+
+        if (!response.ok) {
+          throw new Error(data.error || "Fırlatma alınmadı.");
+        }
+
+        if (Number(data.prize) > 0) {
+          showMessage(
+            `🎉 Təbriklər! ${Number(data.prize).toFixed(2)} AZN qazandın. Məbləğ əsas balansına əlavə edildi.`
+          );
+        } else {
+          showMessage("Bu dəfə uduş olmadı. Növbəti dəfə uğurlar!");
+        }
+
+        await loadStatus();
+      } catch (error) {
+        await new Promise(resolve => setTimeout(resolve, 4100));
+        showMessage(error.message, true);
+        await loadStatus();
+      } finally {
+        spinning = false;
+        if (Number(spinsElement.textContent) > 0) {
+          spinButton.disabled = false;
+          spinButton.textContent = "🎡 İNDİ FIRLAT";
+        }
+      }
+    });
+
+    loadStatus();
+  </script>
+</body>
+</html>
+
