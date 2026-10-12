@@ -4,232 +4,494 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#07110c">
   <title>Spin & Win — CarCash</title>
+
   <style>
     * { box-sizing: border-box; }
+
+    :root {
+      --green: #42f59b;
+      --green-dark: #0eaa64;
+      --bg: #07110c;
+      --panel: #101c15;
+      --muted: #9aafa1;
+    }
 
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: Arial, sans-serif;
+      font-family: Inter, Arial, sans-serif;
       color: #fff;
       background:
-        radial-gradient(ellipse at top, #123c31 0%, #09130f 48%, #070b09 100%);
+        radial-gradient(ellipse at 50% -15%, #17613e 0%, transparent 50%),
+        radial-gradient(ellipse at bottom right, #123523 0%, transparent 38%),
+        var(--bg);
     }
 
+    button, a { -webkit-tap-highlight-color: transparent; }
+
     header {
+      min-height: 76px;
+      padding: 18px clamp(18px, 5vw, 70px);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 20px 6%;
-      border-bottom: 1px solid #ffffff15;
+      gap: 15px;
+      border-bottom: 1px solid #ffffff12;
+      background: #07110c88;
+      backdrop-filter: blur(14px);
     }
 
     .logo {
-      color: #39e58c;
+      color: var(--green);
       font-size: 25px;
-      font-weight: 900;
+      font-weight: 1000;
+      letter-spacing: -1px;
       text-decoration: none;
+      text-shadow: 0 0 20px #42f59b33;
     }
 
     .back {
-      color: #ddd;
+      color: #d2e1d7;
       text-decoration: none;
-      font-size: 14px;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 11px 15px;
+      border: 1px solid #ffffff1a;
+      background: #ffffff08;
+      border-radius: 12px;
+    }
+
+    .back:hover {
+      border-color: #42f59b66;
+      color: var(--green);
     }
 
     main {
-      width: min(100% - 28px, 900px);
-      margin: 35px auto;
+      width: min(100% - 28px, 960px);
+      margin: 36px auto 0;
       text-align: center;
     }
 
     .tag {
-      display: inline-block;
-      color: #53f3a0;
-      border: 1px solid #35dc883d;
-      background: #1b9a4c18;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--green);
+      background: #42f59b0d;
+      border: 1px solid #42f59b44;
       border-radius: 30px;
-      padding: 8px 15px;
-      font-size: 12px;
-      font-weight: bold;
-      letter-spacing: 1px;
+      padding: 9px 16px;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+    }
+
+    .tag-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 10px var(--green);
     }
 
     h1 {
-      font-size: clamp(32px, 7vw, 49px);
-      margin: 18px 0 10px;
+      font-size: clamp(37px, 7vw, 62px);
+      line-height: 1.05;
+      letter-spacing: -2px;
+      margin: 19px 0 13px;
+      font-weight: 1000;
     }
 
-    h1 span { color: #40ed95; }
+    h1 span {
+      color: var(--green);
+      text-shadow: 0 0 35px #42f59b27;
+    }
 
     .subtitle {
-      color: #a8b7ae;
-      line-height: 1.6;
-      max-width: 530px;
+      max-width: 510px;
       margin: 0 auto 28px;
+      color: #a8b9ae;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .game-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+      max-width: 740px;
+      margin: auto;
     }
 
     .panel {
-      max-width: 570px;
-      margin: auto;
-      padding: 25px 18px;
-      background: #101d17;
-      border: 1px solid #ffffff14;
-      border-radius: 24px;
-      box-shadow: 0 20px 70px #0005;
+      position: relative;
+      padding: 26px clamp(12px, 4vw, 28px) 28px;
+      border-radius: 26px;
+      background: linear-gradient(145deg, #13251a, #0b1510 72%);
+      border: 1px solid #ffffff17;
+      box-shadow:
+        0 25px 90px #0006,
+        inset 0 1px 0 #ffffff08;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 15%;
+      right: 15%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #42f59b99, transparent);
     }
 
     .stats {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
-      margin-bottom: 26px;
+      margin-bottom: 28px;
     }
 
     .stat {
-      background: #18271f;
-      border: 1px solid #ffffff0d;
-      border-radius: 15px;
+      min-width: 0;
       padding: 17px 8px;
+      border-radius: 16px;
+      background: #07130d;
+      border: 1px solid #ffffff10;
     }
 
     .stat small {
       display: block;
-      color: #9aafa2;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
       margin-bottom: 9px;
-      font-size: 12px;
     }
 
     .stat strong {
-      color: #43ee97;
-      font-size: 25px;
+      display: block;
+      color: var(--green);
+      font-size: clamp(22px, 5vw, 29px);
+      font-weight: 1000;
+      overflow-wrap: anywhere;
+    }
+
+    .balance-unit {
+      margin-top: 5px !important;
+      margin-bottom: 0 !important;
+      color: #648573 !important;
+      letter-spacing: 1px;
     }
 
     .wheel-area {
       position: relative;
-      width: min(76vw, 320px);
+      width: min(78vw, 360px);
       aspect-ratio: 1;
-      margin: 10px auto 25px;
+      margin: 15px auto 31px;
+      isolation: isolate;
     }
+
+    .wheel-halo {
+      position: absolute;
+      inset: -13px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #42f59b15 45%, transparent 72%);
+      filter: blur(7px);
+      pointer-events: none;
+    }
+
+    .wheel-frame {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      padding: 7px;
+      background: linear-gradient(135deg, #f3fff6, #41f29a, #8ca997, #eafff0);
+      box-shadow:
+        0 0 0 3px #174b33,
+        0 0 0 6px #07140c,
+        0 0 30px #42f59b40,
+        0 15px 35px #0008;
+    }
+
+    .wheel {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      border-radius: 50%;
+      background: conic-gradient(
+        from -30deg,
+        #078b59 0deg 60deg,
+        #176bd0 60deg 120deg,
+        #7440d7 120deg 180deg,
+        #bc841a 180deg 240deg,
+        #b92742 240deg 300deg,
+        #087d57 300deg 360deg
+      );
+      transform: rotate(0deg);
+      transition: transform 4.2s cubic-bezier(.12,.75,.12,1);
+      will-change: transform;
+    }
+
+    .wheel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      border-radius: 50%;
+      pointer-events: none;
+      background: radial-gradient(circle, transparent 35%, #00000013 100%);
+      box-shadow: inset 0 0 18px #0005;
+    }
+
+    .wheel-lines {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .prize-label {
+      position: absolute;
+      z-index: 2;
+      width: 76px;
+      min-height: 48px;
+      padding: 5px 2px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      border-radius: 12px;
+      border: 1px solid #ffffff6e;
+      background: #06130b35;
+      color: white;
+      text-shadow: 0 2px 4px #0009;
+      box-shadow: 0 3px 10px #0002;
+      pointer-events: none;
+    }
+
+    .prize-label strong {
+      font-size: 19px;
+      line-height: 1.1;
+      font-weight: 1000;
+      white-space: nowrap;
+    }
+
+    .prize-label small {
+      margin-top: 4px;
+      font-size: 8px;
+      font-weight: 900;
+      letter-spacing: .7px;
+      white-space: nowrap;
+    }
+
+    /* Bölmələrin mövqeləri */
+    .prize-1 { top: 18%; left: 50%; }
+    .prize-2 { top: 34%; left: 78%; }
+    .prize-3 { top: 70%; left: 78%; }
+    .prize-4 { top: 82%; left: 50%; }
+    .prize-5 { top: 70%; left: 22%; }
+    .prize-6 { top: 34%; left: 22%; }
 
     .pointer {
       position: absolute;
-      top: -8px;
+      top: -15px;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 3;
+      z-index: 5;
       width: 0;
       height: 0;
       border-left: 17px solid transparent;
       border-right: 17px solid transparent;
-      border-top: 34px solid #fff;
-      filter: drop-shadow(0 3px 4px #0008);
+      border-top: 37px solid #f3fff6;
+      filter: drop-shadow(0 3px 4px #0009);
     }
 
-    .wheel {
+    .pointer::after {
+      content: "";
       position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      border: 7px solid #d4ffdf;
-      background: conic-gradient(
-        #d83d4e 0deg 144deg,
-        #e9a72e 144deg 216deg,
-        #2788ef 216deg 252deg,
-        #854de8 252deg 270deg,
-        #16b878 270deg 288deg,
-        #db6b27 288deg 306deg,
-        #188e68 306deg 360deg
-      );
-      box-shadow: 0 0 0 5px #1a4d35, 0 0 35px #20e88728;
-      overflow: hidden;
-      transition: transform 4s cubic-bezier(.12,.75,.12,1);
+      left: -7px;
+      top: -36px;
+      border-left: 7px solid transparent;
+      border-right: 7px solid transparent;
+      border-top: 17px solid var(--green-dark);
     }
 
-    .wheel::after {
-      content: "CAR\A CASH";
-      white-space: pre;
-      display: grid;
-      place-items: center;
+    .center-logo {
       position: absolute;
-      width: 76px;
-      height: 76px;
-      left: 50%;
+      z-index: 4;
+      width: 79px;
+      height: 79px;
       top: 50%;
+      left: 50%;
       transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       border-radius: 50%;
-      background: #10271b;
-      border: 4px solid #d4ffdf;
-      color: #45ef99;
-      font-weight: 900;
-      line-height: 1.15;
+      background: linear-gradient(145deg, #14291c, #06100a);
+      border: 4px solid #e0ffea;
+      box-shadow: 0 0 0 4px #14623b, 0 4px 18px #000b;
+      pointer-events: none;
+    }
+
+    .center-logo strong {
+      color: var(--green);
       font-size: 14px;
-      box-shadow: 0 3px 15px #0007;
+      font-weight: 1000;
+      letter-spacing: -.5px;
+    }
+
+    .center-logo small {
+      color: #b3d9c0;
+      font-size: 8px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      margin-top: 2px;
     }
 
     .spin-btn {
-      border: 0;
+      position: relative;
       width: 100%;
-      max-width: 330px;
-      padding: 17px 22px;
-      border-radius: 13px;
-      background: linear-gradient(100deg, #21c978, #55f5a0);
-      color: #062315;
-      font-size: 17px;
-      font-weight: 900;
+      max-width: 350px;
+      min-height: 57px;
+      padding: 16px 20px;
+      border: 1px solid #aaffce;
+      border-radius: 15px;
+      background: linear-gradient(110deg, #17b96e, #55f5a0);
+      color: #062314;
+      font-size: 15px;
+      font-weight: 1000;
+      letter-spacing: .5px;
       cursor: pointer;
-      box-shadow: 0 7px 25px #20e88725;
+      box-shadow: 0 8px 26px #21d9802c, inset 0 1px 0 #ffffff70;
+      transition: transform .2s, box-shadow .2s, opacity .2s;
     }
 
+    .spin-btn:not(:disabled):hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px #21d98048;
+    }
+
+    .spin-btn:not(:disabled):active { transform: scale(.98); }
+
     .spin-btn:disabled {
-      opacity: .45;
+      opacity: .48;
       cursor: not-allowed;
       box-shadow: none;
     }
 
+    .button-note {
+      margin: 12px 0 0;
+      font-size: 11px;
+      color: #799082;
+    }
+
     .message {
       display: none;
-      margin: 20px auto 0;
-      padding: 15px;
-      max-width: 420px;
-      border-radius: 13px;
-      line-height: 1.5;
-      background: #1b3024;
-      border: 1px solid #36db8750;
+      max-width: 430px;
+      margin: 21px auto 0;
+      padding: 17px 15px;
+      border-radius: 15px;
+      border: 1px solid #42f59b44;
+      background: #42f59b0e;
+      color: #c8ffdd;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
     }
 
     .message.show { display: block; }
+
     .message.error {
-      background: #381d20;
-      border-color: #e6535355;
-      color: #ffb7b7;
+      color: #ffbfc2;
+      background: #e84b4b12;
+      border-color: #e84b4b55;
     }
 
     .rules {
-      max-width: 570px;
-      margin: 22px auto;
+      margin: 19px auto 0;
+      max-width: 740px;
+      padding: 23px;
       text-align: left;
-      padding: 20px;
-      background: #ffffff06;
-      border: 1px solid #ffffff12;
-      border-radius: 17px;
-      color: #b8c6bd;
+      border-radius: 21px;
+      border: 1px solid #ffffff13;
+      background: linear-gradient(145deg, #101c15, #0b130e);
+    }
+
+    .rules h2 {
+      margin: 0 0 17px;
+      font-size: 17px;
+    }
+
+    .rule {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      color: #afc1b5;
+      font-size: 12px;
       line-height: 1.8;
-      font-size: 13px;
+      margin: 10px 0;
     }
 
-    .rules h3 {
-      color: #fff;
-      margin-top: 0;
+    .rule-icon {
+      flex: 0 0 25px;
+      width: 25px;
+      height: 25px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: #42f59b12;
+      color: var(--green);
     }
 
-    .rules strong { color: #4bea9a; }
+    .rule strong { color: #e2ffeb; }
+
+    .probability-note {
+      margin-top: 15px;
+      padding-top: 14px;
+      border-top: 1px solid #ffffff12;
+      color: #82988a;
+      font-size: 11px;
+      line-height: 1.7;
+    }
 
     footer {
-      padding: 25px;
-      color: #63776b;
+      padding: 28px 15px;
       text-align: center;
-      font-size: 12px;
+      color: #62796a;
+      font-size: 11px;
+    }
+
+    @media (max-width: 420px) {
+      header { padding: 16px; }
+      .logo { font-size: 22px; }
+      .back { font-size: 11px; padding: 10px; }
+      main { margin-top: 27px; }
+      .panel { padding: 20px 10px 23px; border-radius: 22px; }
+      .stats { gap: 8px; }
+      .stat { padding: 15px 5px; }
+      .wheel-area { width: min(78vw, 330px); }
+      .prize-label { width: 63px; min-height: 42px; border-radius: 10px; }
+      .prize-label strong { font-size: 16px; }
+      .prize-label small { font-size: 7px; letter-spacing: 0; }
+      .center-logo { width: 70px; height: 70px; }
+      .center-logo strong { font-size: 12px; }
+      .rules { padding: 18px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .wheel { transition-duration: .01ms; }
+      .spin-btn { transition: none; }
     }
   </style>
 </head>
@@ -241,44 +503,123 @@
   </header>
 
   <main>
-    <div class="tag">★ BONUS OYUNU</div>
-    <h1>Spin <span>&amp; Win</span></h1>
+    <div class="tag"><span class="tag-dot"></span> BONUS OYUNU</div>
+
+    <h1>SPIN <span>&amp; WIN</span></h1>
+
     <p class="subtitle">
       Çarxı fırlat, şansını yoxla və pul mükafatı qazan.
       Qazandığın məbləğ əsas CarCash balansına əlavə olunur.
     </p>
 
-    <section class="panel">
-      <div class="stats">
-        <div class="stat">
-          <small>Fırlatma hüququn</small>
-          <strong id="spins">—</strong>
+    <div class="game-layout">
+      <section class="panel">
+        <div class="stats">
+          <div class="stat">
+            <small>🎡 Fırlatma hüququn</small>
+            <strong id="spins">—</strong>
+          </div>
+
+          <div class="stat">
+            <small>💰 Əsas balansın</small>
+            <strong id="balance">—</strong>
+            <small class="balance-unit">AZN</small>
+          </div>
         </div>
-        <div class="stat">
-          <small>Əsas balansın</small>
-          <strong id="balance">—</strong>
-          <small>AZN</small>
+
+        <div class="wheel-area">
+          <div class="wheel-halo"></div>
+          <div class="pointer"></div>
+
+          <div class="wheel-frame">
+            <div class="wheel" id="wheel">
+              <svg class="wheel-lines" viewBox="0 0 360 360"
+                   aria-hidden="true">
+                <g stroke="#ffffffa8" stroke-width="2">
+                  <line x1="180" y1="180" x2="180" y2="0"/>
+                  <line x1="180" y1="180" x2="335.9" y2="90"/>
+                  <line x1="180" y1="180" x2="335.9" y2="270"/>
+                  <line x1="180" y1="180" x2="180" y2="360"/>
+                  <line x1="180" y1="180" x2="24.1" y2="270"/>
+                  <line x1="180" y1="180" x2="24.1" y2="90"/>
+                </g>
+                <circle cx="180" cy="180" r="172"
+                        fill="none" stroke="#ffffff65" stroke-width="2"/>
+              </svg>
+
+              <div class="prize-label prize-1" data-prize="1">
+                <strong>1 ₼</strong><small>ŞANS</small>
+              </div>
+
+              <div class="prize-label prize-2" data-prize="2">
+                <strong>2 ₼</strong><small>BONUS</small>
+              </div>
+
+              <div class="prize-label prize-3" data-prize="3">
+                <strong>3 ₼</strong><small>BONUS</small>
+              </div>
+
+              <div class="prize-label prize-4" data-prize="4">
+                <strong>4 ₼</strong><small>UDUŞ</small>
+              </div>
+
+              <div class="prize-label prize-5" data-prize="10">
+                <strong>10 ₼</strong><small>JACKPOT</small>
+              </div>
+
+              <div class="prize-label prize-6" data-prize="0">
+                <strong>0 ₼</strong><small>YENİDƏN CƏHD</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="center-logo">
+            <strong>CARCASH</strong>
+            <small>SPIN WIN</small>
+          </div>
         </div>
-      </div>
 
-      <div class="wheel-area">
-        <div class="pointer"></div>
-        <div class="wheel" id="wheel"></div>
-      </div>
+        <button class="spin-btn" id="spinButton" disabled>
+          MƏLUMATLAR YÜKLƏNİR...
+        </button>
 
-      <button class="spin-btn" id="spinButton" disabled>
-        YÜKLƏNİR...
-      </button>
+        <p class="button-note">
+          Hər təsdiqlənmiş 50 AZN depozitə 1 fırlatma
+        </p>
 
-      <div class="message" id="message" role="status"></div>
-    </section>
+        <div class="message" id="message" role="status"
+             aria-live="polite"></div>
+      </section>
+    </div>
 
     <section class="rules">
-      <h3>🎁 Oyunun qaydaları</h3>
-      <div>• Hər <strong>50 AZN təsdiqlənmiş depozitə</strong> 1 fırlatma hüququ.</div>
-      <div>• 1 AZN, 2 AZN, 3 AZN, 4 AZN və 10 AZN uduş imkanları.</div>
-      <div>• Uduşlar ayrıca pul kisəsinə deyil, əsas balansına əlavə edilir.</div>
-      <div>• Yalnız server tərəfindən təsdiqlənən nəticə etibarlıdır.</div>
+      <h2>🎁 Oyunun qaydaları</h2>
+
+      <div class="rule">
+        <span class="rule-icon">✓</span>
+        <span>Hər <strong>50 AZN təsdiqlənmiş depozitə</strong> 1 fırlatma hüququ verilir.</span>
+      </div>
+
+      <div class="rule">
+        <span class="rule-icon">₼</span>
+        <span>Mümkün nəticələr: <strong>0, 1, 2, 3, 4 və 10 AZN.</strong></span>
+      </div>
+
+      <div class="rule">
+        <span class="rule-icon">↗</span>
+        <span>Uduş əldə edilərsə, məbləğ server vasitəsilə əsas balansına əlavə olunur.</span>
+      </div>
+
+      <div class="rule">
+        <span class="rule-icon">🔒</span>
+        <span>Nəticəni server müəyyən edir. Çarxın üzərindəki bölmələr ehtimalların ölçüsünü göstərmir.</span>
+      </div>
+
+      <div class="probability-note">
+        Nəticə ehtimalları: 0 AZN — 61,9%; 1 AZN — 20%;
+        2 AZN — 10%; 3 AZN — 5%; 4 AZN — 3%;
+        10 AZN — 0,1%.
+      </div>
     </section>
   </main>
 
@@ -293,92 +634,191 @@
 
     let spinning = false;
     let rotation = 0;
+    let statusLoaded = false;
 
     function showMessage(text, error = false) {
       messageElement.textContent = text;
-      messageElement.className = "message show" + (error ? " error" : "");
+      messageElement.className =
+        "message show" + (error ? " error" : "");
+    }
+
+    function hideMessage() {
+      messageElement.className = "message";
+      messageElement.textContent = "";
+    }
+
+    function updateButton(spins) {
+      if (spinning) return;
+
+      spinButton.disabled = !statusLoaded || spins < 1;
+
+      if (!statusLoaded) {
+        spinButton.textContent = "MƏLUMATLAR YÜKLƏNİR...";
+      } else if (spins > 0) {
+        spinButton.textContent = "🎡 İNDİ FIRLAT";
+      } else {
+        spinButton.textContent = "FIRLATMA HÜQUQUN YOXDUR";
+      }
     }
 
     async function loadStatus() {
       try {
         const response = await fetch("/api/spin/status", {
-          credentials: "same-origin"
+          credentials: "same-origin",
+          cache: "no-store"
         });
 
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.error || "Məlumat yüklənmədi.");
+          throw new Error(
+            data.error || "Məlumat yüklənmədi. Hesabına daxil ol."
+          );
         }
 
-        spinsElement.textContent = data.spins;
+        spinsElement.textContent = Number(data.spins || 0);
         balanceElement.textContent =
-          Number(data.balance).toFixed(2);
+          Number(data.balance || 0).toFixed(2);
 
-        spinButton.disabled = Number(data.spins) < 1;
-        spinButton.textContent = Number(data.spins) > 0
-          ? "🎡 İNDİ FIRLAT"
-          : "FIRLATMA HÜQUQUN YOXDUR";
+        statusLoaded = true;
+        updateButton(Number(data.spins || 0));
       } catch (error) {
+        statusLoaded = false;
         spinsElement.textContent = "—";
         balanceElement.textContent = "—";
-        spinButton.disabled = true;
-        spinButton.textContent = "MƏLUMAT YÜKLƏNMƏDİ";
+        updateButton(0);
+
         showMessage(
-          error.message + " Server bağlantısı və giriş yoxlanmalıdır.",
+          error.message || "Server bağlantısı alınmadı.",
           true
         );
       }
     }
 
+    /*
+      Çarxın bölmələrinin mərkəzi bucaqları:
+      1 AZN = 0°, 2 AZN = 60°, 3 AZN = 120°,
+      4 AZN = 180°, 10 AZN = 240°, 0 AZN = 300°.
+
+      Serverdən gələn mükafat yalnız animasiyanın
+      vizual sonluğunu təyin edir. Uduşu brauzer seçmir.
+    */
+    function getTargetAngle(prize) {
+      const angles = {
+        1: 0,
+        2: 60,
+        3: 120,
+        4: 180,
+        10: 240,
+        0: 300
+      };
+
+      if (!Object.prototype.hasOwnProperty.call(angles, prize)) {
+        throw new Error("Serverdən düzgün uduş nəticəsi gəlmədi.");
+      }
+
+      return angles[prize];
+    }
+
+    function animateToPrize(prize) {
+      const target = getTargetAngle(prize);
+      const currentAngle = ((rotation % 360) + 360) % 360;
+      const delta = (target - currentAngle + 360) % 360;
+
+      rotation += 360 * 6 + delta;
+      wheel.style.transform = `rotate(${rotation}deg)`;
+    }
+
+    function waitForAnimation() {
+      return new Promise(resolve => {
+        let finished = false;
+
+        const finish = () => {
+          if (finished) return;
+          finished = true;
+          wheel.removeEventListener("transitionend", onEnd);
+          resolve();
+        };
+
+        const onEnd = event => {
+          if (event.target === wheel &&
+              event.propertyName === "transform") {
+            finish();
+          }
+        };
+
+        wheel.addEventListener("transitionend", onEnd);
+        setTimeout(finish, 4600);
+      });
+    }
+
     spinButton.addEventListener("click", async () => {
-      if (spinning || Number(spinsElement.textContent) < 1) return;
+      if (spinning || !statusLoaded ||
+          Number(spinsElement.textContent) < 1) {
+        return;
+      }
 
       spinning = true;
       spinButton.disabled = true;
-      spinButton.textContent = "ÇARX FIRLANIR...";
-      messageElement.className = "message";
-
-      rotation += 1800 + Math.floor(Math.random() * 360);
-      wheel.style.transform = `rotate(${rotation}deg)`;
+      spinButton.textContent = "🎡 ÇARX FIRLANIR...";
+      hideMessage();
 
       try {
-        // Nəticəni server müəyyən edir; brauzer uduş seçmir.
-        const responsePromise = fetch("/api/spin/play", {
+        /*
+          Server nəticəsi alınır. Nəticə serverdə seçilir,
+          fırlatma hüququ orada istifadə olunur və uduş
+          varsa əsas balans serverdə yenilənir.
+        */
+        const response = await fetch("/api/spin/play", {
           method: "POST",
           credentials: "same-origin",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({})
         });
 
-        const response = await responsePromise;
         const data = await response.json();
 
-        await new Promise(resolve => setTimeout(resolve, 4100));
-
         if (!response.ok) {
-          throw new Error(data.error || "Fırlatma alınmadı.");
+          throw new Error(
+            data.error || "Fırlatma alınmadı."
+          );
         }
 
-        if (Number(data.prize) > 0) {
+        const prize = Number(data.prize);
+
+        if (![0, 1, 2, 3, 4, 10].includes(prize)) {
+          throw new Error("Serverdən düzgün nəticə gəlmədi.");
+        }
+
+        animateToPrize(prize);
+        await waitForAnimation();
+
+        if (prize > 0) {
           showMessage(
-            `🎉 Təbriklər! ${Number(data.prize).toFixed(2)} AZN qazandın. Məbləğ əsas balansına əlavə edildi.`
+            `🎉 TƏBRİKLƏR! ${prize.toFixed(2)} AZN qazandın! Uduşun əsas balansına əlavə edildi.`
           );
         } else {
-          showMessage("Bu dəfə uduş olmadı. Növbəti dəfə uğurlar!");
+          showMessage(
+            "Bu dəfə uduş olmadı. Növbəti fırlatmada uğurlar! 🍀"
+          );
         }
 
+        /*
+          Serverin qaytardığı balans və qalan fırlatmalar
+          yenidən status sorğusu ilə dəqiqləşdirilir.
+        */
         await loadStatus();
+
       } catch (error) {
-        await new Promise(resolve => setTimeout(resolve, 4100));
-        showMessage(error.message, true);
+        showMessage(
+          error.message || "Fırlatma zamanı xəta baş verdi.",
+          true
+        );
+
         await loadStatus();
       } finally {
         spinning = false;
-        if (Number(spinsElement.textContent) > 0) {
-          spinButton.disabled = false;
-          spinButton.textContent = "🎡 İNDİ FIRLAT";
-        }
+        updateButton(Number(spinsElement.textContent) || 0);
       }
     });
 
@@ -386,4 +826,3 @@
   </script>
 </body>
 </html>
-
