@@ -1848,6 +1848,22 @@ font-size:10px;
     }
 
 }
+
+/* WITHDRAW METHOD PICKER */
+.withdraw-method-title{font-size:13px;font-weight:700;color:#aab5ca;margin:18px 0 10px}
+.withdraw-methods{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.withdraw-method-card{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:7px;min-width:0;padding:15px 13px;background:#0b1222;border:1px solid #293754;border-radius:13px;color:#eef3ff;text-align:left;cursor:pointer;transition:border-color .18s,background .18s,transform .18s;font:inherit}
+.withdraw-method-card:hover{border-color:#507cff;transform:translateY(-1px)}
+.withdraw-method-card.selected{background:#172448;border-color:#4d7cff;box-shadow:0 0 0 1px #4d7cff inset}
+.withdraw-method-icon{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:#202e4c;color:#7da0ff;font-size:23px;font-weight:800}
+.withdraw-method-name{font-size:14px;font-weight:800;line-height:1.25}
+.withdraw-method-desc{font-size:11px;color:#98a6bf;line-height:1.35}
+.withdraw-method-check{display:none;position:absolute;right:10px;top:10px;width:19px;height:19px;border-radius:50%;background:#4d7cff;color:#fff;align-items:center;justify-content:center;font-size:12px}
+.withdraw-method-card.selected .withdraw-method-check{display:flex}
+.withdraw-extra-field[hidden]{display:none!important}
+#withdrawModal .note{white-space:pre-line}
+@media(max-width:420px){.withdraw-methods{gap:8px}.withdraw-method-card{padding:12px 10px}.withdraw-method-name{font-size:13px}.withdraw-method-desc{font-size:10px}}
+
 </style>
 </head>
 
@@ -2536,45 +2552,38 @@ id="withdrawBalance">
 
 </div>
 
-<div class="input-group">
+<div class="withdraw-method-title">Ödəniş üsulunu seç</div>
 
-<label id="withdrawAmountLabel">
-Məbləğ (AZN)
-</label>
-
-<input
-type="number"
-id="withdrawAmount"
-min="10"
-step="0.01"
-placeholder="Minimum 10 AZN">
-
+<div class="withdraw-methods" role="group" aria-label="Çıxarış üsulu">
+  <button type="button" class="withdraw-method-card" id="withdrawCardOption" onclick="selectWithdrawMethod('card')" aria-pressed="false">
+    <span class="withdraw-method-icon">▣</span>
+    <span class="withdraw-method-name">Kart vasitəsilə</span>
+    <span class="withdraw-method-desc">Bank kartına köçürmə</span>
+    <span class="withdraw-method-check">✓</span>
+  </button>
+  <button type="button" class="withdraw-method-card" id="withdrawM10Option" onclick="selectWithdrawMethod('m10')" aria-pressed="false">
+    <span class="withdraw-method-icon">₼</span>
+    <span class="withdraw-method-name">M10 vasitəsilə</span>
+    <span class="withdraw-method-desc">M10 hesabına köçürmə</span>
+    <span class="withdraw-method-check">✓</span>
+  </button>
 </div>
 
+<input type="hidden" id="withdrawMethod" value="">
+
 <div class="input-group">
-
-<label id="withdrawMethodLabel">
-Ödəniş üsulu
-</label>
-
-<input
-type="text"
-id="withdrawMethod"
-placeholder="Məsələn: Bank kartı">
-
+<label id="withdrawAmountLabel">Məbləğ (AZN)</label>
+<input type="number" id="withdrawAmount" min="10" step="0.01" inputmode="decimal" placeholder="Minimum 10 AZN">
 </div>
 
-<div class="input-group">
+<div class="input-group withdraw-extra-field" id="withdrawCardholderGroup" hidden>
+<label for="withdrawCardholder">Kart sahibinin adı və soyadı</label>
+<input type="text" id="withdrawCardholder" maxlength="100" autocomplete="cc-name" placeholder="Ad Soyad">
+</div>
 
-<label id="withdrawAccountLabel">
-Hesab / kart məlumatı
-</label>
-
-<input
-type="text"
-id="withdrawAccount"
-placeholder="Kart nömrəsi və ya hesab">
-
+<div class="input-group withdraw-extra-field" id="withdrawAccountGroup" hidden>
+<label id="withdrawAccountLabel" for="withdrawAccount">Kart nömrəsi</label>
+<input type="text" id="withdrawAccount" maxlength="120" autocomplete="off" placeholder="Kart nömrəsini daxil et">
 </div>
 
 <button
@@ -5243,155 +5252,118 @@ ${t("withdrawLoadError")}
 /* WITHDRAW MODAL */
 
 function openWithdraw(){
-
-closeMobileMenu();
-
-document.getElementById(
-"withdrawModal"
-).classList.add("active");
-
-document.getElementById(
-"withdrawBalance"
-).textContent=
-Number(
-currentUser?.balance||0
-).toFixed(8)+
-" AZN";
-
+  closeMobileMenu();
+  const modal = document.getElementById("withdrawModal");
+  modal.classList.add("active");
+  document.getElementById("withdrawBalance").textContent =
+    Number(currentUser?.balance || 0).toFixed(8) + " AZN";
+  document.getElementById("withdrawAmount").value = "";
+  document.getElementById("withdrawCardholder").value = "";
+  document.getElementById("withdrawAccount").value = "";
+  document.getElementById("withdrawMethod").value = "";
+  document.getElementById("withdrawCardholderGroup").hidden = true;
+  document.getElementById("withdrawAccountGroup").hidden = true;
+  document.getElementById("withdrawMessage").className = "message";
+  document.getElementById("withdrawMessage").textContent = "";
+  document.querySelectorAll(".withdraw-method-card").forEach(el => {
+    el.classList.remove("selected");
+    el.setAttribute("aria-pressed", "false");
+  });
 }
-
 
 function closeWithdraw(){
-
-document.getElementById(
-"withdrawModal"
-).classList.remove("active");
-
+  document.getElementById("withdrawModal").classList.remove("active");
 }
 
+function selectWithdrawMethod(method){
+  const methodInput = document.getElementById("withdrawMethod");
+  const accountLabel = document.getElementById("withdrawAccountLabel");
+  const accountInput = document.getElementById("withdrawAccount");
+  const cardholderGroup = document.getElementById("withdrawCardholderGroup");
+  const accountGroup = document.getElementById("withdrawAccountGroup");
+  if(method !== "card" && method !== "m10") return;
+  methodInput.value = method === "card" ? "Kart vasitəsilə" : "M10 vasitəsilə";
+  document.getElementById("withdrawCardOption").classList.toggle("selected", method === "card");
+  document.getElementById("withdrawM10Option").classList.toggle("selected", method === "m10");
+  document.getElementById("withdrawCardOption").setAttribute("aria-pressed", String(method === "card"));
+  document.getElementById("withdrawM10Option").setAttribute("aria-pressed", String(method === "m10"));
+  cardholderGroup.hidden = method !== "card";
+  accountGroup.hidden = false;
+  if(method === "card"){
+    accountLabel.textContent = "Kart nömrəsi";
+    accountInput.placeholder = "Kart nömrəsini daxil et";
+    accountInput.inputMode = "numeric";
+    accountInput.autocomplete = "cc-number";
+  } else {
+    accountLabel.textContent = "M10 hesabı / telefon nömrəsi";
+    accountInput.placeholder = "+994 XX XXX XX XX";
+    accountInput.inputMode = "tel";
+    accountInput.autocomplete = "tel";
+    cardholderGroup.hidden = true;
+    document.getElementById("withdrawCardholder").value = "";
+  }
+  document.getElementById("withdrawMessage").className = "message";
+  document.getElementById("withdrawMessage").textContent = "";
+}
 
 async function submitWithdraw(){
+  const amount = Number(document.getElementById("withdrawAmount").value);
+  const method = document.getElementById("withdrawMethod").value.trim();
+  const rawAccount = document.getElementById("withdrawAccount").value.trim();
+  const cardholder = document.getElementById("withdrawCardholder").value.trim();
+  const button = document.getElementById("submitWithdrawBtn");
+  const selectedCard = method === "Kart vasitəsilə";
+  const selectedM10 = method === "M10 vasitəsilə";
 
-const amount=
-Number(
-document.getElementById(
-"withdrawAmount"
-).value
-);
+  if(!selectedCard && !selectedM10){
+    showWithdrawMessage("Əvvəlcə Kart və ya M10 seç.", "error");
+    return;
+  }
+  if(!Number.isFinite(amount) || amount < 10){
+    showWithdrawMessage(t("withdrawMinError"), "error");
+    return;
+  }
+  if(amount > Number(currentUser?.balance || 0)){
+    showWithdrawMessage(t("insufficientBalance"), "error");
+    return;
+  }
+  if(!rawAccount || (selectedCard && !cardholder)){
+    showWithdrawMessage(t("fillAll"), "error");
+    return;
+  }
+  if(selectedCard && !/^[0-9 ]{12,23}$/.test(rawAccount)){
+    showWithdrawMessage("Kart nömrəsini düzgün daxil et.", "error");
+    return;
+  }
+  if(selectedM10 && rawAccount.replace(/\D/g, "").length < 9){
+    showWithdrawMessage("M10 telefon nömrəsini düzgün daxil et.", "error");
+    return;
+  }
 
-const method=
-document.getElementById(
-"withdrawMethod"
-).value.trim();
+  // Existing server stores one account string; include the cardholder there so the admin can see it.
+  const account = selectedCard
+    ? "Kart sahibi: " + cardholder + " | Kart: " + rawAccount.replace(/\s/g, "")
+    : rawAccount;
 
-const account=
-document.getElementById(
-"withdrawAccount"
-).value.trim();
-
-const button=
-document.getElementById(
-"submitWithdrawBtn"
-);
-
-if(
-!Number.isFinite(amount)||
-amount<10
-){
-
-showWithdrawMessage(
-t("withdrawMinError"),
-"error"
-);
-
-return;
-
+  button.disabled = true;
+  button.textContent = t("sending");
+  try{
+    const data = await api("/api/withdraw", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ amount, method, account })
+    });
+    showWithdrawMessage(data.message || t("withdrawCreated"), "success");
+    await loadUser();
+    await loadWithdrawals();
+    setTimeout(closeWithdraw, 2000);
+  }catch(error){
+    showWithdrawMessage(error.message || t("serverError"), "error");
+  }finally{
+    button.disabled = false;
+    button.textContent = t("requestWithdraw");
+  }
 }
-
-if(
-amount>
-Number(
-currentUser?.balance||0
-)
-){
-
-showWithdrawMessage(
-t("insufficientBalance"),
-"error"
-);
-
-return;
-
-}
-
-if(!method||!account){
-
-showWithdrawMessage(
-t("fillAll"),
-"error"
-);
-
-return;
-
-}
-
-button.disabled=true;
-
-button.textContent=
-t("sending");
-
-try{
-
-const data=
-await api(
-"/api/withdraw",
-{
-method:"POST",
-headers:{
-"Content-Type":
-"application/json"
-},
-body:JSON.stringify({
-amount,
-method,
-account
-})
-}
-);
-
-showWithdrawMessage(
-data.message||
-t("withdrawCreated"),
-"success"
-);
-
-await loadUser();
-
-await loadWithdrawals();
-
-setTimeout(
-closeWithdraw,
-2000
-);
-
-}catch(error){
-
-showWithdrawMessage(
-error.message,
-"error"
-);
-
-}finally{
-
-button.disabled=false;
-
-button.textContent=
-t("requestWithdraw");
-
-}
-
-}
-
 
 function showWithdrawMessage(
 text,
