@@ -290,11 +290,12 @@
       white-space: nowrap;
     }
 
+    /* Etiketlər 60 dərəcəlik bölmələrin mərkəzinə yerləşdirilib. */
     .prize-1 { top: 18%; left: 50%; }
     .prize-2 { top: 34%; left: 78%; }
-    .prize-3 { top: 70%; left: 78%; }
+    .prize-3 { top: 66%; left: 78%; }
     .prize-4 { top: 82%; left: 50%; }
-    .prize-5 { top: 70%; left: 22%; }
+    .prize-5 { top: 66%; left: 22%; }
     .prize-6 { top: 34%; left: 22%; }
 
     .pointer {
@@ -641,28 +642,29 @@
     }
 
     /*
-      Etiketlərin ilkin yerləşməsi:
-      1 AZN yuxarı, 2 AZN yuxarı-sağ, 3 AZN aşağı-sağ,
-      4 AZN aşağı, 10 AZN aşağı-sol, 0 AZN yuxarı-sol.
+      Pointer yuxarıdadır.
+      Etiketlərin bucaqları:
+      1 AZN = 0°, 2 AZN = 60°, 3 AZN = 120°,
+      4 AZN = 180°, 10 AZN = 240°, 0 AZN = 300°.
 
-      Yuxarıdakı göstəriciyə gətirmək üçün çarxı əks bucaqla
-      fırladırıq. Nəticə serverdən gəlir, brauzer uduş seçmir.
+      Hədəf bucaq həmin bucağın 360°-dən çıxılması ilə hesablanır.
+      Uduşu server müəyyən edir; bu funksiya yalnız çarxı fırladır.
     */
     function getTargetAngle(prize) {
-      const angles = {
+      const labelAngles = {
         1: 0,
-        2: 300,
-        3: 240,
+        2: 60,
+        3: 120,
         4: 180,
-        10: 120,
-        0: 60
+        10: 240,
+        0: 300
       };
 
-      if (!Object.prototype.hasOwnProperty.call(angles, prize)) {
+      if (!Object.prototype.hasOwnProperty.call(labelAngles, prize)) {
         throw new Error("Serverdən düzgün uduş nəticəsi gəlmədi.");
       }
 
-      return angles[prize];
+      return (360 - labelAngles[prize]) % 360;
     }
 
     function animateToPrize(prize) {
