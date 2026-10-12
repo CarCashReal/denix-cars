@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#07110c">
-  <title>Spin & Win — CarCash</title>
+  <title>Spin &amp; Win — CarCash</title>
 
   <style>
     * { box-sizing: border-box; }
@@ -132,9 +132,7 @@
       border-radius: 26px;
       background: linear-gradient(145deg, #13251a, #0b1510 72%);
       border: 1px solid #ffffff17;
-      box-shadow:
-        0 25px 90px #0006,
-        inset 0 1px 0 #ffffff08;
+      box-shadow: 0 25px 90px #0006, inset 0 1px 0 #ffffff08;
       overflow: hidden;
     }
 
@@ -292,7 +290,6 @@
       white-space: nowrap;
     }
 
-    /* Bölmələrin mövqeləri */
     .prize-1 { top: 18%; left: 50%; }
     .prize-2 { top: 34%; left: 78%; }
     .prize-3 { top: 70%; left: 78%; }
@@ -519,7 +516,6 @@
             <small>🎡 Fırlatma hüququn</small>
             <strong id="spins">—</strong>
           </div>
-
           <div class="stat">
             <small>💰 Əsas balansın</small>
             <strong id="balance">—</strong>
@@ -533,8 +529,7 @@
 
           <div class="wheel-frame">
             <div class="wheel" id="wheel">
-              <svg class="wheel-lines" viewBox="0 0 360 360"
-                   aria-hidden="true">
+              <svg class="wheel-lines" viewBox="0 0 360 360" aria-hidden="true">
                 <g stroke="#ffffffa8" stroke-width="2">
                   <line x1="180" y1="180" x2="180" y2="0"/>
                   <line x1="180" y1="180" x2="335.9" y2="90"/>
@@ -543,33 +538,15 @@
                   <line x1="180" y1="180" x2="24.1" y2="270"/>
                   <line x1="180" y1="180" x2="24.1" y2="90"/>
                 </g>
-                <circle cx="180" cy="180" r="172"
-                        fill="none" stroke="#ffffff65" stroke-width="2"/>
+                <circle cx="180" cy="180" r="172" fill="none" stroke="#ffffff65" stroke-width="2"/>
               </svg>
 
-              <div class="prize-label prize-1" data-prize="1">
-                <strong>1 ₼</strong><small>ŞANS</small>
-              </div>
-
-              <div class="prize-label prize-2" data-prize="2">
-                <strong>2 ₼</strong><small>BONUS</small>
-              </div>
-
-              <div class="prize-label prize-3" data-prize="3">
-                <strong>3 ₼</strong><small>BONUS</small>
-              </div>
-
-              <div class="prize-label prize-4" data-prize="4">
-                <strong>4 ₼</strong><small>UDUŞ</small>
-              </div>
-
-              <div class="prize-label prize-5" data-prize="10">
-                <strong>10 ₼</strong><small>JACKPOT</small>
-              </div>
-
-              <div class="prize-label prize-6" data-prize="0">
-                <strong>0 ₼</strong><small>YENİDƏN CƏHD</small>
-              </div>
+              <div class="prize-label prize-1"><strong>1 ₼</strong><small>ŞANS</small></div>
+              <div class="prize-label prize-2"><strong>2 ₼</strong><small>BONUS</small></div>
+              <div class="prize-label prize-3"><strong>3 ₼</strong><small>BONUS</small></div>
+              <div class="prize-label prize-4"><strong>4 ₼</strong><small>UDUŞ</small></div>
+              <div class="prize-label prize-5"><strong>10 ₼</strong><small>JACKPOT</small></div>
+              <div class="prize-label prize-6"><strong>0 ₼</strong><small>YENİDƏN CƏHD</small></div>
             </div>
           </div>
 
@@ -579,42 +556,18 @@
           </div>
         </div>
 
-        <button class="spin-btn" id="spinButton" disabled>
-          MƏLUMATLAR YÜKLƏNİR...
-        </button>
-
-        <p class="button-note">
-          Hər təsdiqlənmiş 50 AZN depozitə 1 fırlatma
-        </p>
-
-        <div class="message" id="message" role="status"
-             aria-live="polite"></div>
+        <button class="spin-btn" id="spinButton" disabled>MƏLUMATLAR YÜKLƏNİR...</button>
+        <p class="button-note">Hər təsdiqlənmiş 50 AZN depozitə 1 fırlatma</p>
+        <div class="message" id="message" role="status" aria-live="polite"></div>
       </section>
     </div>
 
     <section class="rules">
       <h2>🎁 Oyunun qaydaları</h2>
-
-      <div class="rule">
-        <span class="rule-icon">✓</span>
-        <span>Hər <strong>50 AZN təsdiqlənmiş depozitə</strong> 1 fırlatma hüququ verilir.</span>
-      </div>
-
-      <div class="rule">
-        <span class="rule-icon">₼</span>
-        <span>Mümkün nəticələr: <strong>0, 1, 2, 3, 4 və 10 AZN.</strong></span>
-      </div>
-
-      <div class="rule">
-        <span class="rule-icon">↗</span>
-        <span>Uduş əldə edilərsə, məbləğ server vasitəsilə əsas balansına əlavə olunur.</span>
-      </div>
-
-      <div class="rule">
-        <span class="rule-icon">🔒</span>
-        <span>Nəticəni server müəyyən edir. Çarxın üzərindəki bölmələr ehtimalların ölçüsünü göstərmir.</span>
-      </div>
-
+      <div class="rule"><span class="rule-icon">✓</span><span>Hər <strong>50 AZN təsdiqlənmiş depozitə</strong> 1 fırlatma hüququ verilir.</span></div>
+      <div class="rule"><span class="rule-icon">₼</span><span>Mümkün nəticələr: <strong>0, 1, 2, 3, 4 və 10 AZN.</strong></span></div>
+      <div class="rule"><span class="rule-icon">↗</span><span>Uduş əldə edilərsə, məbləğ server vasitəsilə əsas balansına əlavə olunur.</span></div>
+      <div class="rule"><span class="rule-icon">🔒</span><span>Nəticəni server müəyyən edir. Çarxın üzərindəki bölmələr ehtimalların ölçüsünü göstərmir.</span></div>
       <div class="probability-note">
         Nəticə ehtimalları: 0 AZN — 61,9%; 1 AZN — 20%;
         2 AZN — 10%; 3 AZN — 5%; 4 AZN — 3%;
@@ -638,8 +591,7 @@
 
     function showMessage(text, error = false) {
       messageElement.textContent = text;
-      messageElement.className =
-        "message show" + (error ? " error" : "");
+      messageElement.className = "message show" + (error ? " error" : "");
     }
 
     function hideMessage() {
@@ -671,14 +623,11 @@
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(
-            data.error || "Məlumat yüklənmədi. Hesabına daxil ol."
-          );
+          throw new Error(data.error || "Məlumat yüklənmədi. Hesabına daxil ol.");
         }
 
         spinsElement.textContent = Number(data.spins || 0);
-        balanceElement.textContent =
-          Number(data.balance || 0).toFixed(2);
+        balanceElement.textContent = Number(data.balance || 0).toFixed(2);
 
         statusLoaded = true;
         updateButton(Number(data.spins || 0));
@@ -687,30 +636,26 @@
         spinsElement.textContent = "—";
         balanceElement.textContent = "—";
         updateButton(0);
-
-        showMessage(
-          error.message || "Server bağlantısı alınmadı.",
-          true
-        );
+        showMessage(error.message || "Server bağlantısı alınmadı.", true);
       }
     }
 
     /*
-      Çarxın bölmələrinin mərkəzi bucaqları:
-      1 AZN = 0°, 2 AZN = 60°, 3 AZN = 120°,
-      4 AZN = 180°, 10 AZN = 240°, 0 AZN = 300°.
+      Etiketlərin ilkin yerləşməsi:
+      1 AZN yuxarı, 2 AZN yuxarı-sağ, 3 AZN aşağı-sağ,
+      4 AZN aşağı, 10 AZN aşağı-sol, 0 AZN yuxarı-sol.
 
-      Serverdən gələn mükafat yalnız animasiyanın
-      vizual sonluğunu təyin edir. Uduşu brauzer seçmir.
+      Yuxarıdakı göstəriciyə gətirmək üçün çarxı əks bucaqla
+      fırladırıq. Nəticə serverdən gəlir, brauzer uduş seçmir.
     */
     function getTargetAngle(prize) {
       const angles = {
         1: 0,
-        2: 60,
-        3: 120,
+        2: 300,
+        3: 240,
         4: 180,
-        10: 240,
-        0: 300
+        10: 120,
+        0: 60
       };
 
       if (!Object.prototype.hasOwnProperty.call(angles, prize)) {
@@ -741,8 +686,7 @@
         };
 
         const onEnd = event => {
-          if (event.target === wheel &&
-              event.propertyName === "transform") {
+          if (event.target === wheel && event.propertyName === "transform") {
             finish();
           }
         };
@@ -753,8 +697,7 @@
     }
 
     spinButton.addEventListener("click", async () => {
-      if (spinning || !statusLoaded ||
-          Number(spinsElement.textContent) < 1) {
+      if (spinning || !statusLoaded || Number(spinsElement.textContent) < 1) {
         return;
       }
 
@@ -764,11 +707,6 @@
       hideMessage();
 
       try {
-        /*
-          Server nəticəsi alınır. Nəticə serverdə seçilir,
-          fırlatma hüququ orada istifadə olunur və uduş
-          varsa əsas balans serverdə yenilənir.
-        */
         const response = await fetch("/api/spin/play", {
           method: "POST",
           credentials: "same-origin",
@@ -779,9 +717,7 @@
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(
-            data.error || "Fırlatma alınmadı."
-          );
+          throw new Error(data.error || "Fırlatma alınmadı.");
         }
 
         const prize = Number(data.prize);
@@ -798,23 +734,13 @@
             `🎉 TƏBRİKLƏR! ${prize.toFixed(2)} AZN qazandın! Uduşun əsas balansına əlavə edildi.`
           );
         } else {
-          showMessage(
-            "Bu dəfə uduş olmadı. Növbəti fırlatmada uğurlar! 🍀"
-          );
+          showMessage("Bu dəfə uduş olmadı. Növbəti fırlatmada uğurlar! 🍀");
         }
 
-        /*
-          Serverin qaytardığı balans və qalan fırlatmalar
-          yenidən status sorğusu ilə dəqiqləşdirilir.
-        */
         await loadStatus();
 
       } catch (error) {
-        showMessage(
-          error.message || "Fırlatma zamanı xəta baş verdi.",
-          true
-        );
-
+        showMessage(error.message || "Fırlatma zamanı xəta baş verdi.", true);
         await loadStatus();
       } finally {
         spinning = false;
