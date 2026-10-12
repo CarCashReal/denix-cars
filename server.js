@@ -145,6 +145,22 @@ async function initDatabase() {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
+    CREATE TABLE IF NOT EXISTS spin_credits (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES users(id),
+      deposit_id INTEGER NOT NULL UNIQUE REFERENCES deposits(id),
+      spins_granted INTEGER NOT NULL DEFAULT 0,
+      spins_remaining INTEGER NOT NULL DEFAULT 0,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS spin_history (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES users(id),
+      prize DOUBLE PRECISION NOT NULL DEFAULT 0,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
     CREATE TABLE IF NOT EXISTS withdrawals (
       id SERIAL PRIMARY KEY,
       user_id INTEGER NOT NULL,
@@ -2760,91 +2776,73 @@ app.post(
   "/api/admin/deposits/:id/approve",
   requireAdmin,
   async (req, res) => {
-    const client =
-      await pool.connect();
+    const client = await pool.connect();
+    let transactionStarted = false;
 
     try {
-      const depositId =
-        Number(req.params.id);
+      const depositId = Number(req.params.id);
 
-      if (!Number.isInteger(depositId)) {
-        return res.status(400).json({
-          error:
-            "Deposit ID düzgün deyil."
-        });
-      }
-
-      const result =
-        await client.query(
-          `
-          SELECT *
-          FROM deposits
-          WHERE id = $1
-          `,
-          [depositId]
-        );
-
-      const deposit =
-        result.rows[0];
-
-      if (!deposit) {
-        return res.status(404).json({
-          error:
-            "Deposit tapılmadı."
-        });
-      }
-
-      if (deposit.status !== "pending") {
-        return res.status(400).json({
-          error:
-            "Bu deposit artıq işlənib."
-        });
+      if (!Number.isInteger(depositId) || depositId < 1) {
+        return res.status(400).json({ error: "Deposit ID düzgün deyil." });
       }
 
       await client.query("BEGIN");
+      transactionStarted = true;
+
+      // Kilidləmə eyni depozitin paralel iki dəfə təsdiqlənməsinin qarşısını alır.
+      const result = await client.query(
+        `SELECT * FROM deposits WHERE id = $1 FOR UPDATE`,
+        [depositId]
+      );
+      const deposit = result.rows[0];
+
+      if (!deposit) {
+        await client.query("ROLLBACK");
+        transactionStarted = false;
+        return res.status(404).json({ error: "Deposit tapılmadı." });
+      }
+
+      if (deposit.status !== "pending") {
+        await client.query("ROLLBACK");
+        transactionStarted = false;
+        return res.status(400).json({ error: "Bu deposit artıq işlənib." });
+      }
 
       await client.query(
-        `
-        UPDATE deposits
-        SET status = 'approved'
-        WHERE id = $1
-        `,
+        `UPDATE deposits SET status = 'approved' WHERE id = $1`,
         [depositId]
       );
 
       await client.query(
-        `
-        UPDATE users
-        SET balance = balance + $1
-        WHERE id = $2
-        `,
-        [
-          deposit.amount,
-          deposit.user_id
-        ]
+        `UPDATE users SET balance = balance + $1 WHERE id = $2`,
+        [Number(deposit.amount), deposit.user_id]
       );
 
+      // Yalnız təsdiqlənmiş depozitə əsasən: hər tam 50 AZN üçün 1 fırlatma.
+      const spinsGranted = Math.floor(Number(deposit.amount) / 50);
+      if (spinsGranted > 0) {
+        await client.query(
+          `INSERT INTO spin_credits (user_id, deposit_id, spins_granted, spins_remaining)
+           VALUES ($1, $2, $3, $3)
+           ON CONFLICT (deposit_id) DO NOTHING`,
+          [deposit.user_id, depositId, spinsGranted]
+        );
+      }
+
       await client.query("COMMIT");
+      transactionStarted = false;
 
       res.json({
         ok: true,
-
-        message:
-          "Deposit təsdiqləndi."
+        message: "Deposit təsdiqləndi.",
+        spinsGranted
       });
     } catch (error) {
-      await client.query("ROLLBACK");
-
-      console.error(
-        "APPROVE DEPOSIT ERROR:",
-        error
-      );
-
-      res.status(500).json({
-        error:
-          "Deposit təsdiqlənmədi: " +
-          error.message
-      });
+      if (transactionStarted) {
+        try { await client.query("ROLLBACK"); } catch (_) {}
+      }
+      console.error("APPROVE DEPOSIT ERROR:", error);
+      res.status(500).json({ error: "Deposit təsdiqlənmədi: " + error.message });
     } finally {
       client.release();
     }
@@ -4551,6 +4549,151 @@ app.delete(
         error:
           "Ticket silinmədi."
       });
+    } finally {
+      client.release();
+    }
+  }
+);
+
+/* =========================
+   SPIN & WIN
+========================= */
+
+// Uduş yalnız serverdə seçilir. Faizlər cəmi 100%-dir:
+// 0 AZN: 61.9%, 1 AZN: 20%, 2 AZN: 10%,
+// 3 AZN: 5%, 4 AZN: 3%, 10 AZN: 0.1%.
+function getSpinPrize() {
+  const r = Math.random();
+  if (r < 0.619) return 0;
+  if (r < 0.819) return 1;
+  if (r < 0.919) return 2;
+  if (r < 0.969) return 3;
+  if (r < 0.999) return 4;
+  return 10;
+}
+
+app.get(
+  "/api/spin/status",
+  requireLogin,
+  async (req, res) => {
+    try {
+      const userId = req.session.userId;
+      const result = await pool.query(
+        `SELECT COALESCE(SUM(spins_remaining), 0)::int AS spins
+         FROM spin_credits WHERE user_id = $1`,
+        [userId]
+      );
+      const user = await getUser(userId);
+      if (!user) {
+        return res.status(404).json({ error: "İstifadəçi tapılmadı." });
+      }
+      res.json({
+        ok: true,
+        spins: Number(result.rows[0].spins || 0),
+        balance: Number(Number(user.balance || 0).toFixed(8))
+      });
+    } catch (error) {
+      console.error("SPIN STATUS ERROR:", error);
+      res.status(500).json({ error: "Spin məlumatları yüklənmədi." });
+    }
+  }
+);
+
+app.post(
+  "/api/spin/play",
+  requireLogin,
+  async (req, res) => {
+    const client = await pool.connect();
+    let transactionStarted = false;
+
+    try {
+      const userId = req.session.userId;
+      await client.query("BEGIN");
+      transactionStarted = true;
+
+      // Bir fırlatma hüququnu kilidləyib eyni anda yalnız bir dəfə istifadə edirik.
+      const creditResult = await client.query(
+        `SELECT id
+         FROM spin_credits
+         WHERE user_id = $1 AND spins_remaining > 0
+         ORDER BY id ASC
+         LIMIT 1
+         FOR UPDATE`,
+        [userId]
+      );
+      const credit = creditResult.rows[0];
+
+      if (!credit) {
+        await client.query("ROLLBACK");
+        transactionStarted = false;
+        return res.status(400).json({ error: "Fırlatma hüququn yoxdur." });
+      }
+
+      const consumed = await client.query(
+        `UPDATE spin_credits
+         SET spins_remaining = spins_remaining - 1
+         WHERE id = $1 AND user_id = $2 AND spins_remaining > 0
+         RETURNING spins_remaining`,
+        [credit.id, userId]
+      );
+
+      if (!consumed.rows[0]) {
+        await client.query("ROLLBACK");
+        transactionStarted = false;
+        return res.status(400).json({ error: "Fırlatma hüququ artıq istifadə olunub." });
+      }
+
+      const prize = getSpinPrize();
+      let balanceResult;
+
+      if (prize > 0) {
+        balanceResult = await client.query(
+          `UPDATE users
+           SET balance = balance + $1
+           WHERE id = $2
+           RETURNING balance`,
+          [prize, userId]
+        );
+      } else {
+        balanceResult = await client.query(
+          `SELECT balance FROM users WHERE id = $1`,
+          [userId]
+        );
+      }
+
+      if (!balanceResult.rows[0]) {
+        throw new Error("İstifadəçi tapılmadı.");
+      }
+
+      await client.query(
+        `INSERT INTO spin_history (user_id, prize) VALUES ($1, $2)`,
+        [userId, prize]
+      );
+
+      const remainingResult = await client.query(
+        `SELECT COALESCE(SUM(spins_remaining), 0)::int AS spins
+         FROM spin_credits WHERE user_id = $1`,
+        [userId]
+      );
+
+      await client.query("COMMIT");
+      transactionStarted = false;
+
+      res.json({
+        ok: true,
+        prize,
+        spins: Number(remainingResult.rows[0].spins || 0),
+        balance: Number(Number(balanceResult.rows[0].balance || 0).toFixed(8)),
+        message: prize > 0
+          ? `Təbriklər! ₼${prize.toFixed(2)} qazandın.`
+          : "Bu dəfə uduş olmadı. Növbəti dəfə şansını yoxla!"
+      });
+    } catch (error) {
+      if (transactionStarted) {
+        try { await client.query("ROLLBACK"); } catch (_) {}
+      }
+      console.error("SPIN PLAY ERROR:", error);
+      res.status(500).json({ error: "Fırlatma zamanı xəta baş verdi." });
     } finally {
       client.release();
     }
