@@ -6303,5 +6303,53 @@ aria-hidden="true">
 
 </a>
 
+
+<a href="/spin.html" class="spin-image-button" aria-label="Spin oyununa keç">
+  🎡
+</a>
+
+<style>
+  .spin-image-button {
+    position: fixed;
+    left: 18px;
+    bottom: 20px;
+    z-index: 99999;
+    width: 66px;
+    height: 66px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #183c28, #07110c);
+    border: 2px solid #42f59b;
+    box-shadow: 0 0 18px #42f59b55, 0 5px 18px #0008;
+    font-size: 39px;
+    text-decoration: none;
+    transition: transform .2s, box-shadow .2s;
+    animation: spinImagePulse 2s ease-in-out infinite;
+  }
+
+  .spin-image-button:hover {
+    transform: scale(1.12);
+    box-shadow: 0 0 28px #42f59b99;
+  }
+
+  @keyframes spinImagePulse {
+    0%, 100% { box-shadow: 0 0 12px #42f59b44; }
+    50% { box-shadow: 0 0 25px #42f59b99; }
+  }
+
+  @media (max-width: 480px) {
+    .spin-image-button {
+      left: 12px;
+      bottom: 14px;
+      width: 58px;
+      height: 58px;
+      font-size: 34px;
+    }
+  }
+</style>
+
+    
 </body>
 </html>
